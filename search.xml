@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>test</title>
+      <link href="/test/"/>
+      <url>/test/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>靶机渗透训练之Acid</title>
       <link href="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/"/>
       <url>/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/</url>
