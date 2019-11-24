@@ -29,7 +29,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124202923768.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124203044222.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124203159279.png">
-<meta property="og:updated_time" content="2019-11-24T12:43:03.301Z">
+<meta property="og:updated_time" content="2019-11-24T12:46:29.903Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124183638929.png">
     
@@ -195,7 +195,7 @@
 <h2 id="提升权限"><a href="#提升权限" class="headerlink" title="提升权限"></a>提升权限</h2><p>查看主机账户，发现除root外，还有两个后门账户</p>
 <p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124200150369.png" alt="image-20191124200150369"></p>
 <p>查找和后门账户相关的文件,找到一份数据包，pwn_me文件夹内的文件作混淆思路的，根本没漏洞。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -user saman 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -user acid 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
 
 <p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124201523418.png" alt="image-20191124201523418"></p>
 <p>利用python开启http服务，将流量包download下来，作流量分析，找到saman用户的密码<code>1337hax0r</code></p>
