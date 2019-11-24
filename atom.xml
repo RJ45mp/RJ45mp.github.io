@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://rj45mp.github.io/"/>
-  <updated>2019-11-24T06:25:55.142Z</updated>
+  <updated>2019-11-24T06:12:55.216Z</updated>
   <id>https://rj45mp.github.io/</id>
   
   <author>
@@ -15,29 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>test</title>
-    <link href="https://rj45mp.github.io/test/"/>
-    <id>https://rj45mp.github.io/test/</id>
-    <published>2019-11-24T06:23:10.000Z</published>
-    <updated>2019-11-24T06:25:55.142Z</updated>
-    
-    <content type="html"><![CDATA[<p>test</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;test&lt;/p&gt;
-
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
   
   <entry>
     <title>利用php-ini构成的后门</title>
@@ -459,6 +436,28 @@
       
         &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;在和E神的日常讨论中…&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/%E4%B8%80%E6%AC%A1%E5%AF%B9mysql%E6%BA%9
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>docker搭建frp实现内网穿透</title>
+    <link href="https://rj45mp.github.io/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/"/>
+    <id>https://rj45mp.github.io/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/</id>
+    <published>2019-09-16T14:39:37.000Z</published>
+    <updated>2019-11-22T16:36:37.748Z</updated>
+    
+    <content type="html"><![CDATA[<p>一直以来都很羡慕PushEax的工作模式<br>【一台物理服务器+一个公网ip+一个域名】，做个内网穿透<br>然后随时随地远程桌面回去工作，不用像我这样每天背着几斤重的笔记本。<br>特别是今天中午，特别酸。<br>下午和傍晚上课的时候，特地搞了一下怎么玩frp的，这里记录一下。</p><h1 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h1><p>准备一个公网ip+一个域名，<br>我采用的是阿里云的学生机子+一个域名，<br>需要设置域名解析，具体可以参考阿里云里面的文档。</p><p>整体的架构如下：</p><p><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/8.png" alt></p><h1 id="下载frp"><a href="#下载frp" class="headerlink" title="下载frp"></a>下载frp</h1><p><a href="https://github.com/fatedier/frp/releases" target="_blank" rel="noopener">frp</a><br><a href="https://github.com/fatedier/frp/blob/master/README_zh.md" target="_blank" rel="noopener">文档</a></p><p>1、服务端为Linux版</p><p>下载并解压：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/1.png" alt></p><p>2、客户端为windows版<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/2.png" alt></p><h1 id="编辑frps-ini"><a href="#编辑frps-ini" class="headerlink" title="编辑frps.ini"></a>编辑frps.ini</h1><p>frps.ini中默认为7000端口，可以自行修改<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/3.png" alt></p><h1 id="编辑Dockerfile"><a href="#编辑Dockerfile" class="headerlink" title="编辑Dockerfile"></a>编辑Dockerfile</h1><p>创建编辑Dockerfile：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">COPY . /frp</span><br><span class="line">RUN chmod -R 777 /frp</span><br><span class="line">CMD [&quot;/frp/frps&quot;,&quot;-c&quot;,&quot;/frp/frps.ini&quot;]</span><br></pre></td></tr></table></figure><p>封装为镜像：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t frp .</span><br></pre></td></tr></table></figure><p><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/4.png" alt><br>注意：在使用64位的时候容器运行失败，后面修改为32位的frp了。</p><h1 id="创建和运行docker"><a href="#创建和运行docker" class="headerlink" title="创建和运行docker"></a>创建和运行docker</h1><p>查看、创建和运行frp的docker</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9090:9090 -p 3389:3389 --name=Rj45_frp frp</span><br></pre></td></tr></table></figure><p>注意：<br>frp的docker中必须映射frps.ini设置的端口和一个目标端口<br>同时，云服务器的防火墙需要放行这两个端口。</p><h1 id="编辑frpc-ini"><a href="#编辑frpc-ini" class="headerlink" title="编辑frpc.ini"></a>编辑frpc.ini</h1><p>设置两个端口：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/5.png" alt></p><h1 id="运行frpc-exe"><a href="#运行frpc-exe" class="headerlink" title="运行frpc.exe"></a>运行frpc.exe</h1><p>CMD中运行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frpc.exe -c frpc.ini</span><br></pre></td></tr></table></figure><h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>客户端创建账户并添加到远程桌面组：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/6.png" alt></p><p>第三方pc测试：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/7.png" alt></p><p>接下来直接通过远程桌面+域名就可以愉快的工作了。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;一直以来都很羡慕PushEax的工作模式&lt;br&gt;【一台物理服务器+一个公网ip+一个域名】，做个内网穿透&lt;br&gt;然后随时随地远程桌面回去工作，不用像我这样每天背着几斤重的笔记本。&lt;br&gt;特别是今天中午，特别酸。&lt;br&gt;下午和傍晚上课的时候，特地搞了一下怎么玩frp的，这里记
       
     
     </summary>
