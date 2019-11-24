@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>test</title>
+      <link href="/test/"/>
+      <url>/test/</url>
+      
+        <content type="html"><![CDATA[<p>test</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>利用php-ini构成的后门</title>
       <link href="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/"/>
       <url>/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/</url>
