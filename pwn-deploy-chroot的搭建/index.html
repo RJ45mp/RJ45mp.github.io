@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="pwn_deploy_chroot是一个部署pwn题，用于CTF的平台。从大佬的博客可以知道该平台的特点如下：  下面是本人复现的搭建过程： 环境准备ubuntu-18.04.1-desktop-amd64并更改源。安装ssh、docker、git。 安装docker-compose1apt install docker-compose  下载pwn_deploy_chroot1git clone">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwn_deploy_chroot的搭建">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="pwn_deploy_chroot是一个部署pwn题，用于CTF的平台。从大佬的博客可以知道该平台的特点如下：  下面是本人复现的搭建过程： 环境准备ubuntu-18.04.1-desktop-amd64并更改源。安装ssh、docker、git。 安装docker-compose1apt install docker-compose  下载pwn_deploy_chroot1git clone">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;7.png">
+<meta property="og:updated_time" content="2019-11-22T16:33:05.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>pwn_deploy_chroot的搭建</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/awd-platform%E7%9A%84%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&text=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&is_video=false&description=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwn_deploy_chroot的搭建&body=Check out this article: https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&name=pwn_deploy_chroot的搭建&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#环境准备"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装docker-compose"><span class="toc-number">2.</span> <span class="toc-text">安装docker-compose</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#下载pwn-deploy-chroot"><span class="toc-number">3.</span> <span class="toc-text">下载pwn_deploy_chroot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#运行pwn-deploy-chroot"><span class="toc-number">4.</span> <span class="toc-text">运行pwn_deploy_chroot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1："><span class="toc-number">5.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2："><span class="toc-number">6.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3："><span class="toc-number">7.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#测试pwn-deploy-chroot"><span class="toc-number">8.</span> <span class="toc-text">测试pwn_deploy_chroot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#关闭pwn-deploy-chroot"><span class="toc-number">9.</span> <span class="toc-text">关闭pwn_deploy_chroot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">10.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        pwn_deploy_chroot的搭建
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-08-04T18:06:24.000Z" itemprop="datePublished">2019-08-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>pwn_deploy_chroot是一个部署pwn题，用于CTF的平台。<br><a href="http://www.giantbranch.cn/2018/09/24/%E5%A6%82%E4%BD%95%E5%AE%89%E5%85%A8%E5%BF%AB%E9%80%9F%E5%9C%B0%E9%83%A8%E7%BD%B2%E5%A4%9A%E9%81%93ctf%20pwn%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AE/" target="_blank" rel="noopener">从大佬的博客可以知道该平台的特点如下：</a></p>
+<p><img src="/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/1.png" alt></p>
+<p>下面是本人复现的搭建过程：</p>
+<h1 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h1><p>ubuntu-18.04.1-desktop-amd64并更改源。<br>安装ssh、docker、git。</p>
+<h1 id="安装docker-compose"><a href="#安装docker-compose" class="headerlink" title="安装docker-compose"></a>安装docker-compose</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install docker-compose</span><br></pre></td></tr></table></figure>
+<p><img src="/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/2.png" alt></p>
+<h1 id="下载pwn-deploy-chroot"><a href="#下载pwn-deploy-chroot" class="headerlink" title="下载pwn_deploy_chroot"></a>下载pwn_deploy_chroot</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/giantbranch/pwn_deploy_chroot.git</span><br></pre></td></tr></table></figure>
+<p><img src="/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/3.png" alt></p>
+<h1 id="运行pwn-deploy-chroot"><a href="#运行pwn-deploy-chroot" class="headerlink" title="运行pwn_deploy_chroot"></a>运行pwn_deploy_chroot</h1><h1 id="1："><a href="#1：" class="headerlink" title="1："></a>1：</h1><p>把pwn题目放到bin目录<br><img src="/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/4.png" alt><br>目录中含有三道pwn题。</p>
+<h1 id="2："><a href="#2：" class="headerlink" title="2："></a>2：</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python initialize.py</span><br></pre></td></tr></table></figure>
+<p><img src="/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/5.png" alt><br>运行脚本，生成题目部署信息。</p>
+<h1 id="3："><a href="#3：" class="headerlink" title="3："></a>3：</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up –-build -d</span><br></pre></td></tr></table></figure>
+<p><img src="/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/6.png" alt><br>胆战心惊的等待下，好像是成功了。</p>
+<h1 id="测试pwn-deploy-chroot"><a href="#测试pwn-deploy-chroot" class="headerlink" title="测试pwn_deploy_chroot"></a>测试pwn_deploy_chroot</h1><p><img src="/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/7.png" alt><br>扫描的结果和前面的是一致的，说明搭建成功。</p>
+<h1 id="关闭pwn-deploy-chroot"><a href="#关闭pwn-deploy-chroot" class="headerlink" title="关闭pwn_deploy_chroot"></a>关闭pwn_deploy_chroot</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker stop $(docker ps -aq)</span><br><span class="line">docker rm $(docker ps -aq)</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://www.giantbranch.cn/2018/09/24/%E5%A6%82%E4%BD%95%E5%AE%89%E5%85%A8%E5%BF%AB%E9%80%9F%E5%9C%B0%E9%83%A8%E7%BD%B2%E5%A4%9A%E9%81%93ctf%20pwn%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AE/" target="_blank" rel="noopener">http://www.giantbranch.cn/2018/09/24/%E5%A6%82%E4%BD%95%E5%AE%89%E5%85%A8%E5%BF%AB%E9%80%9F%E5%9C%B0%E9%83%A8%E7%BD%B2%E5%A4%9A%E9%81%93ctf%20pwn%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AE/</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#环境准备"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装docker-compose"><span class="toc-number">2.</span> <span class="toc-text">安装docker-compose</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#下载pwn-deploy-chroot"><span class="toc-number">3.</span> <span class="toc-text">下载pwn_deploy_chroot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#运行pwn-deploy-chroot"><span class="toc-number">4.</span> <span class="toc-text">运行pwn_deploy_chroot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1："><span class="toc-number">5.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2："><span class="toc-number">6.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3："><span class="toc-number">7.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#测试pwn-deploy-chroot"><span class="toc-number">8.</span> <span class="toc-text">测试pwn_deploy_chroot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#关闭pwn-deploy-chroot"><span class="toc-number">9.</span> <span class="toc-text">关闭pwn_deploy_chroot</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">10.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&text=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&is_video=false&description=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwn_deploy_chroot的搭建&body=Check out this article: https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&title=pwn_deploy_chroot的搭建" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/&name=pwn_deploy_chroot的搭建&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

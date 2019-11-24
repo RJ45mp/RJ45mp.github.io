@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言  环境搭建1、docker部署 12sudo docker pull gfattf1&#x2F;upload-labssudo docker run -d -it --name=upload -p 80:80 gfattf1&#x2F;upload-labs &#x2F;bin&#x2F;bash 访问页面  2、源码安装 https:&#x2F;&#x2F;github.com&#x2F;c0ny1&#x2F;upload-labs 第一关：客户端使用js对不合法图片">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从upload-labs学习文件上传">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="前言  环境搭建1、docker部署 12sudo docker pull gfattf1&#x2F;upload-labssudo docker run -d -it --name=upload -p 80:80 gfattf1&#x2F;upload-labs &#x2F;bin&#x2F;bash 访问页面  2、源码安装 https:&#x2F;&#x2F;github.com&#x2F;c0ny1&#x2F;upload-labs 第一关：客户端使用js对不合法图片">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;0.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;3a.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;7.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;8.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;9.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;10.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;11.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;12.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;12a.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;13.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;14.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;15.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;16.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;17.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;18.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;19.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;21.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;22.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;20.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;23.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;24.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;25.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;26.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;27.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;28.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;29.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;30.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;31.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;32.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;33.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;34.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;35.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;36.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;38.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;37.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;39.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;40.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;41.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;42.png">
+<meta property="og:updated_time" content="2019-10-23T07:34:43.265Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0&#x2F;1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>从upload-labs学习文件上传</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/%E5%85%B3%E4%BA%8Edocker%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BA%86%E8%A7%A3/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&text=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&is_video=false&description=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=从upload-labs学习文件上传&body=Check out this article: https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&name=从upload-labs学习文件上传&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境搭建"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第一关：客户端使用js对不合法图片进行检查"><span class="toc-number">3.</span> <span class="toc-text">第一关：客户端使用js对不合法图片进行检查</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第二关：服务端对数据包的MIME进行检查"><span class="toc-number">4.</span> <span class="toc-text">第二关：服务端对数据包的MIME进行检查</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第三关：禁止上传-asp-aspx-php-jsp后缀文件"><span class="toc-number">5.</span> <span class="toc-text">第三关：禁止上传.asp|.aspx|.php|.jsp后缀文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第五关-禁止所有后缀文件，没有大小写统一"><span class="toc-number">6.</span> <span class="toc-text">第五关 禁止所有后缀文件，没有大小写统一</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第六关-禁止所有后缀文件，没有去空处理"><span class="toc-number">7.</span> <span class="toc-text">第六关 禁止所有后缀文件，没有去空处理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第七关-禁止所有后缀文件，没有去点处理"><span class="toc-number">8.</span> <span class="toc-text">第七关 禁止所有后缀文件，没有去点处理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第八关-禁止所有后缀文件，没有处理-DATA"><span class="toc-number">9.</span> <span class="toc-text">第八关 禁止所有后缀文件，没有处理::$DATA</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第九关-禁止所有后缀文件，路径拼接出现逻辑错误"><span class="toc-number">10.</span> <span class="toc-text">第九关 禁止所有后缀文件，路径拼接出现逻辑错误</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十关-禁止所有后缀文件，将存在问题的后缀替换为空"><span class="toc-number">11.</span> <span class="toc-text">第十关 禁止所有后缀文件，将存在问题的后缀替换为空</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十一关-白名单机制，但拼接上传文件路径"><span class="toc-number">12.</span> <span class="toc-text">第十一关 白名单机制，但拼接上传文件路径</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十二关-禁止所有后缀文件，路径拼接出现逻辑错误"><span class="toc-number">13.</span> <span class="toc-text">第十二关 禁止所有后缀文件，路径拼接出现逻辑错误</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十三关-判断文件类型是否为图片（文件头标识位）"><span class="toc-number">14.</span> <span class="toc-text">第十三关 判断文件类型是否为图片（文件头标识位）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十四关-判断文件类型是否为图片（getimagesize函数）"><span class="toc-number">15.</span> <span class="toc-text">第十四关 判断文件类型是否为图片（getimagesize函数）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十五关-判断文件类型是否为图片（php-exif模块）"><span class="toc-number">16.</span> <span class="toc-text">第十五关 判断文件类型是否为图片（php_exif模块）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十六关-多重防御机制（后缀、类型、内容、二次渲染）"><span class="toc-number">17.</span> <span class="toc-text">第十六关 多重防御机制（后缀、类型、内容、二次渲染）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十七关-条件竞争"><span class="toc-number">18.</span> <span class="toc-text">第十七关 条件竞争</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十八关-白名单-条件竞争"><span class="toc-number">19.</span> <span class="toc-text">第十八关 白名单+条件竞争</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十九关-CVE-2015-2348"><span class="toc-number">20.</span> <span class="toc-text">第十九关 CVE-2015-2348</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">21.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        从upload-labs学习文件上传
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-10-18T17:53:30.000Z" itemprop="datePublished">2019-10-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/1.png" alt></p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/0.png" alt></p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>1、docker部署</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker pull gfattf1/upload-labs</span><br><span class="line">sudo docker run -d -it --name=upload -p 80:80 gfattf1/upload-labs /bin/bash</span><br></pre></td></tr></table></figure>
+<p>访问页面</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/2.png" alt></p>
+<p>2、源码安装</p>
+<p><a href="https://github.com/c0ny1/upload-labs" target="_blank" rel="noopener">https://github.com/c0ny1/upload-labs</a></p>
+<h1 id="第一关：客户端使用js对不合法图片进行检查"><a href="#第一关：客户端使用js对不合法图片进行检查" class="headerlink" title="第一关：客户端使用js对不合法图片进行检查"></a>第一关：客户端使用js对不合法图片进行检查</h1><p>代码：<br><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/3.png" alt><br>绕过：<br>1）直接在前端js代码中添加php后缀</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/3a.png" alt></p>
+<p>2）将php文件，修改后缀为白名单中的后缀，然后上传绕过，bp截取数据包，修改回来为php</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/4.png" alt></p>
+<p>利用：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/5.png" alt></p>
+<h1 id="第二关：服务端对数据包的MIME进行检查"><a href="#第二关：服务端对数据包的MIME进行检查" class="headerlink" title="第二关：服务端对数据包的MIME进行检查"></a>第二关：服务端对数据包的MIME进行检查</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/6.png" alt><br>绕过：<br>既然服务端对数据包的MIME进行检查，那么就在客户端，利用bp截取数据包，然后修改<code>Content-Type</code>字段，使其达到条件</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/7.png" alt></p>
+<p>修改字段后：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/8.png" alt></p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/9.png" alt></p>
+<h1 id="第三关：禁止上传-asp-aspx-php-jsp后缀文件"><a href="#第三关：禁止上传-asp-aspx-php-jsp后缀文件" class="headerlink" title="第三关：禁止上传.asp|.aspx|.php|.jsp后缀文件"></a>第三关：禁止上传.asp|.aspx|.php|.jsp后缀文件</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/10.png" alt></p>
+<p>绕过：<br>既然不允许上传php后缀，那么上传其他不在黑名单内的后缀的文件即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php、php5、php4、php3、php2、html、htm、phtml、pht</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/11.png" alt></p>
+<p>#第四关：禁止上传黑名单后缀文件，漏禁.htaccess<br>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/12.png" alt></p>
+<p>绕过：</p>
+<p>所有可解析执行的文件的后缀拓展名都在黑名单中了。<br>但漏禁.htaccess了，可通过<code>.htaccess</code>机制进行绕过。</p>
+<p>介绍：</p>
+<p>1、.htaccess文件是Apache服务器中的一个配置文件，它负责相关目录下的网页配置。<br>通过htaccess文件，可以实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许/阻止特定的用户或者目录的访问、禁止目录列表、配置默认文档等功能。</p>
+<p>2、.htaccess文件(或者”分布式配置文件”）提供了针对目录改变配置的方法，<br>即，在一个特定的文档目录中放置一个包含一个或多个指令的文件， 以作用于此目录及其所有子目录。作为用户，所能使用的命令受到限制。管理员可以通过Apache的AllowOverride指令来设置。</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/12a.png" alt></p>
+<p>利用：</p>
+<p>利用<code>.htaccess</code>配置文件机制，上传一个<code>.htaccess</code>配置文件，内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SetHandler application/x-httpd-php</span><br></pre></td></tr></table></figure>
+<p>作用是将所有文件都解析为php，从而达到执行的目录。</p>
+<p>操作：</p>
+<p>1、上传<code>.htaccess</code>配置文件</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/13.png" alt></p>
+<p>2、上传后缀为<code>.gif</code>的图片木马</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/14.png" alt></p>
+<p>3、验证是否执行</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/15.png" alt></p>
+<p><a href="https://blog.csdn.net/cmzhuang/article/details/53537591" target="_blank" rel="noopener">参考</a></p>
+<h1 id="第五关-禁止所有后缀文件，没有大小写统一"><a href="#第五关-禁止所有后缀文件，没有大小写统一" class="headerlink" title="第五关 禁止所有后缀文件，没有大小写统一"></a>第五关 禁止所有后缀文件，没有大小写统一</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/16.png" alt></p>
+<p>绕过：<br>添加了<code>.htaccess</code>，但是没有将后缀拓展名进行大小写统一，可以通过大小写绕过</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/17.png" alt></p>
+<h1 id="第六关-禁止所有后缀文件，没有去空处理"><a href="#第六关-禁止所有后缀文件，没有去空处理" class="headerlink" title="第六关 禁止所有后缀文件，没有去空处理"></a>第六关 禁止所有后缀文件，没有去空处理</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/18.png" alt></p>
+<p>绕过：<br>代码中禁止了所有的后缀，然而没有进行去空处理，可以在后缀名后加空绕过</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/19.png" alt></p>
+<h1 id="第七关-禁止所有后缀文件，没有去点处理"><a href="#第七关-禁止所有后缀文件，没有去点处理" class="headerlink" title="第七关 禁止所有后缀文件，没有去点处理"></a>第七关 禁止所有后缀文件，没有去点处理</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/21.png" alt></p>
+<p>绕过：</p>
+<p>代码中禁止了所有的后缀，然而没有进行去点处理，可以在后缀名后加点绕过。<br>适合主机为windows，利用windows特性，会自动去掉后缀名中最后的”.”。</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/22.png" alt></p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/20.png" alt></p>
+<h1 id="第八关-禁止所有后缀文件，没有处理-DATA"><a href="#第八关-禁止所有后缀文件，没有处理-DATA" class="headerlink" title="第八关 禁止所有后缀文件，没有处理::$DATA"></a>第八关 禁止所有后缀文件，没有处理::$DATA</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/23.png" alt></p>
+<p>绕过：</p>
+<p>代码中禁止了所有的后缀，然而没有进行去<code>::$DATA</code>处理，可以在后缀名后加<code>::$DATA</code>绕过。<br>适合主机为windows，利用windows特性，<br>php在window的时候如果文件名+”::$DATA”会把::$DATA之后的数据当成文件流处理,不会检测后缀名.且保持”::$DATA”之前的文件名。</p>
+<h1 id="第九关-禁止所有后缀文件，路径拼接出现逻辑错误"><a href="#第九关-禁止所有后缀文件，路径拼接出现逻辑错误" class="headerlink" title="第九关 禁止所有后缀文件，路径拼接出现逻辑错误"></a>第九关 禁止所有后缀文件，路径拼接出现逻辑错误</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/24.png" alt></p>
+<p>绕过：</p>
+<p>路径拼接的是处理后的文件名，处理机制是去点去特征字符串去空。<br>那么在目标文件后添加点添加空，然后配合处理机制处理后，即可绕过</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/25.png" alt></p>
+<h1 id="第十关-禁止所有后缀文件，将存在问题的后缀替换为空"><a href="#第十关-禁止所有后缀文件，将存在问题的后缀替换为空" class="headerlink" title="第十关 禁止所有后缀文件，将存在问题的后缀替换为空"></a>第十关 禁止所有后缀文件，将存在问题的后缀替换为空</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/26.png" alt></p>
+<p>绕过：<br>路径拼接的是处理后的文件名，处理机制是将存在问题的后缀替换为空。<br>双写即可绕过。</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/27.png" alt></p>
+<h1 id="第十一关-白名单机制，但拼接上传文件路径"><a href="#第十一关-白名单机制，但拼接上传文件路径" class="headerlink" title="第十一关 白名单机制，但拼接上传文件路径"></a>第十一关 白名单机制，但拼接上传文件路径</h1><p>什么是白名单？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">一般而言，黑名单白名单是为防止骚扰电话而设的。</span><br><span class="line">所谓黑名单，如果你设置了黑名单，那被设置的名单将无法打入，不在黑名单之列的所有电话都可被接入。</span><br><span class="line">所谓白名单则和黑名单反之，被列入白名单的号码都可以被接入，而不在名单之列的号码则统统被拒接。</span><br><span class="line">安全防护机制中白名单和黑名单也是如此原理。</span><br></pre></td></tr></table></figure>
+
+<p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/28.png" alt></p>
+<p>绕过：</p>
+<p>既然拼接了上传文件路径，那么可以利用<code>%00</code>截断绕过。</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/29.png" alt></p>
+<p><code>%00</code>截断的条件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">（1）php版本必须小于5.3.4</span><br><span class="line">（2）php的配置文件php-ini中，magic_quotes_gpc设置为Off</span><br></pre></td></tr></table></figure>
+
+<h1 id="第十二关-禁止所有后缀文件，路径拼接出现逻辑错误"><a href="#第十二关-禁止所有后缀文件，路径拼接出现逻辑错误" class="headerlink" title="第十二关 禁止所有后缀文件，路径拼接出现逻辑错误"></a>第十二关 禁止所有后缀文件，路径拼接出现逻辑错误</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/30.png" alt></p>
+<p>绕过：</p>
+<p>同11关，不过是在报头信息中利用<code>%00</code>截断绕过。</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/31.png" alt></p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/32.png" alt></p>
+<h1 id="第十三关-判断文件类型是否为图片（文件头标识位）"><a href="#第十三关-判断文件类型是否为图片（文件头标识位）" class="headerlink" title="第十三关 判断文件类型是否为图片（文件头标识位）"></a>第十三关 判断文件类型是否为图片（文件头标识位）</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/33.png" alt></p>
+<p>绕过：</p>
+<p>通过文件的前2个字节判断文件类型是否为图片，如果是则通过。</p>
+<p>制作图片木马：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy a.jpg/b + shell.php/a webshell.jpg</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/34.png" alt></p>
+<h1 id="第十四关-判断文件类型是否为图片（getimagesize函数）"><a href="#第十四关-判断文件类型是否为图片（getimagesize函数）" class="headerlink" title="第十四关 判断文件类型是否为图片（getimagesize函数）"></a>第十四关 判断文件类型是否为图片（getimagesize函数）</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/35.png" alt></p>
+<p>绕过：</p>
+<p>同十三关，制作图片木马绕过</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/36.png" alt></p>
+<h1 id="第十五关-判断文件类型是否为图片（php-exif模块）"><a href="#第十五关-判断文件类型是否为图片（php-exif模块）" class="headerlink" title="第十五关 判断文件类型是否为图片（php_exif模块）"></a>第十五关 判断文件类型是否为图片（php_exif模块）</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/38.png" alt></p>
+<p>绕过：</p>
+<p>使用php_exif模块判断文件类型，同十三、十四关一样，制作图片木马绕过。</p>
+<p><a href="https://www.php.net/manual/zh/book.exif.php" target="_blank" rel="noopener">php_exif模块</a></p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/37.png" alt></p>
+<h1 id="第十六关-多重防御机制（后缀、类型、内容、二次渲染）"><a href="#第十六关-多重防御机制（后缀、类型、内容、二次渲染）" class="headerlink" title="第十六关 多重防御机制（后缀、类型、内容、二次渲染）"></a>第十六关 多重防御机制（后缀、类型、内容、二次渲染）</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/39.png" alt></p>
+<p>绕过：</p>
+<p>依此构造绕过即可。</p>
+<p><a href="https://blog.csdn.net/weixin_43571641/article/details/83902223" target="_blank" rel="noopener">二次渲染绕过1</a></p>
+<p><a href="https://xz.aliyun.com/t/2657" target="_blank" rel="noopener">二次渲染绕过2</a></p>
+<h1 id="第十七关-条件竞争"><a href="#第十七关-条件竞争" class="headerlink" title="第十七关 条件竞争"></a>第十七关 条件竞争</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/40.png" alt></p>
+<p>绕过：</p>
+<p>结合bp和浏览器，利用条件竞争的方式在unlink前，访问webshell。</p>
+<p><a href="https://rj45mp.github.io/%2F2019%2F03%2F21%2F%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%2F">方法</a></p>
+<h1 id="第十八关-白名单-条件竞争"><a href="#第十八关-白名单-条件竞争" class="headerlink" title="第十八关 白名单+条件竞争"></a>第十八关 白名单+条件竞争</h1><p>同前面。</p>
+<h1 id="第十九关-CVE-2015-2348"><a href="#第十九关-CVE-2015-2348" class="headerlink" title="第十九关 CVE-2015-2348"></a>第十九关 CVE-2015-2348</h1><p>代码：</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/41.png" alt></p>
+<p>绕过：</p>
+<p>move_uploaded_file函数中的img_path是由post参数save_name控制的，可以在save_name利用00截断绕过</p>
+<p><img src="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/42.png" alt></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://xz.aliyun.com/t/2435" target="_blank" rel="noopener">https://xz.aliyun.com/t/2435</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境搭建"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第一关：客户端使用js对不合法图片进行检查"><span class="toc-number">3.</span> <span class="toc-text">第一关：客户端使用js对不合法图片进行检查</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第二关：服务端对数据包的MIME进行检查"><span class="toc-number">4.</span> <span class="toc-text">第二关：服务端对数据包的MIME进行检查</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第三关：禁止上传-asp-aspx-php-jsp后缀文件"><span class="toc-number">5.</span> <span class="toc-text">第三关：禁止上传.asp|.aspx|.php|.jsp后缀文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第五关-禁止所有后缀文件，没有大小写统一"><span class="toc-number">6.</span> <span class="toc-text">第五关 禁止所有后缀文件，没有大小写统一</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第六关-禁止所有后缀文件，没有去空处理"><span class="toc-number">7.</span> <span class="toc-text">第六关 禁止所有后缀文件，没有去空处理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第七关-禁止所有后缀文件，没有去点处理"><span class="toc-number">8.</span> <span class="toc-text">第七关 禁止所有后缀文件，没有去点处理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第八关-禁止所有后缀文件，没有处理-DATA"><span class="toc-number">9.</span> <span class="toc-text">第八关 禁止所有后缀文件，没有处理::$DATA</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第九关-禁止所有后缀文件，路径拼接出现逻辑错误"><span class="toc-number">10.</span> <span class="toc-text">第九关 禁止所有后缀文件，路径拼接出现逻辑错误</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十关-禁止所有后缀文件，将存在问题的后缀替换为空"><span class="toc-number">11.</span> <span class="toc-text">第十关 禁止所有后缀文件，将存在问题的后缀替换为空</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十一关-白名单机制，但拼接上传文件路径"><span class="toc-number">12.</span> <span class="toc-text">第十一关 白名单机制，但拼接上传文件路径</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十二关-禁止所有后缀文件，路径拼接出现逻辑错误"><span class="toc-number">13.</span> <span class="toc-text">第十二关 禁止所有后缀文件，路径拼接出现逻辑错误</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十三关-判断文件类型是否为图片（文件头标识位）"><span class="toc-number">14.</span> <span class="toc-text">第十三关 判断文件类型是否为图片（文件头标识位）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十四关-判断文件类型是否为图片（getimagesize函数）"><span class="toc-number">15.</span> <span class="toc-text">第十四关 判断文件类型是否为图片（getimagesize函数）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十五关-判断文件类型是否为图片（php-exif模块）"><span class="toc-number">16.</span> <span class="toc-text">第十五关 判断文件类型是否为图片（php_exif模块）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十六关-多重防御机制（后缀、类型、内容、二次渲染）"><span class="toc-number">17.</span> <span class="toc-text">第十六关 多重防御机制（后缀、类型、内容、二次渲染）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十七关-条件竞争"><span class="toc-number">18.</span> <span class="toc-text">第十七关 条件竞争</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十八关-白名单-条件竞争"><span class="toc-number">19.</span> <span class="toc-text">第十八关 白名单+条件竞争</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第十九关-CVE-2015-2348"><span class="toc-number">20.</span> <span class="toc-text">第十九关 CVE-2015-2348</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">21.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&text=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&is_video=false&description=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=从upload-labs学习文件上传&body=Check out this article: https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&title=从upload-labs学习文件上传" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/&name=从upload-labs学习文件上传&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Dockerfile的保留字指令 123456789101112FROM #基础镜像，当前新镜像是基于哪个镜像的MAINTAINER #镜像维护者的姓名和邮箱RUN #容器构建时需要运行的命令EXPOSE #当前容器对外暴露出的端口WORKDIR #指定在创建容器后，终端默认登陆的工作目录ENV #构建镜像过程中设置环境变量ADD #将宿主机目录下的文件拷贝到镜像且自定处理解压缩COPY #将宿主">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dockerfile的编写">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;Dockerfile%E7%9A%84%E7%BC%96%E5%86%99&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="Dockerfile的保留字指令 123456789101112FROM #基础镜像，当前新镜像是基于哪个镜像的MAINTAINER #镜像维护者的姓名和邮箱RUN #容器构建时需要运行的命令EXPOSE #当前容器对外暴露出的端口WORKDIR #指定在创建容器后，终端默认登陆的工作目录ENV #构建镜像过程中设置环境变量ADD #将宿主机目录下的文件拷贝到镜像且自定处理解压缩COPY #将宿主">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-11-22T16:30:00.117Z">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>Dockerfile的编写</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/docker%E5%AE%B9%E5%99%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&text=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&is_video=false&description=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Dockerfile的编写&body=Check out this article: https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&name=Dockerfile的编写&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Test1"><span class="toc-number">1.</span> <span class="toc-text">Test1:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Test2"><span class="toc-number">2.</span> <span class="toc-text">Test2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Test3"><span class="toc-number">3.</span> <span class="toc-text">Test3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Test4"><span class="toc-number">4.</span> <span class="toc-text">Test4</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Dockerfile的编写
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-08-14T08:54:19.000Z" itemprop="datePublished">2019-08-14</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>Dockerfile的保留字指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">FROM #基础镜像，当前新镜像是基于哪个镜像的</span><br><span class="line">MAINTAINER #镜像维护者的姓名和邮箱</span><br><span class="line">RUN #容器构建时需要运行的命令</span><br><span class="line">EXPOSE #当前容器对外暴露出的端口</span><br><span class="line">WORKDIR #指定在创建容器后，终端默认登陆的工作目录</span><br><span class="line">ENV #构建镜像过程中设置环境变量</span><br><span class="line">ADD #将宿主机目录下的文件拷贝到镜像且自定处理解压缩</span><br><span class="line">COPY #将宿主机目录下的文件拷贝到镜像，COPY src dest(COPY [&quot;src&quot;,&quot;dest&quot;])</span><br><span class="line">VOLUME #容器数据卷</span><br><span class="line">CMD #指定容器启动时要运行的命令，如有多个CMD时会只执行最后一个命令，其参数会被/bin/bash替换</span><br><span class="line">ENTRYPOINT #指定容器启动时要运行的命令，如有多个命令则在后面追加</span><br><span class="line">ONBUILD #当构建一个被继承的Dockerfile时运行命令，父镜像在被子继承后，父镜像的onbuild会被触发</span><br></pre></td></tr></table></figure>
+<p>Docker Hub中99%的镜像都是通过在base镜像中安装和配置需要的软件构建出来的。</p>
+<h1 id="Test1"><a href="#Test1" class="headerlink" title="Test1:"></a>Test1:</h1><p>编写</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">MAINTAINER Rj45@mp.com</span><br><span class="line">ENV MYPATH /home</span><br><span class="line">WORKDIR $MYPATH</span><br><span class="line">RUN apt-get install vim -y</span><br><span class="line">RUN apt-get install net-tools -y</span><br><span class="line">EXPOSE 80</span><br><span class="line">CMD echo $MYPATH</span><br><span class="line">CMD echo &quot;Success&quot;</span><br><span class="line">CMD /bin/bash</span><br></pre></td></tr></table></figure>
+<p>构建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -f Dockerfile -t image_name/tag .</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -it image_name/tag /bin/bash</span><br><span class="line">docker run -d image_name/tag</span><br></pre></td></tr></table></figure>
+<h1 id="Test2"><a href="#Test2" class="headerlink" title="Test2"></a>Test2</h1><p>构建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line"># CMD [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run image_name -i</span><br></pre></td></tr></table></figure>
+<h1 id="Test3"><a href="#Test3" class="headerlink" title="Test3"></a>Test3</h1><p>构建<br>father</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ONBUILD RUN echo &quot;father image onbuild&quot;</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -f Dockerfile -t father_name .</span><br></pre></td></tr></table></figure>
+
+<p>构建son</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM father_name</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line"># CMD [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br></pre></td></tr></table></figure>
+<p>运行后会打印”father image onbuild”。</p>
+<h1 id="Test4"><a href="#Test4" class="headerlink" title="Test4"></a>Test4</h1><p>构建自定义tomcat<br>在自定义路径放置目标c.txt压缩包apache-tomcat-9.0.8.tar.gz和jdk1.8.0_171-linux.tar.gz</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">MAINTAINER Rj45@mp.com</span><br><span class="line">COPY c.txt /usr/local/cincontainer.txt</span><br><span class="line">ADD apache-tomcat-9.0.8.tar.gz /usr/local</span><br><span class="line">ADD jdk1.8.0_171-linux.tar.gz /usr/local</span><br><span class="line">RUN apt-get install vim -y</span><br><span class="line">ENV MYPATH /usr/local</span><br><span class="line">WORKDIR $MYPATH</span><br><span class="line">ENV JAVA_HOME /usr/local/jdk1.8.0_171</span><br><span class="line">ENV CLASSPATH $JAVA_HOME/LIB/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">ENV CATALINA_HOME /usr/local/apache-tomcat-9.0.8</span><br><span class="line">ENV CATALIME_BASE /usr/local/apache-tomcat-9.0.8</span><br><span class="line">ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/lib:$CATALINA_HOME/bin</span><br><span class="line">EXPOSE 8080</span><br><span class="line">#ENTRYPOINT [&quot;/usr/local/apache-tomcat-9.0.8/bin/startup.sh&quot;]</span><br><span class="line">#CMD [&quot;/usr/local/apache-tomcat-9.0.8/bin/catalina.sh&quot;,&quot;run&quot;]</span><br><span class="line">CMD /usr/local/apache-tomcat-9.0.8/bin/startup.sh &amp;&amp; tail -F /usr/local/apache-tomcat-9.0.8/bin/logs/catalina.out</span><br></pre></td></tr></table></figure>
+<p>构建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t image_name</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Test1"><span class="toc-number">1.</span> <span class="toc-text">Test1:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Test2"><span class="toc-number">2.</span> <span class="toc-text">Test2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Test3"><span class="toc-number">3.</span> <span class="toc-text">Test3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Test4"><span class="toc-number">4.</span> <span class="toc-text">Test4</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&text=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&is_video=false&description=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Dockerfile的编写&body=Check out this article: https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&title=Dockerfile的编写" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/&name=Dockerfile的编写&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

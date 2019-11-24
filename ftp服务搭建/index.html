@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="早啊，世界。 环境准备1、主机：centos72、关闭防火墙 1systemctl stop firewalld 3、关闭selinux 安装ftp1yum install vsftpd -y  配置ftp1234567891011121314151617181920anonymous_enable=YES&#x2F;&#x2F;允许匿名用户登陆local_enable=YES&#x2F;&#x2F;允许本地用户登陆write_enab">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ftp服务搭建">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="早啊，世界。 环境准备1、主机：centos72、关闭防火墙 1systemctl stop firewalld 3、关闭selinux 安装ftp1yum install vsftpd -y  配置ftp1234567891011121314151617181920anonymous_enable=YES&#x2F;&#x2F;允许匿名用户登陆local_enable=YES&#x2F;&#x2F;允许本地用户登陆write_enab">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA&#x2F;3.png">
+<meta property="og:updated_time" content="2019-08-24T09:26:17.796Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA&#x2F;2.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>ftp服务搭建</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/dns%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/dhcp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&text=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&is_video=false&description=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ftp服务搭建&body=Check out this article: https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&name=ftp服务搭建&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#环境准备"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装ftp"><span class="toc-number">2.</span> <span class="toc-text">安装ftp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置ftp"><span class="toc-number">3.</span> <span class="toc-text">配置ftp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#测试ftp"><span class="toc-number">4.</span> <span class="toc-text">测试ftp</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ftp服务搭建
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-08-24T03:13:26.000Z" itemprop="datePublished">2019-08-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>早啊，世界。</p>
+<h1 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h1><p>1、主机：centos7<br>2、关闭防火墙</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br></pre></td></tr></table></figure>
+<p>3、关闭selinux<br><img src="/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/2.png" alt></p>
+<h1 id="安装ftp"><a href="#安装ftp" class="headerlink" title="安装ftp"></a>安装ftp</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install vsftpd -y</span><br></pre></td></tr></table></figure>
+<p><img src="/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/1.png" alt></p>
+<h1 id="配置ftp"><a href="#配置ftp" class="headerlink" title="配置ftp"></a>配置ftp</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">anonymous_enable=YES//允许匿名用户登陆</span><br><span class="line">local_enable=YES//允许本地用户登陆</span><br><span class="line">write_enable=YES//允许对登录用户开启写权限。属全局性设置</span><br><span class="line">local_umask=022//设置本地用户新增文档的umask，默认为022，对应的权限为755</span><br><span class="line">#anon_upload_enable=YES//允许匿名用户上传文件</span><br><span class="line">#anon_mkdir_write_enable=YES//允许匿名用户创建目录</span><br><span class="line">dirmessage_enable=YES//设置用户登录时，将要显示输出的文件。该设置项将覆盖ftpd_banner的设置</span><br><span class="line">xferlog_enable=YES//启用上传/下载日志记录</span><br><span class="line">connect_from_port_20=YES//指定FTP数据传输连接使用20端口</span><br><span class="line">#chown_uploads=YES//允许改变匿名用户上传文件</span><br><span class="line">#chown_username=whoever//设置匿名用户上传的文档的属主名</span><br><span class="line">#xferlog_file=/var/log/xferlog//设置日志文件名及路径</span><br><span class="line">xferlog_std_format=YES//日志文件是否使用标准的xferlog日志文件格式</span><br><span class="line">#ascii_upload_enable=YES//启用ASCII模式上传数据</span><br><span class="line">#ascii_download_enable=YES//启用ASCII模式下载数据</span><br><span class="line">ftpd_banner=Welcome to blah FTP service.//设置欢迎信息</span><br><span class="line">#chroot_local_user=YES//用于指定用户列表文件中的用户，是否允许切换到上级目录</span><br><span class="line">#chroot_list_enable=YES//设置是否启用chroot_list_file配置项指定的用户列表文件。设置为YES则除了列在j/etc/vsftpd/chroot_list文件中的的帐号外，所有登录的用户都可以进入ftp根目录之外的目录</span><br><span class="line">#chroot_list_file=/etc/vsftpd/chroot_list//指定的用户列表文件</span><br><span class="line">#ls_recurse_enable=YES//允许执行“ls –R”这个命令</span><br></pre></td></tr></table></figure>
+<p>重启</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start/restart vsftpd</span><br></pre></td></tr></table></figure>
+<h1 id="测试ftp"><a href="#测试ftp" class="headerlink" title="测试ftp"></a>测试ftp</h1><p><img src="/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/3.png" alt></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#环境准备"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装ftp"><span class="toc-number">2.</span> <span class="toc-text">安装ftp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置ftp"><span class="toc-number">3.</span> <span class="toc-text">配置ftp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#测试ftp"><span class="toc-number">4.</span> <span class="toc-text">测试ftp</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&text=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&is_video=false&description=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ftp服务搭建&body=Check out this article: https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&title=ftp服务搭建" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/ftp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/&name=ftp服务搭建&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

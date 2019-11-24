@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言：什么是python的多线程…我也一脸懵逼现在 理解：去菜鸟教程转了一圈，也去廖雪峰的官网看一波，这里我copy回来，在这个过程中尝试着理解一下 1、主线程和子线程12345678910111213141516171819202122#coding: UTF-8import threading,time# 子线程执行的代码def loop():    print &amp;apos;子线程 %s 启动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python多线程">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;python%E5%A4%9A%E7%BA%BF%E7%A8%8B&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="前言：什么是python的多线程…我也一脸懵逼现在 理解：去菜鸟教程转了一圈，也去廖雪峰的官网看一波，这里我copy回来，在这个过程中尝试着理解一下 1、主线程和子线程12345678910111213141516171819202122#coding: UTF-8import threading,time# 子线程执行的代码def loop():    print &amp;apos;子线程 %s 启动">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;python%E5%A4%9A%E7%BA%BF%E7%A8%8B&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;python%E5%A4%9A%E7%BA%BF%E7%A8%8B&#x2F;2.png">
+<meta property="og:updated_time" content="2019-03-10T16:35:09.835Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;python%E5%A4%9A%E7%BA%BF%E7%A8%8B&#x2F;1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>python多线程</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/python%E4%B9%8Boptparse%E6%A8%A1%E5%9D%97/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&text=python多线程" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&is_video=false&description=python多线程" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=python多线程&body=Check out this article: https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&name=python多线程&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#理解："><span class="toc-number">2.</span> <span class="toc-text">理解：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1、主线程和子线程"><span class="toc-number">2.1.</span> <span class="toc-text">1、主线程和子线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2、创建线程"><span class="toc-number">2.2.</span> <span class="toc-text">2、创建线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3、核心"><span class="toc-number">2.3.</span> <span class="toc-text">3、核心</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        python多线程
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-10T14:54:37.000Z" itemprop="datePublished">2019-03-10</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>什么是python的多线程…我也一脸懵逼现在</p>
+<h1 id="理解："><a href="#理解：" class="headerlink" title="理解："></a>理解：</h1><p>去菜鸟教程转了一圈，也去廖雪峰的官网看一波，这里我copy回来，在这个过程中尝试着理解一下</p>
+<h2 id="1、主线程和子线程"><a href="#1、主线程和子线程" class="headerlink" title="1、主线程和子线程"></a>1、主线程和子线程</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#coding: UTF-8</span><br><span class="line">import threading,time</span><br><span class="line"></span><br><span class="line"># 子线程执行的代码</span><br><span class="line">def loop():</span><br><span class="line">    print &apos;子线程 %s 启动...&apos; %threading.current_thread().name</span><br><span class="line">    n = 0</span><br><span class="line">    while n &lt; 5:</span><br><span class="line">        n +=1</span><br><span class="line">        print &apos;%s ---&gt; %s&apos;%(threading.current_thread().name,n)</span><br><span class="line">        time.sleep(1)</span><br><span class="line">    print &apos;子线程 %s 结束...&apos; %threading.current_thread().name</span><br><span class="line"></span><br><span class="line">print &apos;主线程 %s 启动&apos;%threading.current_thread().name</span><br><span class="line"></span><br><span class="line">t = threading.Thread(target=loop,name=&apos;LoopThread&apos;)</span><br><span class="line"></span><br><span class="line">t.start()</span><br><span class="line"></span><br><span class="line">t.join()</span><br><span class="line"></span><br><span class="line">print &apos;主线程 %s 结束&apos;%threading.current_thread().name</span><br></pre></td></tr></table></figure>
+
+<p><img src="/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/1.png" alt></p>
+<p>1)启动一个线程就是把一个函数传入并创建Thread实例，然后调用start()开始执行，调用join()表示其结束。</p>
+<p>2)在demo:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t = threading.Thread(target=loop,name=&apos;LoopThread&apos;)</span><br></pre></td></tr></table></figure>
+<p>子线程的名字，在创建时可以指定，如果不指定则线程命名位Thread-1，Thread-2…</p>
+<p>3)current_thread()<br>对于主线程和子线程，任何进程都会默认启动一个线程，这叫主线程。主线程启动的线程叫子线程。<br>current_thread()函数返回当前线程的实例，current_thread().name，则返回实例的名字。</p>
+<h2 id="2、创建线程"><a href="#2、创建线程" class="headerlink" title="2、创建线程"></a>2、创建线程</h2><p>1)关于Thread()<br><img src="/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/2.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">target  #子线程函数</span><br><span class="line">args    #向子线程函数传入的参数</span><br><span class="line">kwargs  #可选参数</span><br><span class="line">name    #子线程的名字</span><br><span class="line">group   #线程组</span><br><span class="line">verbose #...</span><br></pre></td></tr></table></figure>
+
+<p>2)其他</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">thread.exit()   #可以在线程函数中调用抛出SystemExit exception，达到退出线程的目的</span><br><span class="line"></span><br><span class="line">threading.currentThread()   #返回当前的线程变量。</span><br><span class="line"></span><br><span class="line">threading.enumerate()   #返回一个包含正在运行的线程的list。正在运行指线程启动后、结束前，不包括启动前和终止后的线程。</span><br><span class="line"></span><br><span class="line">threading.activeCount()     #返回正在运行的线程数量，与len(threading.enumerate())有相同的结果。</span><br><span class="line"></span><br><span class="line">run()     # 用以表示线程活动的方法。</span><br><span class="line"></span><br><span class="line">start()     #启动线程活动。</span><br><span class="line"></span><br><span class="line">join([time])     # 等待至线程中止。这阻塞调用线程直至线程的join() 方法被调用中止-正常退出或者抛出未处理的异常-或者是可选的超时发生。</span><br><span class="line"></span><br><span class="line">isAlive()     # 返回线程是否活动的。</span><br><span class="line"></span><br><span class="line">getName()     # 返回线程名。</span><br><span class="line"></span><br><span class="line">setName()     # 设置线程名。</span><br></pre></td></tr></table></figure>
+<h2 id="3、核心"><a href="#3、核心" class="headerlink" title="3、核心"></a>3、核心</h2><p>多线程像打架,开始时候一人单手一把手枪,后来给人插上几只手,然后给其他的手装上枪或刀。由此使得打架的效率高得要命,即：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import threading</span><br><span class="line">t = threading.Thread(target=function,args=(parameter1,parameter2...))</span><br><span class="line">t.start()</span><br><span class="line">t.join()</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#理解："><span class="toc-number">2.</span> <span class="toc-text">理解：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1、主线程和子线程"><span class="toc-number">2.1.</span> <span class="toc-text">1、主线程和子线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2、创建线程"><span class="toc-number">2.2.</span> <span class="toc-text">2、创建线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3、核心"><span class="toc-number">2.3.</span> <span class="toc-text">3、核心</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&text=python多线程" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&is_video=false&description=python多线程" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=python多线程&body=Check out this article: https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&title=python多线程" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/python%E5%A4%9A%E7%BA%BF%E7%A8%8B/&name=python多线程&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

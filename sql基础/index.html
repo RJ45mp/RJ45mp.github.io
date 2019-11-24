@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="sql注入是web安全中一个特别典型的安全漏洞。学习sql注入可以大概分为四个阶段：sql基础、检测是否存在注入、注入获取数据、注入获取权限。以下为sql基础内容。 什么是关系型数据库和非关系型数据库？1：关系型数据库是以关系模型来创建的数据库。关系模型就是指二维表格模型。一个关系型数据库就是由二维表及其之间的联系组成的一个数据组织。常见的关系型数据库有：Mysql、Oracle、PostgreS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql基础">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="sql注入是web安全中一个特别典型的安全漏洞。学习sql注入可以大概分为四个阶段：sql基础、检测是否存在注入、注入获取数据、注入获取权限。以下为sql基础内容。 什么是关系型数据库和非关系型数据库？1：关系型数据库是以关系模型来创建的数据库。关系模型就是指二维表格模型。一个关系型数据库就是由二维表及其之间的联系组成的一个数据组织。常见的关系型数据库有：Mysql、Oracle、PostgreS">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;7.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;8.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;30.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;31.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;32.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;33.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;34.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;35.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;24.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;25.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;26.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;27.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;28.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;29.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;9.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;10.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;12.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;13.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;11.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;14.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;15.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;16.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;17.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;18.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;20.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;21.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;22.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;23.png">
+<meta property="og:updated_time" content="2019-08-06T15:37:12.964Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;sql%E5%9F%BA%E7%A1%80&#x2F;1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>mysql基础</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/awd-platform%E7%9A%84%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&text=mysql基础" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&is_video=false&description=mysql基础" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=mysql基础&body=Check out this article: https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&name=mysql基础&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是关系型数据库和非关系型数据库？"><span class="toc-number">1.</span> <span class="toc-text">什么是关系型数据库和非关系型数据库？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1："><span class="toc-number">2.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2："><span class="toc-number">3.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的术语"><span class="toc-number">4.</span> <span class="toc-text">mysql的术语</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的关系结构"><span class="toc-number">5.</span> <span class="toc-text">mysql的关系结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的数据类型"><span class="toc-number">6.</span> <span class="toc-text">mysql的数据类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-1"><span class="toc-number">7.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2：-1"><span class="toc-number">8.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3："><span class="toc-number">9.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的函数"><span class="toc-number">10.</span> <span class="toc-text">mysql的函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1"><span class="toc-number">11.</span> <span class="toc-text">1:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2"><span class="toc-number">12.</span> <span class="toc-text">2:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的安装"><span class="toc-number">13.</span> <span class="toc-text">mysql的安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的登陆和退出"><span class="toc-number">14.</span> <span class="toc-text">mysql的登陆和退出</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的权限机制"><span class="toc-number">15.</span> <span class="toc-text">mysql的权限机制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-2"><span class="toc-number">16.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-1"><span class="toc-number">17.</span> <span class="toc-text">2:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3：-1"><span class="toc-number">18.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4："><span class="toc-number">19.</span> <span class="toc-text">4：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5"><span class="toc-number">20.</span> <span class="toc-text">5:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的information-schema表"><span class="toc-number">21.</span> <span class="toc-text">mysql的information_schema表</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-3"><span class="toc-number">22.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2：-2"><span class="toc-number">23.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3：-2"><span class="toc-number">24.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4：-1"><span class="toc-number">25.</span> <span class="toc-text">4：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5："><span class="toc-number">26.</span> <span class="toc-text">5：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的管理："><span class="toc-number">27.</span> <span class="toc-text">mysql的管理：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-1"><span class="toc-number">28.</span> <span class="toc-text">1:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-2"><span class="toc-number">29.</span> <span class="toc-text">2:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3：-3"><span class="toc-number">30.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4"><span class="toc-number">31.</span> <span class="toc-text">4:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql对数据的操作："><span class="toc-number">32.</span> <span class="toc-text">mysql对数据的操作：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-4"><span class="toc-number">33.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2：-3"><span class="toc-number">34.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3：-4"><span class="toc-number">35.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4：-2"><span class="toc-number">36.</span> <span class="toc-text">4：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5：-1"><span class="toc-number">37.</span> <span class="toc-text">5：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-5"><span class="toc-number">38.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2：-4"><span class="toc-number">39.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">40.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        mysql基础
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-08-06T06:18:30.000Z" itemprop="datePublished">2019-08-06</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>sql注入是web安全中一个特别典型的安全漏洞。<br>学习sql注入可以大概分为四个阶段：sql基础、检测是否存在注入、注入获取数据、注入获取权限。<br>以下为sql基础内容。</p>
+<h1 id="什么是关系型数据库和非关系型数据库？"><a href="#什么是关系型数据库和非关系型数据库？" class="headerlink" title="什么是关系型数据库和非关系型数据库？"></a>什么是关系型数据库和非关系型数据库？</h1><h1 id="1："><a href="#1：" class="headerlink" title="1："></a>1：</h1><p>关系型数据库是以关系模型来创建的数据库。<br>关系模型就是指二维表格模型。<br>一个关系型数据库就是由二维表及其之间的联系组成的一个数据组织。<br>常见的关系型数据库有：<br>Mysql、Oracle、PostgreSQL、MicrosoftSQLServer、MicrosoftAccess。</p>
+<h1 id="2："><a href="#2：" class="headerlink" title="2："></a>2：</h1><p>非关系型数据库是以非关系模型来创建的数据库。<br>非关系模型有列模型、键值对模型、文档类模型。<br>常见的关系型数据库有：<br>mongoDB、redis、MemcacheDB、Hbase。</p>
+<h1 id="mysql的术语"><a href="#mysql的术语" class="headerlink" title="mysql的术语"></a>mysql的术语</h1><p>数据库：一些关联表的集合。<br>数据表：数据库中的类Excel表格。<br>列：具有相同数据类型的数据集合。<br>行：每一行用来描述某条记录的具体信息。<br>数据：行的具体信息、每个数据必须与该列的数据类型相同。<br>主键：具有唯一性、一个数据表中只能包含一个主键。<br>外键：用来关联两个表。<br>复合键：将多个列作为一个索引键，用来复合索引。<br>索引：对数据库表中一列或多列数据进行排序的一个结构，类似书目录。</p>
+<h1 id="mysql的关系结构"><a href="#mysql的关系结构" class="headerlink" title="mysql的关系结构"></a>mysql的关系结构</h1><p><img src="/sql%E5%9F%BA%E7%A1%80/1.png" alt></p>
+<h1 id="mysql的数据类型"><a href="#mysql的数据类型" class="headerlink" title="mysql的数据类型"></a>mysql的数据类型</h1><h1 id="1：-1"><a href="#1：-1" class="headerlink" title="1："></a>1：</h1><p>数值类型</p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/2.png" alt></p>
+<h1 id="2：-1"><a href="#2：-1" class="headerlink" title="2："></a>2：</h1><p>日期和时间类型</p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/3.png" alt></p>
+<h1 id="3："><a href="#3：" class="headerlink" title="3："></a>3：</h1><p>字符串类型</p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/4.png" alt></p>
+<h1 id="mysql的函数"><a href="#mysql的函数" class="headerlink" title="mysql的函数"></a>mysql的函数</h1><h1 id="1"><a href="#1" class="headerlink" title="1:"></a>1:</h1><p>字符串函数</p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/5.png" alt><br><img src="/sql%E5%9F%BA%E7%A1%80/6.png" alt></p>
+<h1 id="2"><a href="#2" class="headerlink" title="2:"></a>2:</h1><p>高级函数</p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/7.png" alt></p>
+<h1 id="mysql的安装"><a href="#mysql的安装" class="headerlink" title="mysql的安装"></a>mysql的安装</h1><p>采用<a href="https://www.xp.cn/" target="_blank" rel="noopener">phpStudy</a>，安装过程略。</p>
+<h1 id="mysql的登陆和退出"><a href="#mysql的登陆和退出" class="headerlink" title="mysql的登陆和退出"></a>mysql的登陆和退出</h1><p><img src="/sql%E5%9F%BA%E7%A1%80/8.png" alt></p>
+<h1 id="mysql的权限机制"><a href="#mysql的权限机制" class="headerlink" title="mysql的权限机制"></a>mysql的权限机制</h1><p>权限与安全息息相关。<br>在平常时候，经常遇到一些情况：<br>进入数据库后，当前用户的权限非常低，没有多大作用，只能查询当前数据库或者没有导出文件的权限，不能导出一句话木马等等。</p>
+<p>mysql的权限机制存储在mysql的user、db、table_priv、columns_priv、和procs_priv这几个系统表中。<br><img src="/sql%E5%9F%BA%E7%A1%80/30.png" alt></p>
+<p>mysql的权限机制分为3个等级，每个权限等级下有不同的权限划分：<br>1、作用于整个mysql的权限等级<br>2、作用于某个或多个指定数据库的权限等级<br>3、作用于某个或多个指定数据表的权限等级</p>
+<h1 id="1：-2"><a href="#1：-2" class="headerlink" title="1："></a>1：</h1><p>db<br>该表存放着数据库级别的权限<br><img src="/sql%E5%9F%BA%E7%A1%80/31.png" alt></p>
+<h1 id="2-1"><a href="#2-1" class="headerlink" title="2:"></a>2:</h1><p>user<br>该表存放用户账户信息以及权限等级1的权限。<br><img src="/sql%E5%9F%BA%E7%A1%80/32.png" alt></p>
+<h1 id="3：-1"><a href="#3：-1" class="headerlink" title="3："></a>3：</h1><p>table_priv、columns_priv、和procs_priv<br>存放着表、列和存储过程的权限。<br><img src="/sql%E5%9F%BA%E7%A1%80/33.png" alt></p>
+<h1 id="4："><a href="#4：" class="headerlink" title="4："></a>4：</h1><p>字段分析：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Select_priv、Insert_priv、Update_priv、Delete_priv、Create_priv、Drop_priv、Show_db_priv：权限如名字。</span><br><span class="line">Reload_priv：是否允许执行flush命令</span><br><span class="line">Shutdown_priv：是否允许关闭数据库实例</span><br><span class="line">Process_priv：是否允许查看MySQL中的进程信息</span><br><span class="line">File_priv：是否允许MySQL在可访问的目录读写磁盘文件操作(结合into outfile和已知路径可导出一句话木马拿shell)</span><br><span class="line">Grant_priv：是否允许用户授权权限</span><br><span class="line">References_priv：是否允许创建外键</span><br><span class="line">Index_priv：是否允许创建和删除索引</span><br><span class="line">Alter_priv ：是否允许修改表结构，需要其他权限配合</span><br><span class="line">Create_tmp_table_priv：是否允许创建临时数据表</span><br><span class="line">Lock_tables_priv：是否允许对拥有select权限的表进行锁定，以防止其他链接对此表的读写。</span><br><span class="line">Create_view_priv：是否允许创建视图</span><br><span class="line">Show_view_priv：是否允许执行show create view查看视图创建的语句</span><br><span class="line">Create_routine_priv：是否允许修改或删除存储过程和函数</span><br><span class="line">Alter_routine_priv：是否允许修改或删除存储过程和函数</span><br><span class="line">Execute_priv：是否允许执行存储过程和函数的权限</span><br><span class="line">Event_priv：是否允许查询创建修改删除MySQL事件</span><br><span class="line">Trigger_priv：是否允许创建删除执行显示触发器的权限</span><br><span class="line">Super_priv：是否允许执行一系列数据库关联命令</span><br><span class="line">Repl_slave_priv：是否允许slave主机通过此用户连接master以便建立主从、复制关系</span><br><span class="line">Repl_client_priv：是否允许执行show master status,show slave status,show binary logs命令</span><br><span class="line">Create_user_priv：是否允许创建修改删除重命名user的权限</span><br><span class="line">Create_tablespace_priv：是否允许创建临时表的的权限</span><br><span class="line">plugin、password、authentication_string：存放用户认证信息</span><br></pre></td></tr></table></figure>
+<h1 id="5"><a href="#5" class="headerlink" title="5:"></a>5:</h1><p>操作权限</p>
+<p>创建测试用户：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">grant select,insert on *.* to Rj45@&apos;%&apos; identified by &apos;Rj45&apos;;</span><br><span class="line">flush privileges;</span><br><span class="line">show grants for Rj45;</span><br></pre></td></tr></table></figure>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/34.png" alt></p>
+<p>查看用户权限：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from mysql.user where user=&apos;Rj45&apos;\G;</span><br></pre></td></tr></table></figure>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/35.png" alt></p>
+<p>删除用户：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">drop user Rj45;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h1 id="mysql的information-schema表"><a href="#mysql的information-schema表" class="headerlink" title="mysql的information_schema表"></a>mysql的information_schema表</h1><p>mysql的information_schema表保存着mysql维护的所有其他数据库的信息。<br>如数据库名、数据库表、数据库字段、用户权限、表权限、列权限等信息。<br><img src="/sql%E5%9F%BA%E7%A1%80/24.png" alt></p>
+<h1 id="1：-3"><a href="#1：-3" class="headerlink" title="1："></a>1：</h1><p>数据库名的表schemata<br><img src="/sql%E5%9F%BA%E7%A1%80/25.png" alt></p>
+<h1 id="2：-2"><a href="#2：-2" class="headerlink" title="2："></a>2：</h1><p>数据库表的表tables<br><img src="/sql%E5%9F%BA%E7%A1%80/26.png" alt></p>
+<h1 id="3：-2"><a href="#3：-2" class="headerlink" title="3："></a>3：</h1><p>数据库字段的表columns<br><img src="/sql%E5%9F%BA%E7%A1%80/27.png" alt></p>
+<h1 id="4：-1"><a href="#4：-1" class="headerlink" title="4："></a>4：</h1><p>用户权限的表user_privileges<br><img src="/sql%E5%9F%BA%E7%A1%80/28.png" alt></p>
+<h1 id="5："><a href="#5：" class="headerlink" title="5："></a>5：</h1><p>表权限的表table_privileges<br>列权限的表column_privileges<br><img src="/sql%E5%9F%BA%E7%A1%80/29.png" alt></p>
+<h1 id="mysql的管理："><a href="#mysql的管理：" class="headerlink" title="mysql的管理："></a>mysql的管理：</h1><p>针对库表列</p>
+<h1 id="1-1"><a href="#1-1" class="headerlink" title="1:"></a>1:</h1><p>查看<br><img src="/sql%E5%9F%BA%E7%A1%80/9.png" alt></p>
+<h1 id="2-2"><a href="#2-2" class="headerlink" title="2:"></a>2:</h1><p>创建<br><img src="/sql%E5%9F%BA%E7%A1%80/10.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create table rj45(id int unsigned auto_increment,name varchar(100) not null,motto varchar(200) not null,set_data date,primary key(id))engine=InnoDB default charset=utf8;</span><br></pre></td></tr></table></figure>
+<p>参数解析：<br>not null,是指在操作数据库时如果输入该字段的数据为NULL ，就会报错。<br>auto_increment定义字段为自增属性，一般用于主键。<br>primary key关键字用于定义字段为主键。<br>engine是设置存储引擎。<br>charset是设置编码。</p>
+<h1 id="3：-3"><a href="#3：-3" class="headerlink" title="3："></a>3：</h1><p>修改<br><img src="/sql%E5%9F%BA%E7%A1%80/12.png" alt><br><img src="/sql%E5%9F%BA%E7%A1%80/13.png" alt><br>注意：<br>mysql没有直接修改数据库名字的命令，只能以其他方式对数据库名字进行修改。</p>
+<h1 id="4"><a href="#4" class="headerlink" title="4:"></a>4:</h1><p>删除<br><img src="/sql%E5%9F%BA%E7%A1%80/11.png" alt></p>
+<h1 id="mysql对数据的操作："><a href="#mysql对数据的操作：" class="headerlink" title="mysql对数据的操作："></a>mysql对数据的操作：</h1><h1 id="1：-4"><a href="#1：-4" class="headerlink" title="1："></a>1：</h1><p>增</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">insert into Rj45(id,name,motto,set_data)values(1,&apos;Rj45&apos;,&apos;good,good study&apos;,now());</span><br><span class="line">insert into Rj45(id,name,motto,set_data)values(2,&apos;rj45&apos;,&apos;day,day up&apos;,now());</span><br></pre></td></tr></table></figure>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/14.png" alt></p>
+<h1 id="2：-3"><a href="#2：-3" class="headerlink" title="2："></a>2：</h1><p>删<br><img src="/sql%E5%9F%BA%E7%A1%80/15.png" alt></p>
+<h1 id="3：-4"><a href="#3：-4" class="headerlink" title="3："></a>3：</h1><p>改<br><img src="/sql%E5%9F%BA%E7%A1%80/16.png" alt></p>
+<h1 id="4：-2"><a href="#4：-2" class="headerlink" title="4："></a>4：</h1><p>查<br><img src="/sql%E5%9F%BA%E7%A1%80/17.png" alt><br><img src="/sql%E5%9F%BA%E7%A1%80/18.png" alt></p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/20.png" alt></p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/21.png" alt></p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/22.png" alt></p>
+<p>a,b为表的别名。</p>
+<p><img src="/sql%E5%9F%BA%E7%A1%80/23.png" alt><br>left join读取左表的所有选取的字段数据，即便在右表无对应数据。<br>right join会读取右表的全部数据，即便左表无对应数据。</p>
+<h1 id="5：-1"><a href="#5：-1" class="headerlink" title="5："></a>5：</h1><p>导入导出</p>
+<h1 id="1：-5"><a href="#1：-5" class="headerlink" title="1："></a>1：</h1><p>导出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select * from Rj45 into outfile &apos;E:\phpStudy\PHPTutorial\WWW\data.txt&apos;;</span><br><span class="line"></span><br><span class="line">mysqldump命令</span><br></pre></td></tr></table></figure>
+<h1 id="2：-4"><a href="#2：-4" class="headerlink" title="2："></a>2：</h1><p>导入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">load data local infile &apos;E:\phpStudy\PHPTutorial\WWW\data.txt&apos; into table Rj45;</span><br><span class="line"></span><br><span class="line">source /home/rj45/data.sql</span><br><span class="line"></span><br><span class="line">mysqlimport命令</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>关系型和非关系型参考：<br><a href="https://www.cnblogs.com/progor/p/8729798.html" target="_blank" rel="noopener">https://www.cnblogs.com/progor/p/8729798.html</a></p>
+<p>mysql权限机制参考：<br><a href="https://www.cnblogs.com/Csir/p/7889953.html" target="_blank" rel="noopener">https://www.cnblogs.com/Csir/p/7889953.html</a><br><a href="https://www.cnblogs.com/wangchaoyuana/p/7545419.html" target="_blank" rel="noopener">https://www.cnblogs.com/wangchaoyuana/p/7545419.html</a></p>
+<p>mysql的information_schema表参考：<br><a href="https://blog.csdn.net/xianjie0318/article/details/80857568" target="_blank" rel="noopener">https://blog.csdn.net/xianjie0318/article/details/80857568</a></p>
+<p>mysql基础参考：<br><a href="https://www.runoob.com/mysql/mysql-tutorial.html" target="_blank" rel="noopener">https://www.runoob.com/mysql/mysql-tutorial.html</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是关系型数据库和非关系型数据库？"><span class="toc-number">1.</span> <span class="toc-text">什么是关系型数据库和非关系型数据库？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1："><span class="toc-number">2.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2："><span class="toc-number">3.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的术语"><span class="toc-number">4.</span> <span class="toc-text">mysql的术语</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的关系结构"><span class="toc-number">5.</span> <span class="toc-text">mysql的关系结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的数据类型"><span class="toc-number">6.</span> <span class="toc-text">mysql的数据类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-1"><span class="toc-number">7.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2：-1"><span class="toc-number">8.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3："><span class="toc-number">9.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的函数"><span class="toc-number">10.</span> <span class="toc-text">mysql的函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1"><span class="toc-number">11.</span> <span class="toc-text">1:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2"><span class="toc-number">12.</span> <span class="toc-text">2:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的安装"><span class="toc-number">13.</span> <span class="toc-text">mysql的安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的登陆和退出"><span class="toc-number">14.</span> <span class="toc-text">mysql的登陆和退出</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的权限机制"><span class="toc-number">15.</span> <span class="toc-text">mysql的权限机制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-2"><span class="toc-number">16.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-1"><span class="toc-number">17.</span> <span class="toc-text">2:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3：-1"><span class="toc-number">18.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4："><span class="toc-number">19.</span> <span class="toc-text">4：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5"><span class="toc-number">20.</span> <span class="toc-text">5:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的information-schema表"><span class="toc-number">21.</span> <span class="toc-text">mysql的information_schema表</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-3"><span class="toc-number">22.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2：-2"><span class="toc-number">23.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3：-2"><span class="toc-number">24.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4：-1"><span class="toc-number">25.</span> <span class="toc-text">4：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5："><span class="toc-number">26.</span> <span class="toc-text">5：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql的管理："><span class="toc-number">27.</span> <span class="toc-text">mysql的管理：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-1"><span class="toc-number">28.</span> <span class="toc-text">1:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-2"><span class="toc-number">29.</span> <span class="toc-text">2:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3：-3"><span class="toc-number">30.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4"><span class="toc-number">31.</span> <span class="toc-text">4:</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql对数据的操作："><span class="toc-number">32.</span> <span class="toc-text">mysql对数据的操作：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-4"><span class="toc-number">33.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2：-3"><span class="toc-number">34.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3：-4"><span class="toc-number">35.</span> <span class="toc-text">3：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4：-2"><span class="toc-number">36.</span> <span class="toc-text">4：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5：-1"><span class="toc-number">37.</span> <span class="toc-text">5：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1：-5"><span class="toc-number">38.</span> <span class="toc-text">1：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2：-4"><span class="toc-number">39.</span> <span class="toc-text">2：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">40.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&text=mysql基础" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&is_video=false&description=mysql基础" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=mysql基础&body=Check out this article: https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&title=mysql基础" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/sql%E5%9F%BA%E7%A1%80/&name=mysql基础&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

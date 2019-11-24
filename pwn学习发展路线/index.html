@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="基础1、基础知识2、工具使用 Linux-libc-pwn1、栈溢出类型基础缓冲区溢出ret2textret2shellcodeROP系列ret2syscallret2libcret_dl_runtime_resolveBROPSROP 2、格式化字符串类型3、堆相关类型堆溢出系列UAF系列Off-By-oneOverlappigUnlinkFastbin AttackUnsorted Bin A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwn学习发展路线">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="基础1、基础知识2、工具使用 Linux-libc-pwn1、栈溢出类型基础缓冲区溢出ret2textret2shellcodeROP系列ret2syscallret2libcret_dl_runtime_resolveBROPSROP 2、格式化字符串类型3、堆相关类型堆溢出系列UAF系列Off-By-oneOverlappigUnlinkFastbin AttackUnsorted Bin A">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-09-30T16:51:39.391Z">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>pwn学习发展路线</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/%E7%AE%80%E5%8D%95%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E5%8E%9F%E7%90%86/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&text=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&is_video=false&description=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwn学习发展路线&body=Check out this article: https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&name=pwn学习发展路线&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基础"><span class="toc-number">1.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux-libc-pwn"><span class="toc-number">2.</span> <span class="toc-text">Linux-libc-pwn</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#虚拟机pwn"><span class="toc-number">3.</span> <span class="toc-text">虚拟机pwn</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#浏览器pwn"><span class="toc-number">4.</span> <span class="toc-text">浏览器pwn</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#linux内核pwn"><span class="toc-number">5.</span> <span class="toc-text">linux内核pwn</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        pwn学习发展路线
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-09-30T15:59:21.000Z" itemprop="datePublished">2019-09-30</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h1><p>1、基础知识<br>2、工具使用</p>
+<h1 id="Linux-libc-pwn"><a href="#Linux-libc-pwn" class="headerlink" title="Linux-libc-pwn"></a>Linux-libc-pwn</h1><p>1、栈溢出类型<br>基础缓冲区溢出<br>ret2text<br>ret2shellcode<br>ROP系列<br>ret2syscall<br>ret2libc<br>ret_dl_runtime_resolve<br>BROP<br>SROP</p>
+<p>2、格式化字符串类型<br>3、堆相关类型<br>堆溢出系列<br>UAF系列<br>Off-By-one<br>Overlappig<br>Unlink<br>Fastbin Attack<br>Unsorted Bin Attack<br>Large Bin Attack<br>Tcache Attack<br>Hostse of 系列</p>
+<p>4、整型溢出类型<br>宽度溢出<br>算数溢出<br>符号溢出</p>
+<p>5、FILE结构体利用类型<br>伪造FIlE结构体<br>修改vtable</p>
+<p>6、条件竞争类型<br>和逻辑漏洞相关</p>
+<h1 id="虚拟机pwn"><a href="#虚拟机pwn" class="headerlink" title="虚拟机pwn"></a>虚拟机pwn</h1><p>如vmware、qemu等</p>
+<h1 id="浏览器pwn"><a href="#浏览器pwn" class="headerlink" title="浏览器pwn"></a>浏览器pwn</h1><p>Chrome、js引擎等</p>
+<h1 id="linux内核pwn"><a href="#linux内核pwn" class="headerlink" title="linux内核pwn"></a>linux内核pwn</h1><p>Linux内核漏洞利用</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基础"><span class="toc-number">1.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux-libc-pwn"><span class="toc-number">2.</span> <span class="toc-text">Linux-libc-pwn</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#虚拟机pwn"><span class="toc-number">3.</span> <span class="toc-text">虚拟机pwn</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#浏览器pwn"><span class="toc-number">4.</span> <span class="toc-text">浏览器pwn</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#linux内核pwn"><span class="toc-number">5.</span> <span class="toc-text">linux内核pwn</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&text=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&is_video=false&description=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwn学习发展路线&body=Check out this article: https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&title=pwn学习发展路线" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/&name=pwn学习发展路线&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

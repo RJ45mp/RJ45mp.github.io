@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="会长计划从19届开始在协会组建一支正规的CTF队伍。由于需要训练、比赛和培训等等一系列的过程，并且离开学的时间也比较短了（主要是我太菜，开发能力有限），于是我准备拿CTFd来作为队伍平台，以下为搭建CTFd的过程和优化。  什么是CTFd?官方说法：CTFd是一个Capture The Flag框架，侧重于易用性和可定制性。它提供了运行CTF所需的一切，并且可以使用插件和主题轻松进行自定义。  虚">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CTFd的搭建">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="会长计划从19届开始在协会组建一支正规的CTF队伍。由于需要训练、比赛和培训等等一系列的过程，并且离开学的时间也比较短了（主要是我太菜，开发能力有限），于是我准备拿CTFd来作为队伍平台，以下为搭建CTFd的过程和优化。  什么是CTFd?官方说法：CTFd是一个Capture The Flag框架，侧重于易用性和可定制性。它提供了运行CTF所需的一切，并且可以使用插件和主题轻松进行自定义。  虚">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;7.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;8.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;9.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;10.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;11.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;12.png">
+<meta property="og:updated_time" content="2019-11-22T16:32:38.350Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;CTFd%E7%9A%84%E6%90%AD%E5%BB%BA&#x2F;1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>CTFd的搭建</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/%E4%BD%BF%E7%94%A8Docker%E5%AE%89%E8%A3%85php/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&text=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&is_video=false&description=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CTFd的搭建&body=Check out this article: https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&name=CTFd的搭建&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#虚拟机安装"><span class="toc-number">1.</span> <span class="toc-text">虚拟机安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置ssh"><span class="toc-number">2.</span> <span class="toc-text">配置ssh</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#更改源"><span class="toc-number">3.</span> <span class="toc-text">更改源</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装docker"><span class="toc-number">4.</span> <span class="toc-text">安装docker</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装CTFd"><span class="toc-number">5.</span> <span class="toc-text">安装CTFd</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#运行CTFd"><span class="toc-number">6.</span> <span class="toc-text">运行CTFd</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#优化CTFd-去广告"><span class="toc-number">7.</span> <span class="toc-text">优化CTFd(去广告)</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        CTFd的搭建
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-08-03T14:41:28.000Z" itemprop="datePublished">2019-08-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>会长计划从19届开始在协会组建一支正规的CTF队伍。由于需要训练、比赛和培训等等一系列的过程，并且离开学的时间也比较短了（主要是我太菜，开发能力有限），于是我准备拿CTFd来作为队伍平台，以下为搭建CTFd的过程和优化。</p>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/1.png" alt></p>
+<p>什么是CTFd?<br>官方说法：CTFd是一个Capture The Flag框架，侧重于易用性和可定制性。它提供了运行CTF所需的一切，并且可以使用插件和主题轻松进行自定义。</p>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/2.png" alt></p>
+<h1 id="虚拟机安装"><a href="#虚拟机安装" class="headerlink" title="虚拟机安装"></a>虚拟机安装</h1><p>采用ubuntu-18.04.1-desktop-amd64。<br>安装过程略。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/3.png" alt></p>
+<h1 id="配置ssh"><a href="#配置ssh" class="headerlink" title="配置ssh"></a>配置ssh</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install ssh -y</span><br><span class="line">sudo apt install vim -y</span><br><span class="line">sudo vim /etc/ssh/sshd_config #编辑配置文件,启用密码</span><br><span class="line">sudo systemctl enable ssh #添加为开机自启动</span><br><span class="line">sudo systemctl start ssh  #启动ssh</span><br></pre></td></tr></table></figure>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/4.png" alt></p>
+<h1 id="更改源"><a href="#更改源" class="headerlink" title="更改源"></a>更改源</h1><p>利用连接工具，连接虚拟机，更改国内源<br>sudo gedit /etc/apt/sources.list</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#添加阿里源</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+<p>更新</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade   #更新所有软件</span><br></pre></td></tr></table></figure>
+<h1 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install docker.io -y</span><br><span class="line">sudo groupadd docker</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br><span class="line">sudo systemctl enable docker #添加为开机自启动</span><br><span class="line">sudo systemctl start docker  #启动docker</span><br><span class="line">注销用户后再重新登陆</span><br></pre></td></tr></table></figure>
+<h1 id="安装CTFd"><a href="#安装CTFd" class="headerlink" title="安装CTFd"></a>安装CTFd</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull ctfd/ctfd</span><br></pre></td></tr></table></figure>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/5.png" alt></p>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/6.png" alt></p>
+<h1 id="运行CTFd"><a href="#运行CTFd" class="headerlink" title="运行CTFd"></a>运行CTFd</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 80:8000 ctfd/ctfd</span><br></pre></td></tr></table></figure>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/7.png" alt></p>
+<h1 id="优化CTFd-去广告"><a href="#优化CTFd-去广告" class="headerlink" title="优化CTFd(去广告)"></a>优化CTFd(去广告)</h1><p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/8.png" alt><br>配置信息<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/9.png" alt><br>这一部分存在广告，比较不友好。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/10.png" alt><br>在Admin选项中，点击所有页面<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/11.png" alt><br>在index页面中可以自定义页面源代码。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/12.png" alt></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#虚拟机安装"><span class="toc-number">1.</span> <span class="toc-text">虚拟机安装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置ssh"><span class="toc-number">2.</span> <span class="toc-text">配置ssh</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#更改源"><span class="toc-number">3.</span> <span class="toc-text">更改源</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装docker"><span class="toc-number">4.</span> <span class="toc-text">安装docker</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装CTFd"><span class="toc-number">5.</span> <span class="toc-text">安装CTFd</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#运行CTFd"><span class="toc-number">6.</span> <span class="toc-text">运行CTFd</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#优化CTFd-去广告"><span class="toc-number">7.</span> <span class="toc-text">优化CTFd(去广告)</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&text=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&is_video=false&description=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CTFd的搭建&body=Check out this article: https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&title=CTFd的搭建" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/&name=CTFd的搭建&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
