@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://rj45mp.github.io/"/>
-  <updated>2019-11-26T07:40:17.842Z</updated>
+  <updated>2019-11-27T06:51:23.487Z</updated>
   <id>https://rj45mp.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CVE-2016-5195-CentOS65脏牛提权</title>
+    <link href="https://rj45mp.github.io/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/"/>
+    <id>https://rj45mp.github.io/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/</id>
+    <published>2019-11-27T06:15:08.000Z</published>
+    <updated>2019-11-27T06:51:23.487Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>某场比赛的模拟复现。</p><p>关键字：<code>centos 6.5</code>、<code>UUID提权</code>、<code>断网条件</code></p><h2 id="Kernel-version"><a href="#Kernel-version" class="headerlink" title="Kernel-version"></a>Kernel-version</h2><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127142328780.png" alt="image-20191127142328780"></p><h2 id="Exploit-kali"><a href="#Exploit-kali" class="headerlink" title="Exploit-kali"></a>Exploit-kali</h2><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127142522819.png" alt="image-20191127142522819"></p><h2 id="Send2centos"><a href="#Send2centos" class="headerlink" title="Send2centos"></a>Send2centos</h2><p>利用kali自带的HTTP服务，将40839.c转移到centos6.5。</p><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127143427324.png" alt="image-20191127143427324"></p><h2 id="Compile-amp-run"><a href="#Compile-amp-run" class="headerlink" title="Compile&amp;run"></a>Compile&amp;run</h2><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127144101289.png" alt="image-20191127144101289"></p><h2 id="Seize-power"><a href="#Seize-power" class="headerlink" title="Seize-power"></a>Seize-power</h2><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127145038360.png" alt="image-20191127145038360"></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;Preface&quot;&gt;&lt;a href=&quot;#Preface&quot; class=&quot;headerlink&quot; title=&quot;Preface&quot;&gt;&lt;/a&gt;Preface&lt;/h2&gt;&lt;p&gt;某场比赛的模拟复现。&lt;/p&gt;
+&lt;p&gt;关键字：&lt;code&gt;centos 6.5&lt;/code&gt;、&lt;cod
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>stackoverflow之stack-pivoting</title>
@@ -437,28 +460,6 @@
       
       
         &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;mysql在对数据的处理中有增删改查四个操作。&lt;br&gt;而在sql注入中，往往常见的是&lt;code&gt;select&lt;/code&gt;查询形式。&lt;br&gt;
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>由一个简单的程序学习常见汇编指令</title>
-    <link href="https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/"/>
-    <id>https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/</id>
-    <published>2019-09-22T16:36:33.000Z</published>
-    <updated>2019-09-23T16:26:53.344Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一直以来，内心有股焦急焦虑，急冲冲的学习，急冲冲的比赛，没有时间和心思回过头来静心总结。<br>突然之间想安静下来回顾和记录一下pwn的知识点 <del>其实是写web有点累了，想切换一下脑壳，看心情更新吧</del></p><h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/1.png" alt><br>编译</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc stack.c -o stack -m32</span><br></pre></td></tr></table></figure><h1 id="反汇编分析"><a href="#反汇编分析" class="headerlink" title="反汇编分析"></a>反汇编分析</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d stack -M intel</span><br></pre></td></tr></table></figure><p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/2.png" alt></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">080483db &lt;fun&gt;:</span><br><span class="line"> 80483db:55                   push   ebp//将ebp压入栈</span><br><span class="line"> 80483dc:89 e5                mov    ebp,esp//将esp压入栈</span><br><span class="line"> 80483de:83 ec 10             sub    esp,0x10//在栈上分配0x10个字节的空间</span><br><span class="line"> 80483e1:c7 45 f8 01 00 00 00 mov    DWORD PTR [ebp-0x8],0x1//将0x1存储在[ebp-0x8],dword是双字即四个字节，ptr是指针，这里指[ebp-0x8]地址是一个双字型地址</span><br><span class="line"> 80483e8:8b 45 08             mov    eax,DWORD PTR [ebp+0x8]//将[esp+0x8]的数据复制到eax</span><br><span class="line"> 80483eb:89 45 fc             mov    DWORD PTR [ebp-0x4],eax//将eax内的数据复制到[ebp-0x4]</span><br><span class="line"> 80483ee:8b 55 08             mov    edx,DWORD PTR [ebp+0x8]//将[ebp+0x8]内的数据复制到edx</span><br><span class="line"> 80483f1:8b 45 0c             mov    eax,DWORD PTR [ebp+0xc]//将[ebp+0xc]内的数据复制到eax</span><br><span class="line"> 80483f4:01 d0                add    eax,edx//将edx内的数据与eax内的数据相加，复制到eax</span><br><span class="line"> 80483f6:c9                   leave  //等价于mov ebp,esp;pop ebp</span><br><span class="line"> 80483f7:c3                   ret   //等价于pop ip;用栈中的数据，修改IP的内容，实现近转移</span><br><span class="line"></span><br><span class="line">080483f8 &lt;main&gt;:</span><br><span class="line"> 80483f8:55                   push   ebp</span><br><span class="line"> 80483f9:89 e5                mov    ebp,esp</span><br><span class="line"> 80483fb:6a 14                push   0x14//将0x14=20压入栈</span><br><span class="line"> 80483fd:6a 0a                push   0xa////将0xa=10压入栈</span><br><span class="line"> 80483ff:e8 d7 ff ff ff       call   80483db &lt;fun&gt;//调用fun函数</span><br><span class="line"> 8048404:83 c4 08             add    esp,0x8//esp+8，进行栈帧还原</span><br><span class="line"> 8048407:b8 00 00 00 00       mov    eax,0x0//清空eax内的数据</span><br><span class="line"> 804840c:c9                   leave  </span><br><span class="line"> 804840d:c3                   ret    </span><br><span class="line"> 804840e:66 90                xchg   ax,ax//交换ax;等价于nop</span><br></pre></td></tr></table></figure><h1 id="常见汇编指令"><a href="#常见汇编指令" class="headerlink" title="常见汇编指令"></a>常见汇编指令</h1><p>1、寄存器</p><p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/3.png" alt><br>2、常见汇编指令</p><p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/4.png" alt></p><h1 id="下期预告"><a href="#下期预告" class="headerlink" title="下期预告"></a>下期预告</h1><p>可能写如何编写一个简单的汇编程序、可能写函数在栈中的调用过程、ret指令与call指令的深入理解、可能写程序在内存中的分布、编译链接过程、可能写函数调用约定、x86架构与x64架构的不同之处。<br>个人感觉这些都是pwn的基础内容。建议如果想深入学习pwn的话，推荐首先学习《汇编语言(第3版)》。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;一直以来，内心有股焦急焦虑，急冲冲的学习，急冲冲的比赛，没有时间和心思回过头来静心总结。&lt;br&gt;突然之间想安静下来回顾和记录一下pwn的知识
       
     
     </summary>

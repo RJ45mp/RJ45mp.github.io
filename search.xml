@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>CVE-2016-5195-CentOS65脏牛提权</title>
+      <link href="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/"/>
+      <url>/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>某场比赛的模拟复现。</p><p>关键字：<code>centos 6.5</code>、<code>UUID提权</code>、<code>断网条件</code></p><h2 id="Kernel-version"><a href="#Kernel-version" class="headerlink" title="Kernel-version"></a>Kernel-version</h2><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127142328780.png" alt="image-20191127142328780"></p><h2 id="Exploit-kali"><a href="#Exploit-kali" class="headerlink" title="Exploit-kali"></a>Exploit-kali</h2><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127142522819.png" alt="image-20191127142522819"></p><h2 id="Send2centos"><a href="#Send2centos" class="headerlink" title="Send2centos"></a>Send2centos</h2><p>利用kali自带的HTTP服务，将40839.c转移到centos6.5。</p><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127143427324.png" alt="image-20191127143427324"></p><h2 id="Compile-amp-run"><a href="#Compile-amp-run" class="headerlink" title="Compile&amp;run"></a>Compile&amp;run</h2><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127144101289.png" alt="image-20191127144101289"></p><h2 id="Seize-power"><a href="#Seize-power" class="headerlink" title="Seize-power"></a>Seize-power</h2><p><img src="/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/image-20191127145038360.png" alt="image-20191127145038360"></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>stackoverflow之stack-pivoting</title>
       <link href="/stackoverflow%E4%B9%8Bstack-pivoting/"/>
       <url>/stackoverflow%E4%B9%8Bstack-pivoting/</url>
