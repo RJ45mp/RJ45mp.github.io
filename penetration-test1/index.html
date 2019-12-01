@@ -14,7 +14,7 @@
 <meta property="og:description" content="靶机渗透是渗透实战的一个缩影。 图示 准备1、个人准备： 12345web安全基础Linux基础kali基础CTF基础渗透基础  2、环境准备： kali+SecQuan 3、靶机准备： 靶机可在Vulnerable或HTB下载 分层常见靶机一般按照其内容可以划分成三层：web层、主机层和数据库层。（web层和数据库层其实可以归为服务层） 划分的目的是为了更好地在渗透的过程中，特别是在陷入难点的时">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;penetration-test1&#x2F;image-20191201151716428.png">
-<meta property="og:updated_time" content="2019-12-01T11:55:48.553Z">
+<meta property="og:updated_time" content="2019-12-01T12:04:35.825Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;penetration-test1&#x2F;image-20191201151716428.png">
     
@@ -261,6 +261,10 @@
 
 <p>找到信息泄露文件的线索后，直接挖掘寻找即可。有可能是一个流量包，一份加密的文件，一张图片，一个二进制文件等。</p>
 <p>这个步骤需要积累特别是特定命令的特定使用，例如如何利用find命令开启一个终端等。</p>
+<p>注意：</p>
+<p>有时候，需要将文件从靶机上下载下来，或上传到靶机：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python3 -m http.server //python -m SimpleHTTPServer</span><br><span class="line">wget&amp;curl -o</span><br><span class="line">pyftpdlib的使用</span><br></pre></td></tr></table></figure>
+
 <h2 id="提取flag"><a href="#提取flag" class="headerlink" title="提取flag"></a>提取flag</h2><p>根据前面提到的flag可能存放的位置进行提取。</p>
 <p>有一点需要注意的是，有可能flag被隐藏起来（.Congratulations.txt）,甚至有些靶机可能没有flag。</p>
 <h2 id="新方向"><a href="#新方向" class="headerlink" title="新方向"></a>新方向</h2><p>与常规靶机不同，还有的靶机更加精细。如：</p>
