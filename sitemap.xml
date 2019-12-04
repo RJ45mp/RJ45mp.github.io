@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://rj45mp.github.io/ret2shellcode-test/</loc>
+    
+    <lastmod>2019-12-04T06:28:59.063Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://rj45mp.github.io/pwn/</loc>
     
     <lastmod>2019-12-03T07:09:53.676Z</lastmod>
