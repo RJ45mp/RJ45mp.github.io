@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://rj45mp.github.io/about/</loc>
+    
+    <lastmod>2020-01-02T15:03:49.586Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://rj45mp.github.io/2019-Rj45mp-%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/</loc>
     
     <lastmod>2019-12-31T16:08:04.156Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>https://rj45mp.github.io/firends/</loc>
     
     <lastmod>2019-12-30T01:33:40.799Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://rj45mp.github.io/about/</loc>
-    
-    <lastmod>2019-12-30T01:33:16.425Z</lastmod>
     
   </url>
   
@@ -313,13 +313,6 @@
     <loc>https://rj45mp.github.io/%E4%BB%8Eupload-labs%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/</loc>
     
     <lastmod>2019-10-23T07:34:43.265Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://rj45mp.github.io/sqli-labs-%E5%AD%A6%E4%B9%A0mysql%E6%B3%A8%E5%85%A5/</loc>
-    
-    <lastmod>2019-10-07T07:31:39.496Z</lastmod>
     
   </url>
   
