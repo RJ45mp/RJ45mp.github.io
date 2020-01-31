@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://rj45mp.github.io/phpMyAdmin-CVE-2016-5734/</loc>
+    
+    <lastmod>2020-01-31T11:09:54.421Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://rj45mp.github.io/IIS/</loc>
+    
+    <lastmod>2020-01-28T06:31:41.982Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://rj45mp.github.io/phpstudy-backdoor/</loc>
     
     <lastmod>2020-01-21T07:42:18.141Z</lastmod>

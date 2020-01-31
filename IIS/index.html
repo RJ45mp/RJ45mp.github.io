@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x00 IIS​    IIS是由微软公司提供的基于运行Microsoft Windows的互联网基本服务。 其是一种web服务组件，其中包括WEB服务器、FTP服务器、NNTP服务器和SMTP服务器，分别用于网页浏览、文件传输、新闻服务和邮件发送等方面。 目前,IIS一共发行了12个版本，从IIS1.0到IIS10.0,web市场上主要以IIS5.0到IIS10.0为主。 对于IIS漏洞主要分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IIS历史漏洞合集（有价值部分）">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;IIS&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="0x00 IIS​    IIS是由微软公司提供的基于运行Microsoft Windows的互联网基本服务。 其是一种web服务组件，其中包括WEB服务器、FTP服务器、NNTP服务器和SMTP服务器，分别用于网页浏览、文件传输、新闻服务和邮件发送等方面。 目前,IIS一共发行了12个版本，从IIS1.0到IIS10.0,web市场上主要以IIS5.0到IIS10.0为主。 对于IIS漏洞主要分">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;IIS&#x2F;image-20200127204834630.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;IIS&#x2F;image-20200127213534366.png">
+<meta property="og:updated_time" content="2020-01-28T06:31:41.982Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;IIS&#x2F;image-20200127204834630.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>IIS历史漏洞合集（有价值部分）</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/phpMyAdmin-CVE-2016-5734/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/phpstudy-backdoor/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/IIS/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/IIS/&text=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/IIS/&is_video=false&description=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=IIS历史漏洞合集（有价值部分）&body=Check out this article: https://rj45mp.github.io/IIS/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/IIS/&name=IIS历史漏洞合集（有价值部分）&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-IIS"><span class="toc-number">1.</span> <span class="toc-text">0x00 IIS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-MS09-053-CVE-2009-3023"><span class="toc-number">2.</span> <span class="toc-text">0x01 MS09-053/CVE-2009-3023</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-认证绕过"><span class="toc-number">3.</span> <span class="toc-text">0x02 认证绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-短文件名泄露"><span class="toc-number">4.</span> <span class="toc-text">0x03 短文件名泄露</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-PUT漏洞"><span class="toc-number">5.</span> <span class="toc-text">0x04 PUT漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-MS15-034-CVE-2015-1635"><span class="toc-number">6.</span> <span class="toc-text">0x05 MS15-034/CVE-2015-1635</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-CVE-2017-7269"><span class="toc-number">7.</span> <span class="toc-text">0x06 CVE-2017-7269</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-IIS解析漏洞"><span class="toc-number">8.</span> <span class="toc-text">0x07 IIS解析漏洞</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        IIS历史漏洞合集（有价值部分）
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-27T05:41:10.000Z" itemprop="datePublished">2020-01-27</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00-IIS"><a href="#0x00-IIS" class="headerlink" title="0x00 IIS"></a>0x00 IIS</h2><p>​    IIS是由微软公司提供的基于运行Microsoft Windows的互联网基本服务。</p>
+<p>其是一种web服务组件，其中包括WEB服务器、FTP服务器、NNTP服务器和SMTP服务器，分别用于网页浏览、文件传输、新闻服务和邮件发送等方面。</p>
+<p>目前,IIS一共发行了12个版本，从IIS1.0到IIS10.0,web市场上主要以IIS5.0到IIS10.0为主。</p>
+<p>对于IIS漏洞主要分布在缓冲区溢出、认证绕过、DOS拒绝服务、代码执行和信息泄露。</p>
+<h2 id="0x01-MS09-053-CVE-2009-3023"><a href="#0x01-MS09-053-CVE-2009-3023" class="headerlink" title="0x01 MS09-053/CVE-2009-3023"></a>0x01 MS09-053/CVE-2009-3023</h2><p>Microsoft-IIS-FTPd服务MLST命令栈缓冲区溢出漏洞</p>
+<p>影响版本：IIS5.5、IIS5.1、IIS6.0</p>
+<p>漏洞详情：IIS内嵌的FTP服务器中存在栈溢出漏洞，如果远程攻击者对带有特制名称的目录发布了包含有通配符的FTP<code>NLST</code>(name list)命令即可触发该溢出，导致拒绝服务或执行任意代码</p>
+<p>攻击手段：</p>
+<p><img src="/IIS/image-20200127204834630.png" alt="image-20200127204834630"></p>
+<p>条件：拥有写权限</p>
+<p>修补：修改NTFS文件权限或修改不允许FTP写权限或不允许FTP匿名登录或安装补丁</p>
+<h2 id="0x02-认证绕过"><a href="#0x02-认证绕过" class="headerlink" title="0x02 认证绕过"></a>0x02 认证绕过</h2><p>影响版本：IIS6.0、IIS7.5</p>
+<p>漏洞详情：对用户输入未经正确验证，攻击者可利用漏洞构造特殊数据，在服务器进程上下文中获取密码保护资源和查看源代码文件的未授权访问</p>
+<p>攻击手段：</p>
+<p>IIS6.0</p>
+<p>将<code>::$INDEX_ALLOCATION</code>后缀添加到目录名称后，如<code>/admin::$INDEX_ALLOCATION/index.php</code></p>
+<p>IIS7.5</p>
+<p>将<code>:$i30:$INDEX_ALLOCATION</code>后缀添加到目录名称后，如<code>/admin:$i30:$INDEX_ALLOCATION/index.asp</code></p>
+<h2 id="0x03-短文件名泄露"><a href="#0x03-短文件名泄露" class="headerlink" title="0x03 短文件名泄露"></a>0x03 短文件名泄露</h2><p>影响版本：IIS5.0-IIS10.0</p>
+<p>漏洞详情：Windows支持以8.3格式生成与MS-DOS兼容的（短）文件名，以允许基于MS-DOS或16位Windows的程序访问这些文件。基于Windows的IIS服务器默认根目录C:\inetpub\wwwroot下的网页脚本文件和目录符合一定条件时，会生成相应的短文件名。此时，攻击者利用HTTP的DEBUG、OPTIONS、GET、POST、HEAD、TRACE等方法携带波浪号，可以对IIS服务器短文件名进行暴力猜解，依据返回的页面信息和状态码来确认真实存在的文件名，从而获取服务器敏感信息。</p>
+<p>POC：</p>
+<p><img src="/IIS/image-20200127213534366.png" alt="image-20200127213534366"></p>
+<p>检测工具： <a href="https://github.com/lijiejie/IIS_shortname_Scanner" target="_blank" rel="noopener">https://github.com/lijiejie/IIS_shortname_Scanner</a> </p>
+<h2 id="0x04-PUT漏洞"><a href="#0x04-PUT漏洞" class="headerlink" title="0x04 PUT漏洞"></a>0x04 PUT漏洞</h2><p>漏洞详情：对IIS的错误配置导致的写权限漏洞。WEB服务器拓展里设置了<code>WebDAV</code>为允许，同时网站权限配置开启了写入权限与脚本资源访问权限。通过该PUT漏洞可以写入webshell。</p>
+<p>攻击手段： <a href="https://www.codercto.com/a/48257.html" target="_blank" rel="noopener">https://www.codercto.com/a/48257.html</a> </p>
+<h2 id="0x05-MS15-034-CVE-2015-1635"><a href="#0x05-MS15-034-CVE-2015-1635" class="headerlink" title="0x05 MS15-034/CVE-2015-1635"></a>0x05 MS15-034/CVE-2015-1635</h2><p>漏洞详情： 远程执行代码漏洞存在于 HTTP 协议堆栈 (HTTP.sys) 中，当 HTTP.sys 未正确分析经特殊设计的 HTTP 请求时会导致此漏洞。成功利用此漏洞的攻击者可以在系统帐户的上下文中执行任意代码。 </p>
+<p>攻击手段： <a href="https://www.freebuf.com/articles/system/64185.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/system/64185.html</a> </p>
+<h2 id="0x06-CVE-2017-7269"><a href="#0x06-CVE-2017-7269" class="headerlink" title="0x06 CVE-2017-7269"></a>0x06 CVE-2017-7269</h2><p> IIS远程代码执行漏洞 </p>
+<p>影响版本：IIS6.0</p>
+<p>漏洞详情：开启<code>WebDAV</code>服务的IIS 6.0被爆存在缓存区溢出漏洞导致远程代码执行，目前针对 Windows Server 2003 R2 可以稳定利用。</p>
+<p>攻击手段： <a href="https://github.com/zcgonvh/cve-2017-7269" target="_blank" rel="noopener">https://github.com/zcgonvh/cve-2017-7269</a> </p>
+<h2 id="0x07-IIS解析漏洞"><a href="#0x07-IIS解析漏洞" class="headerlink" title="0x07 IIS解析漏洞"></a>0x07 IIS解析漏洞</h2><p>影响版本：IIS5.0-6.0、IIS7.0</p>
+<p>漏洞详情：</p>
+<p>1、IIS5.0-6.0下，如果一个目录以”xxx.asp”的形式命名，那么该目录下的所有类型文件都会被当做asp文件来进行解析执行</p>
+<p>2、IIS5.0-6.0下，如果一个文件的扩展名采用”.asp;*.jpg”的形式，那么该文件也会被当做asp文件解析执行 </p>
+<p>3、IIS70下，如果php.ini中的cgi.cgi_pathinfo=1同时IIS7.0在Fast-CGI运行模式下，则可以在恶意文件后面添加<code>/.php</code>使得其解析为php。如<code>http://192.168.61.141/789.jpg/.php</code></p>
+<p>参考链接：</p>
+<p> <a href="https://www.cnblogs.com/baifan2618/p/7704678.html" target="_blank" rel="noopener">https://www.cnblogs.com/baifan2618/p/7704678.html</a> </p>
+<p> <a href="https://blog.csdn.net/nzjdsds/article/details/96989492" target="_blank" rel="noopener">https://blog.csdn.net/nzjdsds/article/details/96989492</a> </p>
+
+  </div>
+</article>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-IIS"><span class="toc-number">1.</span> <span class="toc-text">0x00 IIS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-MS09-053-CVE-2009-3023"><span class="toc-number">2.</span> <span class="toc-text">0x01 MS09-053/CVE-2009-3023</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-认证绕过"><span class="toc-number">3.</span> <span class="toc-text">0x02 认证绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-短文件名泄露"><span class="toc-number">4.</span> <span class="toc-text">0x03 短文件名泄露</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-PUT漏洞"><span class="toc-number">5.</span> <span class="toc-text">0x04 PUT漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-MS15-034-CVE-2015-1635"><span class="toc-number">6.</span> <span class="toc-text">0x05 MS15-034/CVE-2015-1635</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-CVE-2017-7269"><span class="toc-number">7.</span> <span class="toc-text">0x06 CVE-2017-7269</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-IIS解析漏洞"><span class="toc-number">8.</span> <span class="toc-text">0x07 IIS解析漏洞</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/IIS/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/IIS/&text=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/IIS/&is_video=false&description=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=IIS历史漏洞合集（有价值部分）&body=Check out this article: https://rj45mp.github.io/IIS/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/IIS/&title=IIS历史漏洞合集（有价值部分）" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/IIS/&name=IIS历史漏洞合集（有价值部分）&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
