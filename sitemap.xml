@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://rj45mp.github.io/penetration/</loc>
+    
+    <lastmod>2020-01-31T12:18:52.654Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://rj45mp.github.io/resources/</loc>
+    
+    <lastmod>2020-01-31T12:18:47.424Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://rj45mp.github.io/phpMyAdmin-CVE-2016-5734/</loc>
     
     <lastmod>2020-01-31T11:16:28.180Z</lastmod>
@@ -72,13 +86,6 @@
   </url>
   
   <url>
-    <loc>https://rj45mp.github.io/resources/</loc>
-    
-    <lastmod>2019-12-14T06:52:49.626Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://rj45mp.github.io/php-%E4%BC%AA%E5%8D%8F%E8%AE%AE/</loc>
     
     <lastmod>2019-12-14T06:51:58.406Z</lastmod>
@@ -145,13 +152,6 @@
     <loc>https://rj45mp.github.io/penetration-test1/</loc>
     
     <lastmod>2019-12-01T12:45:18.369Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://rj45mp.github.io/penetration/</loc>
-    
-    <lastmod>2019-12-01T12:28:34.572Z</lastmod>
     
   </url>
   
