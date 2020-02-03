@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x00 ATT&amp;amp;CK1、ATT&amp;amp;CK模型ATT&amp;amp;CK模型是一套基于历史实战的高级威胁攻击战术的知识库框架。 1)ATT&amp;amp;CK框架下的术语 战术：攻击的意图 技术：攻击的技术 过程：攻击的技术流程  ATT&amp;amp;CK模型基于洛克希德-马丁杀伤链的技术上，分为了3个矩阵：  PRE-ATT&amp;amp;CK: 攻击前的准备，战略计划指定、武器化、信息收集、脆弱点发现等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ATT&amp;CK初接触">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;ATTCK&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="0x00 ATT&amp;amp;CK1、ATT&amp;amp;CK模型ATT&amp;amp;CK模型是一套基于历史实战的高级威胁攻击战术的知识库框架。 1)ATT&amp;amp;CK框架下的术语 战术：攻击的意图 技术：攻击的技术 过程：攻击的技术流程  ATT&amp;amp;CK模型基于洛克希德-马丁杀伤链的技术上，分为了3个矩阵：  PRE-ATT&amp;amp;CK: 攻击前的准备，战略计划指定、武器化、信息收集、脆弱点发现等">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;ATTCK&#x2F;image-20200201143414332.png">
+<meta property="og:updated_time" content="2020-02-01T14:50:35.676Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;ATTCK&#x2F;image-20200201143414332.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>ATT&amp;CK初接触</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/phpMyAdmin-WooYun-2016-199433/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/ATTCK/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/ATTCK/&text=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/ATTCK/&is_video=false&description=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ATT&amp;CK初接触&body=Check out this article: https://rj45mp.github.io/ATTCK/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/ATTCK/&name=ATT&amp;CK初接触&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-ATT-amp-CK"><span class="toc-number">1.</span> <span class="toc-text">0x00 ATT&amp;CK</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、ATT-amp-CK模型"><span class="toc-number">1.1.</span> <span class="toc-text">1、ATT&amp;CK模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-ATT-amp-CK框架下的术语"><span class="toc-number">1.1.1.</span> <span class="toc-text">1)ATT&amp;CK框架下的术语</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-ATT-amp-CK框架的内容"><span class="toc-number">1.1.2.</span> <span class="toc-text">2)ATT&amp;CK框架的内容</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、Cyber-kill-chain杀伤链"><span class="toc-number">1.2.</span> <span class="toc-text">2、Cyber kill chain杀伤链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、APT攻击"><span class="toc-number">1.3.</span> <span class="toc-text">3、APT攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、红蓝对抗"><span class="toc-number">1.4.</span> <span class="toc-text">4、红蓝对抗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-PRE-ATT-amp-CK"><span class="toc-number">2.</span> <span class="toc-text">0x02 PRE-ATT&amp;CK</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-ATT-amp-CK-for-Enterprise"><span class="toc-number">3.</span> <span class="toc-text">0x03 ATT&amp;CK for Enterprise</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ATT-amp-CK-for-Mobile"><span class="toc-number">4.</span> <span class="toc-text">0x04 ATT&amp;CK for Mobile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-参考"><span class="toc-number">5.</span> <span class="toc-text">0x05 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ATT&amp;CK初接触
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-02-01T13:43:37.000Z" itemprop="datePublished">2020-02-01</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00-ATT-amp-CK"><a href="#0x00-ATT-amp-CK" class="headerlink" title="0x00 ATT&amp;CK"></a>0x00 ATT&amp;CK</h2><h3 id="1、ATT-amp-CK模型"><a href="#1、ATT-amp-CK模型" class="headerlink" title="1、ATT&amp;CK模型"></a>1、ATT&amp;CK模型</h3><p>ATT&amp;CK模型是一套基于历史实战的高级威胁攻击战术的知识库框架。</p>
+<h4 id="1-ATT-amp-CK框架下的术语"><a href="#1-ATT-amp-CK框架下的术语" class="headerlink" title="1)ATT&amp;CK框架下的术语"></a>1)ATT&amp;CK框架下的术语</h4><ul>
+<li>战术：攻击的意图</li>
+<li>技术：攻击的技术</li>
+<li>过程：攻击的技术流程</li>
+</ul>
+<p>ATT&amp;CK模型基于洛克希德-马丁杀伤链的技术上，分为了3个矩阵：</p>
+<ul>
+<li><p>PRE-ATT&amp;CK:</p>
+<p>攻击前的准备，战略计划指定、武器化、信息收集、脆弱点发现等</p>
+</li>
+<li><p>ATT&amp;CK for Enterprise:</p>
+<p>攻击时的部分已知技术手段，如初始权限获取、执行、防御规避、横向移动等。(红蓝对抗知识库)</p>
+</li>
+<li><p>ATT&amp;CK for Mobile:</p>
+<p>移动端的部分已知技术手段、移动框架</p>
+</li>
+</ul>
+<h4 id="2-ATT-amp-CK框架的内容"><a href="#2-ATT-amp-CK框架的内容" class="headerlink" title="2)ATT&amp;CK框架的内容"></a>2)ATT&amp;CK框架的内容</h4><p><img src="/ATTCK/image-20200201143414332.png" alt="image-20200201143414332"></p>
+<p>ATT&amp;CK模型的三部分为：</p>
+<ul>
+<li><p>PRE-ATT&amp;CK</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">侦察跟踪、武器构建</span><br></pre></td></tr></table></figure>
+
+<p>PRE-ATT&amp;CK包括的战术有优先级定义、选择目标、信心收集、发现脆弱点、攻击性利用开发平台、建立和维护基础设施、人员的开发、建立能力、测试能力、分段能力。</p>
+</li>
+<li><p>ATT&amp;CK for Enterprise：Linux、macOS、windows</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">载荷传递、漏洞利用、安装植入、命令与控制、目标达成</span><br></pre></td></tr></table></figure>
+
+<p>ATT&amp;CK包括的战术有访问初始化、执行、常驻、提权、防御规避、访问凭证、发现、横向移动、收集、命令和控制、数据获取、影响</p>
+</li>
+<li><p>ATT&amp;CK for Mobile：Android、iOS</p>
+<p>主要针对移动平台</p>
+</li>
+</ul>
+<h3 id="2、Cyber-kill-chain杀伤链"><a href="#2、Cyber-kill-chain杀伤链" class="headerlink" title="2、Cyber kill chain杀伤链"></a>2、Cyber kill chain杀伤链</h3><p>洛克希德-马丁杀伤链，Cyber kill chain，这条杀伤链定义了攻击目标的一系列步骤。</p>
+<p>Cyber kill chain杀伤链下的系列步骤：</p>
+<ul>
+<li><p>侦察,Reconnaissance</p>
+<p>收集信息、侦察目标</p>
+</li>
+<li><p>武器化,Weaponization</p>
+<p>准备攻击，准备攻击的软件、技术手段等武器</p>
+</li>
+<li><p>传递,Delivery</p>
+<p>开始攻击，将准备的软件、技术手段等武器传递到目标，完成入侵攻击</p>
+</li>
+<li><p>漏洞利用,Exploitation</p>
+<p>在攻陷系统内运行漏洞利用</p>
+</li>
+<li><p>安装,Installation</p>
+<p>安装恶意软件</p>
+</li>
+<li><p>命令与控制,Command&amp;Control</p>
+<p>C&amp;C，夺得系统控制权，远程操纵</p>
+</li>
+<li><p>针对目标行动,Actions on Objectives</p>
+<p>实现设定的目标</p>
+</li>
+</ul>
+<h3 id="3、APT攻击"><a href="#3、APT攻击" class="headerlink" title="3、APT攻击"></a>3、APT攻击</h3><p>APT(Advanced Persistent Threat)，高级持续威胁，利用各种先进攻击手段，对高价值目标进行有组织、长期持续性的网络攻击行为。</p>
+<p>APT的主要特点是：</p>
+<ul>
+<li>手段高</li>
+<li>攻击持久</li>
+<li>危害高</li>
+</ul>
+<p>APT攻击模型<code>信息收集、攻击阶段、提权阶段、后渗透阶段、销毁痕迹阶段</code>与Cyber kill chain杀伤链相对应。</p>
+<h3 id="4、红蓝对抗"><a href="#4、红蓝对抗" class="headerlink" title="4、红蓝对抗"></a>4、红蓝对抗</h3><p>在网络安全的红蓝对抗中，在国内扮演黑客的一方叫蓝军，扮演防御者的一方叫红军。在国外则相反。</p>
+<p>红蓝对抗的目的是找出企业安全中最脆弱的环节，如木桶定律一样，评估企业安全性，提升企业安全能力。</p>
+<p>红蓝对抗区别于渗透测试，其对抗测试范围和应用技术更加广泛，一般以团队的形式进行。</p>
+<h2 id="0x02-PRE-ATT-amp-CK"><a href="#0x02-PRE-ATT-amp-CK" class="headerlink" title="0x02 PRE-ATT&amp;CK"></a>0x02 PRE-ATT&amp;CK</h2><p>15项</p>
+<table>
+<thead>
+<tr>
+<th align="center">战术</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">优先级定义计划</td>
+<td align="center">优先级定义计划包括确定满足关键战略，运营或战术目标所需的一组关键情报主题（KIT）或关键情报问题（KIQ）的过程。领导层概述了优先定义（可以认为是目标），对手根据优先级设计来选择目标和要实现的加护。在确定现有KIT或KIQ中的差距时，分析人员可以概述优先级定义。</td>
+</tr>
+<tr>
+<td align="center">优先级定义方向</td>
+<td align="center">优先级定义方向包括收集和分配满足领导层确定的关键情报主题（KIT）或关键情报问题（KIQ）的要求的过程。</td>
+</tr>
+<tr>
+<td align="center">目标选择</td>
+<td align="center">目标选择包括一个反复的过程，在此过程中，敌方首先从战略层面开始，然后在操作和战术上缩小范围，直到选择了特定目标，然后确定目标。目标可以定义为执行考虑拥有可能的参与或其他动作的功能的实体或对象。</td>
+</tr>
+<tr>
+<td align="center">技术信息收集</td>
+<td align="center">技术信息收集包括识别对手所需的情报的关键技术要素的过程，以便最佳进行攻击。技术情报收集包括但不限于了解目标的网络体现结构，IP空间，网络服务，电子邮件格式和安全性过程。</td>
+</tr>
+<tr>
+<td align="center">人员信息收集</td>
+<td align="center">人员信息收集包括识别对手所需的情报关键要素以便最佳攻击的过程。人才情报收集工作重点在于确定具有关键访问权限的关键人员或个人，以便最好得接近攻击目标。它可能涉及社会工程，启发，挖掘社交媒体资源等方面，或者被认为是理解竞争情报的人事要素。</td>
+</tr>
+<tr>
+<td align="center">组织信息收集</td>
+<td align="center">组信息收集包括识别对手所需要的情报的关键祖师的要素的过程，以便最佳进行攻击。与竞争情报类似，组织情报收集侧重于理解组织的运作节奏并收集对组织及其运作方式的深刻理解，以便最佳地制定针对它的策略。</td>
+</tr>
+<tr>
+<td align="center">技术弱点识别</td>
+<td align="center">技术弱点识别包括识别和分析在情报收集阶段收集的弱点和漏洞，以便根据技术复杂性和对手优先级（例如权宜，隐身）确定最佳方法。</td>
+</tr>
+<tr>
+<td align="center">人的弱点识别</td>
+<td align="center">人员弱点识别包括从情报收集阶段识别和分析弱点和漏洞，可以利用这些弱点和弱点获得与目标或中间目标感兴趣的人或社会信任关系的访问权限。</td>
+</tr>
+<tr>
+<td align="center">组织的弱点识别</td>
+<td align="center">组织弱点识别包括从情报收集阶段识别和分析弱点和漏洞，可以利用这些弱点和弱点来访问感兴趣的目标组织或中间目标组织。</td>
+</tr>
+<tr>
+<td align="center">对手OPSEC</td>
+<td align="center">对手OPSEC包括使用各种技术活第三方服务来混淆，隐藏或混入可接受的网络流量或系统行为。对手可能会使用这些技术来逃避防御，减少归因，最小化发现或或增加分析所需的时间和精力。</td>
+</tr>
+<tr>
+<td align="center">建立和维护基础架构</td>
+<td align="center">建立和维护基础架构包括构建，购买，选择和维护拥有进行网络运营的系统和服务。对手将需要建立用于于资产进行通信并控制器整个运营过程中使用的资产的基础结构。</td>
+</tr>
+<tr>
+<td align="center">角色发展</td>
+<td align="center">角色发展包括公共信息，存在，历史和适当隶属关系的发展。这种发展可以应用于社交媒体，网站或其他可公开获得的信息，在使用该角色或身份进行的操作过程中，这些信息可被参考和审查以确保其合法性。</td>
+</tr>
+<tr>
+<td align="center">建立能力</td>
+<td align="center">构建能力包括开发和或获取在从中的不同阶段使用的软件，数据和技术。这是确定开发需求并实施解决方案的过程，例如恶意软件，传送机制，混淆/密码保护以及回叫和O&amp;M功能。</td>
+</tr>
+<tr>
+<td align="center">测试能力</td>
+<td align="center">当对手可能需要从外部测试能力以完善开发目标和标准并确保运营成功时，就会进行测试能力。分级能力后可以进行某些测试。</td>
+</tr>
+<tr>
+<td align="center">舞台能力</td>
+<td align="center">暂存能力包括准备进行操作所需的操作环境。这包括诸如部署团建，上传数据，启动命令和控制基础结构之类的活动。</td>
+</tr>
+</tbody></table>
+<h2 id="0x03-ATT-amp-CK-for-Enterprise"><a href="#0x03-ATT-amp-CK-for-Enterprise" class="headerlink" title="0x03 ATT&amp;CK for Enterprise"></a>0x03 ATT&amp;CK for Enterprise</h2><p>12项</p>
+<table>
+<thead>
+<tr>
+<th align="center">战术</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Initial Access、入口点</td>
+<td align="center">进入网络</td>
+</tr>
+<tr>
+<td align="center">Execution、命令执行</td>
+<td align="center">运行恶意代码</td>
+</tr>
+<tr>
+<td align="center">Persistence、持久化</td>
+<td align="center">保持立足点</td>
+</tr>
+<tr>
+<td align="center">Privilege Escalation、权限提升</td>
+<td align="center">获得更高权限</td>
+</tr>
+<tr>
+<td align="center">Defense Evasion、绕过防御</td>
+<td align="center">避免被发现</td>
+</tr>
+<tr>
+<td align="center">Credential Access、窃取凭证</td>
+<td align="center">窃取账户和密码</td>
+</tr>
+<tr>
+<td align="center">Discovery、发现</td>
+<td align="center">找出环境</td>
+</tr>
+<tr>
+<td align="center">Lateral Movement、横向移动</td>
+<td align="center">穿越环境</td>
+</tr>
+<tr>
+<td align="center">Collection、基础信息收集</td>
+<td align="center">收集目标数据</td>
+</tr>
+<tr>
+<td align="center">Command and Control、命令与控制</td>
+<td align="center">与系统进行持续通信与控制</td>
+</tr>
+<tr>
+<td align="center">Exfiltration、信息窃取</td>
+<td align="center">窃取数据</td>
+</tr>
+<tr>
+<td align="center">Impact、影响</td>
+<td align="center">操纵、中断或破坏系统和数据</td>
+</tr>
+</tbody></table>
+<h2 id="0x04-ATT-amp-CK-for-Mobile"><a href="#0x04-ATT-amp-CK-for-Mobile" class="headerlink" title="0x04 ATT&amp;CK for Mobile"></a>0x04 ATT&amp;CK for Mobile</h2><table>
+<thead>
+<tr>
+<th align="center">战术</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Initial Access、入口点</td>
+<td align="center">攻击者用来在移动设备上获得初步立足点的媒介</td>
+</tr>
+<tr>
+<td align="center">Persistence、持久化</td>
+<td align="center">持久性是对移动设备的任何访问、操作或配置更改，可使攻击者 设备上持久存在。攻击者通常需要通过中断来维持对移动设备的访问，例如设备重新启动，甚至可能恢复出厂数据。</td>
+</tr>
+<tr>
+<td align="center">Privilege Escalation、权限提升</td>
+<td align="center">允许攻击者在移动设备上获取更高级别权限的技术。攻击者可能会以非常有限的特权进入移动设备，并且可能需要攻击者利用设备的弱点来获得成功实现其任务目标所需的更高特权。</td>
+</tr>
+<tr>
+<td align="center">Defense Evasion、绕过防御</td>
+<td align="center">对手可能用来规避侦查或避免其他防御的技术。有时，这些动作与其他类别的技术相同或不同，它们具有颠覆特定防御或缓解措施的额外好处。防御规避可以被认为是对手应用于行动的所有其他阶段的一组属性。</td>
+</tr>
+<tr>
+<td align="center">Credential Access、窃取凭证</td>
+<td align="center">攻击者可以用来获取或控制密码，令牌，加密密钥或攻击者可以用来获得对资源的未授权访问的其他值的访问或控制的技术。凭据访问允许对手使用帐户的身份，并拥有该帐户在系统和网络上的所有权限，从而使防御者更难检测到对手。有了网络中足够的访问权限，对手就可以创建帐户以供以后在环境中使用。</td>
+</tr>
+<tr>
+<td align="center">Discovery、基础信息收集</td>
+<td align="center">攻击者获得有关移动设备和可能的其他联网系统特征的知识的技术组成。当对手获得使用新系统的权限时，他们必须使自己适应现在可以控制的内容，以及在入侵过程中从该系统获得的收益对其当前的目标或总体目标产生影响。操作系统可以提供有助于此妥协后信息收集阶段的功能。</td>
+</tr>
+<tr>
+<td align="center">Lateral Movement、横向移动</td>
+<td align="center">使对手能够访问和控制网络上的远程系统的技术组成，并且可以但不一定包括在远程系统上执行工具。横向移动技术可以使对手从系统中收集信息，而无需其他工具，例如远程访问工具。</td>
+</tr>
+<tr>
+<td align="center">Impact、影响</td>
+<td align="center">由敌手用来执行任务目标的技术组成，但并不完全适用于“收集”等其他类别。任务目标因每个对手的目标而异，但示例包括收费欺诈，销毁设备数据或将用户锁定在他或她的设备之外，直到支付赎金为止。</td>
+</tr>
+<tr>
+<td align="center">Collection、目标收集</td>
+<td align="center">包括用于在渗透之前从目标网络识别和收集信息（例如敏感文件）的技术。此类别还涵盖了对手可能在其中寻找信息的系统或网络上的位置。</td>
+</tr>
+<tr>
+<td align="center">Exfiltration、信息窃取</td>
+<td align="center">导致或帮助对手从目标移动设备中删除文件和信息的技术和属性。</td>
+</tr>
+<tr>
+<td align="center">Command and Control、命令与控制</td>
+<td align="center">对手如何与目标网络内受其控制的系统进行通信。对手可以通过多种方式来建立具有不同隐蔽性的命令和控制，具体取决于系统配置和网络拓扑。由于网络级别上对手可获得的变化程度很大，因此仅使用最常见的因素来描述命令和控制上的差异。记录的方法中仍然有许多特定技术，这主要是因为定义新协议并使用现有的合法协议和网络服务进行通信非常容易。</td>
+</tr>
+<tr>
+<td align="center">Network Effects、网络效果</td>
+<td align="center">基于网络的技术，攻击者可能会使用这些技术来实现其目标，而无需访问移动设备本身。这些技术包括拦截或操纵往返移动设备的网络流量的技术。</td>
+</tr>
+<tr>
+<td align="center">Remote Service Effects、远程服务效果</td>
+<td align="center">涉及远程服务的技术，例如供应商提供的云服务（例如Google Drive，Google Find My Device或Apple iCloud）或对手可能会使用的企业移动性管理（EMM）/移动设备管理（MDM）服务无需访问移动设备本身就能使用以实现其目标。</td>
+</tr>
+</tbody></table>
+<h2 id="0x05-参考"><a href="#0x05-参考" class="headerlink" title="0x05 参考"></a>0x05 参考</h2><p> <a href="https://static.anquanke.com/download/b/security-geek-2019-q4.pdf" target="_blank" rel="noopener">https://static.anquanke.com/download/b/security-geek-2019-q4.pdf</a> </p>
+<p> <a href="https://www.anquanke.com/post/id/185492" target="_blank" rel="noopener">https://www.anquanke.com/post/id/185492</a> </p>
+<p> <a href="https://www.sans.org/security-awareness-training/blog/applying-security-awareness-cyber-kill-chain" target="_blank" rel="noopener">https://www.sans.org/security-awareness-training/blog/applying-security-awareness-cyber-kill-chain</a> </p>
+<p> <a href="https://www.freebuf.com/column/160412.html" target="_blank" rel="noopener">https://www.freebuf.com/column/160412.html</a> </p>
+<p> <a href="https://www.cnblogs.com/he1m4n6a/p/10057473.html" target="_blank" rel="noopener">https://www.cnblogs.com/he1m4n6a/p/10057473.html</a> </p>
+<p> <a href="https://attack.mitre.org/" target="_blank" rel="noopener">https://attack.mitre.org/</a> </p>
+
+  </div>
+</article>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-ATT-amp-CK"><span class="toc-number">1.</span> <span class="toc-text">0x00 ATT&amp;CK</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、ATT-amp-CK模型"><span class="toc-number">1.1.</span> <span class="toc-text">1、ATT&amp;CK模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-ATT-amp-CK框架下的术语"><span class="toc-number">1.1.1.</span> <span class="toc-text">1)ATT&amp;CK框架下的术语</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-ATT-amp-CK框架的内容"><span class="toc-number">1.1.2.</span> <span class="toc-text">2)ATT&amp;CK框架的内容</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、Cyber-kill-chain杀伤链"><span class="toc-number">1.2.</span> <span class="toc-text">2、Cyber kill chain杀伤链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、APT攻击"><span class="toc-number">1.3.</span> <span class="toc-text">3、APT攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、红蓝对抗"><span class="toc-number">1.4.</span> <span class="toc-text">4、红蓝对抗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-PRE-ATT-amp-CK"><span class="toc-number">2.</span> <span class="toc-text">0x02 PRE-ATT&amp;CK</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-ATT-amp-CK-for-Enterprise"><span class="toc-number">3.</span> <span class="toc-text">0x03 ATT&amp;CK for Enterprise</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ATT-amp-CK-for-Mobile"><span class="toc-number">4.</span> <span class="toc-text">0x04 ATT&amp;CK for Mobile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-参考"><span class="toc-number">5.</span> <span class="toc-text">0x05 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/ATTCK/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/ATTCK/&text=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/ATTCK/&is_video=false&description=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ATT&amp;CK初接触&body=Check out this article: https://rj45mp.github.io/ATTCK/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/ATTCK/&title=ATT&amp;CK初接触" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/ATTCK/&name=ATT&amp;CK初接触&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
