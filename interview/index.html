@@ -14,7 +14,7 @@
 <meta property="og:description" content="0x00 前言由于疫情原因，这段时间都呆在家里，学校也还没允许回去。 前几天，在总群里看到师兄发的某厂招聘图片，比较心动，一直感觉实力有限，不过还是发了一下简历。 当时就想着反正去接触接触，吸收一下经验，当作前面积累的一次复习和查漏补缺。 发简历过去后，确定了第一关是远程面试。没过几天，就收到技术一个师傅的电话。 面完后，大概回忆了一下整个过程，包括问我的一些问题，这里做一下反思和总结。 0x01">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;interview&#x2F;image-20200203132354375.png">
-<meta property="og:updated_time" content="2020-02-03T08:23:29.554Z">
+<meta property="og:updated_time" content="2020-02-03T08:30:56.801Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;interview&#x2F;image-20200203132354375.png">
     
@@ -186,7 +186,8 @@
 <p>在SSRF里面，我回答的比较差，特别是它在对内网其他服务器的利用方式上，我就在<code>bwapp</code>靶场里面碰了一下，平时也没注意深入研究到。<del>大忌</del></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SSRF，也叫服务端请求伪造，是服务端在获取其他服务端应用数据的时候，没有对目标地址做过滤限制所造成的安全漏洞。</span><br><span class="line">攻击者可以通过构造请求数据，来达到读取文件和探测攻击内部系统的目的。</span><br></pre></td></tr></table></figure>
 
-<p>3、在技巧类的两个问题里，对于时间盲注那个问题，由于前面我曾经研究过<code>DNS-log</code>，所以感觉还行，不过面试完后，晚上师兄提了一下，除了dns-log外，还有<code>mail-injection</code>也就是邮件头注入,这个倒是没有搞过,吸收了一波。而在SQL注入问题里面，对数据太大的处理，正确的应该是利用如<code>hex</code>、<code>bin</code>、<code>binary</code>函数对数据进行处理。</p>
+<p>3、在技巧类的两个问题里，对于时间盲注那个问题，由于前面我曾经研究过<code>DNS-log</code>，所以感觉还行，不过面试完后，晚上师兄提了一下，除了dns-log外，还有<code>mail-injection</code>也就是邮件头注入,这个倒是没有搞过,吸收了一波。</p>
+<p>注入回答的比较尴尬（emmm，读取的函数我答了<code>load data</code>，正确的应该是<code>load_file</code>，噢我…），在SQL注入问题里面，对数据太大的处理，更好的是利用如<code>hex</code>、<code>bin</code>、<code>binary</code>函数对数据进行处理，当时我的思路是将读取的文件通过函数导入数据库，然后在数据库进行查看，避免在web端回显。</p>
 <p>4、关于实战的思路，我理解的过程是：</p>
 <ul>
 <li><p>信息收集</p>
