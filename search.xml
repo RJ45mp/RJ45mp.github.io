@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>phpMyAdmin-CVE-2018-12613</title>
+      <link href="/phpMyAdmin-CVE-2018-12613/"/>
+      <url>/phpMyAdmin-CVE-2018-12613/</url>
+      
+        <content type="html"><![CDATA[<h2 id="0x00-介绍"><a href="#0x00-介绍" class="headerlink" title="0x00 介绍"></a>0x00 介绍</h2><p>phpMyAdmin</p><h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><p><code>vulhub</code>项目之<code>phpmyadmin/CVE-2018-12613</code></p><h2 id="0x02-漏洞"><a href="#0x02-漏洞" class="headerlink" title="0x02 漏洞"></a>0x02 漏洞</h2><p>1、影响版本：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4.8.1</span><br></pre></td></tr></table></figure><p>2、漏洞摘要：</p><p>phpMyAdmin 4.8.1版本存在文件包含漏洞</p><h2 id="0x03-分析"><a href="#0x03-分析" class="headerlink" title="0x03 分析"></a>0x03 分析</h2><p>1、输入点&amp;漏洞点</p><p>在<code>index.php</code>的代码中：</p><p><img src="/phpMyAdmin-CVE-2018-12613/image-20200203210112544.png" alt="image-20200203210112544"></p><p>如果传入的<code>target</code>变量不为空，并且为字符串，不以<code>index</code>开头，其内数据不能存在于<code>$target_blacklist</code>内，同时经过<code>Core::checkPageValidity</code>方法的处理，则包含传入的数据。</p><p><code>$target_blacklist</code>变量的内容，即<code>target</code>传入不能为<code>import.php</code>和<code>export.php</code>：</p><p><img src="/phpMyAdmin-CVE-2018-12613/image-20200203212324201.png" alt="image-20200203212324201"></p><p>继续追踪，在<code>libraries/classes/Core.php</code>中，存在<code>Core::checkPageValidity</code>方法：</p><p><img src="/phpMyAdmin-CVE-2018-12613/image-20200204125037973.png" alt="image-20200204125037973"></p><p>传入量<code>$page</code>和白名单<code>$whitelist</code>，检查如果<code>$page</code>中的数据在白名单中则返回true。</p><p>接着通过<code>mb_strpos</code>函数和<code>mb_substr</code>函数，特区并返回传参特别符号<code>?</code>后面的数据，再次判断数据中是否存在于白名单，如果存在则返回true。</p><p><img src="/phpMyAdmin-CVE-2018-12613/image-20200204135502497.png" alt="image-20200204135502497"></p><p>如果前面的条件都不符合后，通过<code>urldecode</code>函数进行解码，再次进行过滤，最后返回false。</p><p>2、利用点</p><p>关键点正是在该<code>checkPageValidity</code>函数对数据的处理逻辑不够严密，绕过如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">构造满足白名单条件后，?进行两次urlencode，使得其即满足urldecode前后的过滤机制。</span><br></pre></td></tr></table></figure><p><img src="/phpMyAdmin-CVE-2018-12613/image-20200204134945858.png" alt="image-20200204134945858"></p><p>文件包含的利用方式有两类：</p><p>​    a. 读取文件：</p><p>​        直接读取或者利用伪协议读取。</p><p>​    b. 执行代码：</p><p>​        文件包含的特点是被包含进来的文件会被当作php执行。</p><p>​        故只需要通过某种方式写入代码文件，如webshell，即可包含进来执行。</p><p>​        某种方式如其他漏洞写入代码，如将代码写入日志文件或写入数据库文件。</p><p>3、验证</p><p>读取文件：</p><p><img src="/phpMyAdmin-CVE-2018-12613/image-20200204135535168.png" alt="image-20200204135535168"></p><p>执行代码：</p><p>1）写入日志文件然后包含执行</p><p><img src="/phpMyAdmin-CVE-2018-12613/image-20200204141525950.png" alt="image-20200204141525950"></p><p>2）写入数据库文件然后包含执行</p><p><img src="/phpMyAdmin-CVE-2018-12613/image-20200204140832085.png" alt="image-20200204140832085"></p><h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p> <a href="https://mp.weixin.qq.com/s/HZcS2HdUtqz10jUEN57aog" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/HZcS2HdUtqz10jUEN57aog</a> </p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>某场面试总结</title>
       <link href="/interview/"/>
       <url>/interview/</url>
