@@ -4,6 +4,32 @@
   
     
     <entry>
+      <title>xray-crawlergo-xray-server</title>
+      <link href="/xray-crawlergo-xray-server/"/>
+      <url>/xray-crawlergo-xray-server/</url>
+      
+        <content type="html"><![CDATA[<!DOCTYPE html>    <html>    <head>        <meta charset="UTF-8">        <title>前言</title>        <style></style>                <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">                <style>.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }</style>        <style>            body {                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;                font-size: 14px;                line-height: 1.6;            }        </style>                            <link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml"></head>    <body class="vscode-light">        <hr><h2 id="title-xray-crawlergo-xray-serverdate-2020-06-17-010405">title: xray-crawlergo-xray-serverdate: 2020-06-17 01:04:05</h2><h2 id="前言">前言</h2>    </body>    </html>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>xray-crawlergo-xray-server酱-实现自动化挖洞</title>
+      <link href="/xray-crawlergo-xray-server/"/>
+      <url>/xray-crawlergo-xray-server/</url>
+      
+        <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这段时间，一直在挖SRC，深感自动化挖洞的舒服。</p><p>加上前几天撸到xray高级版两个月使用，还有参加某个厂商的内部众测，n多个子域名。</p><p>所以有了这篇文章，《xray-crawlergo-xray-server酱-实现自动化挖洞》。</p><h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p><img src="/xray-crawlergo-xray-server/image-20200617012216993.png" alt="image-20200617012216993"></p><p>简单说说这个架构：</p><ol><li>xray高级版中有subdomain的收集功能，利用这个功能实现子域名的收集，然后保存到本地的targets.txt文件。</li><li>crawlergo读取本地的targets.txt文件，对文件中的每一个子域名进行爬虫爬取url,并将url发送给下行的另一个xray。</li><li>另一个xray接收到了上行的url，启用webscan功能进行漏洞扫描检测，并使用webhook-output输出模式，将检测过程发送到本地的特定端口地址。</li><li>利用python结合server酱监听本地的特定端口地址，过滤出检测到的漏洞信息，将漏洞信息发送到微信。</li></ol>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>php-chinaz-代码审计</title>
       <link href="/php-chinaz/"/>
       <url>/php-chinaz/</url>
