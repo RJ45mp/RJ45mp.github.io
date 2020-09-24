@@ -65,23 +65,15 @@
     <span id="nav">
       <ul>
          
-          <li><a href="/">home</a></li>
+          <li><a href="/">Home</a></li>
          
-          <li><a href="/archives/">articles</a></li>
+          <li><a href="/archives/">Articles</a></li>
          
-          <li><a href="/web/">web</a></li>
+          <li><a href="/firends/">Firends</a></li>
          
-          <li><a href="/penetration/">penetration</a></li>
+          <li><a href="/search/">Search</a></li>
          
-          <li><a href="/pwn/">pwn</a></li>
-         
-          <li><a href="/docker">docker</a></li>
-         
-          <li><a href="/resources/">resources</a></li>
-         
-          <li><a href="/firends/">firends</a></li>
-         
-          <li><a href="/about/">about</a></li>
+          <li><a href="/about/">About</a></li>
         
       </ul>
     </span>
@@ -89,16 +81,18 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/Shiro-rememberMe/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
         
         <li><a class="icon" href="/php-chinaz/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
+      <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
+      <span id="i-next" class="info" style="display:none;">Post Següent</span>
+      <span id="i-top" class="info" style="display:none;">Adalt</span>
+      <span id="i-share" class="info" style="display:none;">Compartir Post</span>
     </span>
     <br/>
     <div id="share" style="display: none">
@@ -210,23 +204,15 @@
     <div id="nav-footer" style="display: none">
       <ul>
          
-          <li><a href="/">home</a></li>
+          <li><a href="/">Home</a></li>
          
-          <li><a href="/archives/">articles</a></li>
+          <li><a href="/archives/">Articles</a></li>
          
-          <li><a href="/web/">web</a></li>
+          <li><a href="/firends/">Firends</a></li>
          
-          <li><a href="/penetration/">penetration</a></li>
+          <li><a href="/search/">Search</a></li>
          
-          <li><a href="/pwn/">pwn</a></li>
-         
-          <li><a href="/docker">docker</a></li>
-         
-          <li><a href="/resources/">resources</a></li>
-         
-          <li><a href="/firends/">firends</a></li>
-         
-          <li><a href="/about/">about</a></li>
+          <li><a href="/about/">About</a></li>
         
       </ul>
     </div>
@@ -252,10 +238,10 @@
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
         <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
     </div>
 
   </div>
@@ -270,23 +256,15 @@
     <nav>
       <ul>
          
-          <li><a href="/">home</a></li>
+          <li><a href="/">Home</a></li>
          
-          <li><a href="/archives/">articles</a></li>
+          <li><a href="/archives/">Articles</a></li>
          
-          <li><a href="/web/">web</a></li>
+          <li><a href="/firends/">Firends</a></li>
          
-          <li><a href="/penetration/">penetration</a></li>
+          <li><a href="/search/">Search</a></li>
          
-          <li><a href="/pwn/">pwn</a></li>
-         
-          <li><a href="/docker">docker</a></li>
-         
-          <li><a href="/resources/">resources</a></li>
-         
-          <li><a href="/firends/">firends</a></li>
-         
-          <li><a href="/about/">about</a></li>
+          <li><a href="/about/">About</a></li>
         
       </ul>
     </nav>
@@ -307,7 +285,7 @@
   <script type="text/javascript">
   $(function() {
     // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"클립보드에 복사하였습니다!\">";
     btn += '<i class="far fa-clone"></i>';
     btn += '</span>'; 
     // mount it!
@@ -318,7 +296,7 @@
       }
     });
     clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
+      e.trigger.setAttribute('aria-label', "복사하였습니다!");
       e.clearSelection();
     })
   })
