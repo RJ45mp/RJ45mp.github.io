@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言一直以来，内心有股焦急焦虑，急冲冲的学习，急冲冲的比赛，没有时间和心思回过头来静心总结。突然之间想安静下来回顾和记录一下pwn的知识点 其实是写web有点累了，想切换一下脑壳，看心情更新吧 程序编译 1gcc stack.c -o stack -m32 反汇编分析1objdump -d stack -M intel  12345678910111213141516171819202122232">
+<meta property="og:type" content="article">
+<meta property="og:title" content="由一个简单的程序学习常见汇编指令">
+<meta property="og:url" content="https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="前言一直以来，内心有股焦急焦虑，急冲冲的学习，急冲冲的比赛，没有时间和心思回过头来静心总结。突然之间想安静下来回顾和记录一下pwn的知识点 其实是写web有点累了，想切换一下脑壳，看心情更新吧 程序编译 1gcc stack.c -o stack -m32 反汇编分析1objdump -d stack -M intel  12345678910111213141516171819202122232">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/1.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/2.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/3.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/4.png">
+<meta property="article:published_time" content="2019-09-22T16:36:33.000Z">
+<meta property="article:modified_time" content="2019-09-23T16:26:53.344Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>由一个简单的程序学习常见汇编指令</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/ret%E6%8C%87%E4%BB%A4%E4%B8%8Ecall%E6%8C%87%E4%BB%A4%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/IDA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&text=由一个简单的程序学习常见汇编指令"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&is_video=false&description=由一个简单的程序学习常见汇编指令"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=由一个简单的程序学习常见汇编指令&body=Check out this article: https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&name=由一个简单的程序学习常见汇编指令&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&t=由一个简单的程序学习常见汇编指令"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.</span> <span class="toc-text">程序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E6%B1%87%E7%BC%96%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">反汇编分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4"><span class="toc-number">4.</span> <span class="toc-text">常见汇编指令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8B%E6%9C%9F%E9%A2%84%E5%91%8A"><span class="toc-number">5.</span> <span class="toc-text">下期预告</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        由一个简单的程序学习常见汇编指令
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-09-22T16:36:33.000Z" itemprop="datePublished">2019-09-23</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一直以来，内心有股焦急焦虑，急冲冲的学习，急冲冲的比赛，没有时间和心思回过头来静心总结。<br>突然之间想安静下来回顾和记录一下pwn的知识点 <del>其实是写web有点累了，想切换一下脑壳，看心情更新吧</del></p>
+<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/1.png"><br>编译</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc stack.c -o stack -m32</span><br></pre></td></tr></table></figure>
+<h1 id="反汇编分析"><a href="#反汇编分析" class="headerlink" title="反汇编分析"></a>反汇编分析</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d stack -M intel</span><br></pre></td></tr></table></figure>
+<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/2.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">080483db &lt;fun&gt;:</span><br><span class="line"> 80483db:	55                   	push   ebp//将ebp压入栈</span><br><span class="line"> 80483dc:	89 e5                	mov    ebp,esp//将esp压入栈</span><br><span class="line"> 80483de:	83 ec 10             	sub    esp,0x10//在栈上分配0x10个字节的空间</span><br><span class="line"> 80483e1:	c7 45 f8 01 00 00 00 	mov    DWORD PTR [ebp-0x8],0x1//将0x1存储在[ebp-0x8],dword是双字即四个字节，ptr是指针，这里指[ebp-0x8]地址是一个双字型地址</span><br><span class="line"> 80483e8:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]//将[esp+0x8]的数据复制到eax</span><br><span class="line"> 80483eb:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax//将eax内的数据复制到[ebp-0x4]</span><br><span class="line"> 80483ee:	8b 55 08             	mov    edx,DWORD PTR [ebp+0x8]//将[ebp+0x8]内的数据复制到edx</span><br><span class="line"> 80483f1:	8b 45 0c             	mov    eax,DWORD PTR [ebp+0xc]//将[ebp+0xc]内的数据复制到eax</span><br><span class="line"> 80483f4:	01 d0                	add    eax,edx//将edx内的数据与eax内的数据相加，复制到eax</span><br><span class="line"> 80483f6:	c9                   	leave  //等价于mov ebp,esp;pop ebp</span><br><span class="line"> 80483f7:	c3                   	ret   //等价于pop ip;用栈中的数据，修改IP的内容，实现近转移</span><br><span class="line"></span><br><span class="line">080483f8 &lt;main&gt;:</span><br><span class="line"> 80483f8:	55                   	push   ebp</span><br><span class="line"> 80483f9:	89 e5                	mov    ebp,esp</span><br><span class="line"> 80483fb:	6a 14                	push   0x14//将0x14=20压入栈</span><br><span class="line"> 80483fd:	6a 0a                	push   0xa////将0xa=10压入栈</span><br><span class="line"> 80483ff:	e8 d7 ff ff ff       	call   80483db &lt;fun&gt;//调用fun函数</span><br><span class="line"> 8048404:	83 c4 08             	add    esp,0x8//esp+8，进行栈帧还原</span><br><span class="line"> 8048407:	b8 00 00 00 00       	mov    eax,0x0//清空eax内的数据</span><br><span class="line"> 804840c:	c9                   	leave  </span><br><span class="line"> 804840d:	c3                   	ret    </span><br><span class="line"> 804840e:	66 90                	xchg   ax,ax//交换ax;等价于nop</span><br></pre></td></tr></table></figure>
+
+<h1 id="常见汇编指令"><a href="#常见汇编指令" class="headerlink" title="常见汇编指令"></a>常见汇编指令</h1><p>1、寄存器</p>
+<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/3.png"><br>2、常见汇编指令</p>
+<p><img src="/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/4.png"></p>
+<h1 id="下期预告"><a href="#下期预告" class="headerlink" title="下期预告"></a>下期预告</h1><p>可能写如何编写一个简单的汇编程序、可能写函数在栈中的调用过程、ret指令与call指令的深入理解、可能写程序在内存中的分布、编译链接过程、可能写函数调用约定、x86架构与x64架构的不同之处。<br>个人感觉这些都是pwn的基础内容。建议如果想深入学习pwn的话，推荐首先学习《汇编语言(第3版)》。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.</span> <span class="toc-text">程序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E6%B1%87%E7%BC%96%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">反汇编分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4"><span class="toc-number">4.</span> <span class="toc-text">常见汇编指令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8B%E6%9C%9F%E9%A2%84%E5%91%8A"><span class="toc-number">5.</span> <span class="toc-text">下期预告</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&text=由一个简单的程序学习常见汇编指令"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&is_video=false&description=由一个简单的程序学习常见汇编指令"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=由一个简单的程序学习常见汇编指令&body=Check out this article: https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&title=由一个简单的程序学习常见汇编指令"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&name=由一个简单的程序学习常见汇编指令&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/%E7%94%B1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/&t=由一个简单的程序学习常见汇编指令"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

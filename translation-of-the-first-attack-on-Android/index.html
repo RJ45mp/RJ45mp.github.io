@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01 前言最近在工作上经常遇到一些关于安卓app的项目，特别关注了一些安卓的攻击资料。 Damn-Vulnerable-Bank，就是一个非常好的关于安卓app的攻击项目，它有比较完善的攻击指南。 所以，这是一个系列的“Damn-Vulnerable-Bank”复现和翻译的第一篇文章。 在此，感谢前辈的分享！ 0x02 环境搭建1、攻击环境我手上真实设备有iPhone 6s和一加5，另外之前也">
+<meta property="og:type" content="article">
+<meta property="og:title" content="让安卓APP正常运行起来">
+<meta property="og:url" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="0x01 前言最近在工作上经常遇到一些关于安卓app的项目，特别关注了一些安卓的攻击资料。 Damn-Vulnerable-Bank，就是一个非常好的关于安卓app的攻击项目，它有比较完善的攻击指南。 所以，这是一个系列的“Damn-Vulnerable-Bank”复现和翻译的第一篇文章。 在此，感谢前辈的分享！ 0x02 环境搭建1、攻击环境我手上真实设备有iPhone 6s和一加5，另外之前也">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801044806233.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731034613507.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731035730730.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731035903199.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731042455746.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731043048973.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731163556148.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731163751713.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731172716313.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731173140897.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731205802261.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731205923295.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731210425026.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731211152773.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731211513545.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731212118906.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210731213517436.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/1.gif">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801004539248.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801014945900.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801031433735.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801032259310.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/2.gif">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801054017775.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801055200015.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801061330541.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801061922537.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801062425351.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801062602326.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801064452138.png">
+<meta property="og:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/3.gif">
+<meta property="article:published_time" content="2021-07-30T16:32:48.000Z">
+<meta property="article:modified_time" content="2021-07-31T23:03:47.393Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/translation-of-the-first-attack-on-Android/image-20210801044806233.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>让安卓APP正常运行起来</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2021-Rj45mp-%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020-Rj45mp-%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&text=让安卓APP正常运行起来"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&is_video=false&description=让安卓APP正常运行起来"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=让安卓APP正常运行起来&body=Check out this article: https://rj45mp.github.io/translation-of-the-first-attack-on-Android/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&name=让安卓APP正常运行起来&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&t=让安卓APP正常运行起来"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">0x02 环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E6%94%BB%E5%87%BB%E7%8E%AF%E5%A2%83"><span class="toc-number">2.1.</span> <span class="toc-text">1、攻击环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81frida"><span class="toc-number">2.2.</span> <span class="toc-text">2、frida</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81apkx%E5%92%8Capktool"><span class="toc-number">2.3.</span> <span class="toc-text">3、apkx和apktool</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81Ghidra"><span class="toc-number">2.4.</span> <span class="toc-text">4、Ghidra</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-%E7%BB%95%E8%BF%87GPU%E6%A3%80%E6%B5%8B"><span class="toc-number">3.</span> <span class="toc-text">0x03 绕过GPU检测</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81apktool%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="toc-number">3.1.</span> <span class="toc-text">1、apktool反编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E6%A3%80%E6%9F%A5AndroidManifest-xml%E6%96%87%E4%BB%B6"><span class="toc-number">3.2.</span> <span class="toc-text">2、检查AndroidManifest.xml文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E7%BC%96%E8%AF%91app"><span class="toc-number">3.3.</span> <span class="toc-text">3、编译app</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E6%B5%8B%E8%AF%95%E8%BF%90%E8%A1%8C"><span class="toc-number">3.4.</span> <span class="toc-text">4、测试运行</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-%E7%BB%95%E8%BF%87root%E6%A3%80%E6%B5%8B"><span class="toc-number">4.</span> <span class="toc-text">0x04 绕过root检测</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="toc-number">4.1.</span> <span class="toc-text">1、反编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="toc-number">4.2.</span> <span class="toc-text">2、代码审计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E7%BB%95%E8%BF%87%E6%A3%80%E6%B5%8B"><span class="toc-number">4.3.</span> <span class="toc-text">3、绕过检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="toc-number">4.4.</span> <span class="toc-text">4、运行结果</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x05-%E7%BB%95%E8%BF%87frida%E6%A3%80%E6%B5%8B"><span class="toc-number">5.</span> <span class="toc-text">0x05 绕过frida检测</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="toc-number">5.1.</span> <span class="toc-text">1、代码审计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%BB%95%E8%BF%87%E6%A3%80%E6%B5%8B"><span class="toc-number">5.2.</span> <span class="toc-text">2、绕过检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="toc-number">5.3.</span> <span class="toc-text">3、运行结果</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        让安卓APP正常运行起来
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-07-30T16:32:48.000Z" itemprop="datePublished">2021-07-31</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h1><p>最近在工作上经常遇到一些关于安卓app的项目，特别关注了一些安卓的攻击资料。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/rewanthtammana/Damn-Vulnerable-Bank">Damn-Vulnerable-Bank</a>，就是一个非常好的关于安卓app的攻击项目，它有比较完善的攻击<a target="_blank" rel="noopener" href="https://rewanthtammana.com/damn-vulnerable-bank/index.html">指南</a>。</p>
+<p>所以，这是一个系列的“Damn-Vulnerable-Bank”复现和翻译的第一篇文章。</p>
+<p>在此，感谢前辈的分享！</p>
+<h1 id="0x02-环境搭建"><a href="#0x02-环境搭建" class="headerlink" title="0x02 环境搭建"></a>0x02 环境搭建</h1><h2 id="1、攻击环境"><a href="#1、攻击环境" class="headerlink" title="1、攻击环境"></a>1、攻击环境</h2><p>我手上真实设备有iPhone 6s和一加5，另外之前也使用过雷电模拟器、夜神模拟器、逍遥模拟器和Memu模拟器，现在在尝试用genymotion模拟器。</p>
+<p>我对自己的“全家桶”是这样设想的：</p>
+<p>a. 一台未越狱的iPhone 满足我对IOS app的测试需求。</p>
+<p>b. 一台未root的安卓9的一加5，目前苦恼在我没root，怎么把burpsuite的证书放入系统目录。</p>
+<p>c. 一个genymotion模拟器可以满足我对root的需求，genymotion模拟器可以选择各种手机类型，同时默认root环境，还可以选择安卓版本，目前支持安卓10，这使得我决定可能不对一加5进行root。</p>
+<p>特别注意genymotion模拟器用于ARM架构的app，还需要安装指令翻译包。</p>
+<p>同时阿里云和亚马逊云开始提供genymotion的服务，这感觉可能以后可以拥有一个云端的app测试环境。</p>
+<p><a target="_blank" rel="noopener" href="https://genymotion.en.softonic.com/">genymotion模拟器的安装参考官方文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/m9rco/Genymotion_ARM_Translation/">ARM架构指令翻译包参考</a></p>
+<p>d. 雷电模拟器、夜神模拟器和逍遥模拟器等作为补充，国内的一系列模拟器大部分停留在安卓5和安卓7，目前仅夜神模拟器的官方内测版支持安卓9，但使用的效果还不太理想，实际工作中发现有一些app已经开始仅适配安卓9以上了。</p>
+<h2 id="2、frida"><a href="#2、frida" class="headerlink" title="2、frida"></a>2、frida</h2><p>frida是一套hook框架。多用于移动app平台上。通过插入一些JavaScript或者python代码到app中，以进程注入的方式来实现劫持app中的函数，从而检测或者修改app的行为和结果。</p>
+<p><a target="_blank" rel="noopener" href="https://frida.re/">frida的官方网站</a>、frida的<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c349471bdef7">安装</a>和<a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1128884-1-1.html">使用</a></p>
+<p>genymotion是一个x86架构的模拟器，所以我下载了x86的frida，实际根据情况选择。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/frida/frida/releases/download/15.0.13/frida-server-15.0.13-linux-x86.xz">下载仓库</a></p>
+<p>安装服务端：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">adb devices</span><br><span class="line">adb pull frida<span class="literal">-server-15</span>.<span class="number">0.13</span><span class="literal">-android-x86</span> /tmp</span><br><span class="line">adb shell</span><br><span class="line"><span class="built_in">cd</span> tmp</span><br><span class="line">chmod +x frida<span class="literal">-server-15</span>.<span class="number">0.13</span><span class="literal">-android-x86</span></span><br><span class="line">./frida<span class="literal">-server-15</span>.<span class="number">0.13</span><span class="literal">-android-x86</span> &amp;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801044806233.png" alt="image-20210801044806233"></p>
+<p>安装客户端：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pip3 install frida</span><br><span class="line">pip3 install frida<span class="literal">-tools</span></span><br><span class="line">frida <span class="literal">--version</span></span><br><span class="line">pip3 install <span class="literal">-U</span> frida</span><br><span class="line">pip3 install <span class="literal">-U</span> frida<span class="literal">-tools</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>注意客户端和服务端的版本要一致。</p>
+<p>运行测试：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida<span class="literal">-ps</span> <span class="literal">-U</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731034613507.png" alt="image-20210731034613507"></p>
+<h2 id="3、apkx和apktool"><a href="#3、apkx和apktool" class="headerlink" title="3、apkx和apktool"></a>3、apkx和apktool</h2><p>我在kali里部署了这两个工具。</p>
+<p>a. apkx是dex文件转换和Java反编译工具，可直接从 apk中提取 Java源代码。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/b-mueller/apkx0">apkx</a></p>
+<p>b. apktool是谷歌提供的APK编译工具，能够反编译及回编译apk。</p>
+<p><a target="_blank" rel="noopener" href="https://ibotpeaches.github.io/Apktool/">apktool</a></p>
+<p>安装：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">apt install apktool <span class="literal">-y</span></span><br><span class="line">git clone https://github.com/b<span class="literal">-mueller</span>/apkx</span><br><span class="line"><span class="built_in">cd</span> apkx</span><br><span class="line">chmod +x install.sh</span><br><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731035730730.png" alt="image-20210731035730730"></p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731035903199.png" alt="image-20210731035903199"></p>
+<p>使用方法：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">反编译：</span><br><span class="line">apktool d test.apk</span><br><span class="line">编译：</span><br><span class="line">apktool b test</span><br><span class="line"></span><br><span class="line">反编译 HelloWord.apk 到 HelloWord</span><br><span class="line">apkx HelloWorld.apk </span><br><span class="line">Converting: classes.dex -&gt; classes.jar (dex2jar)</span><br><span class="line">dex2jar HelloWord/classes.dex -&gt; HelloWord/classes.jar</span><br><span class="line">Decompiling to HelloWord/src (cfr)</span><br><span class="line"></span><br><span class="line">转换器和反编译器的默认组合是dex2jar和cfr。使用<span class="literal">-c</span>和<span class="literal">-d</span>标志来改变这一点。例如：</span><br><span class="line">apkx <span class="literal">-c</span> enjarify <span class="literal">-d</span> procyon HelloWorld.apk</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4、Ghidra"><a href="#4、Ghidra" class="headerlink" title="4、Ghidra"></a>4、Ghidra</h2><p>Ghidra是NSA发布的一款功能强大、免费的开源逆向分析工具。其基于JAVA开发，是一款适用于Windows、Mac和Linux的跨平台反汇编工具，用户可以使用Java或Python开发自己的Ghidra插件或者脚本。Ghidra具有反编译功能，查看、定位反编译后的代码相较于IDA有优势。</p>
+<p><a target="_blank" rel="noopener" href="https://ghidra-sre.org/">官方网站</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/firmianay/CTF-All-In-One/blob/master/doc/2.2.6_Ghidra.md">使用教程</a></p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731042455746.png" alt="image-20210731042455746"></p>
+<h1 id="0x03-绕过GPU检测"><a href="#0x03-绕过GPU检测" class="headerlink" title="0x03 绕过GPU检测"></a>0x03 绕过GPU检测</h1><p>可能是版本的问题，我发现在最新的genymotion中触发不了这个检测场景，最终用逍遥重现了问题。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731043048973.png" alt="image-20210731043048973"></p>
+<p>真是个美妙的界面，想起来之前遇到的好几个项目，在一个个的模拟器和真机的尝试中，最终才解决了运行问题。</p>
+<p>现在，感谢“Damn-Vulnerable-Bank”…</p>
+<h2 id="1、apktool反编译"><a href="#1、apktool反编译" class="headerlink" title="1、apktool反编译"></a>1、apktool反编译</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apktool d dvba_v1.<span class="number">1.0</span>.apk <span class="literal">-o</span> dvba_v1.<span class="number">1.0</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731163556148.png" alt="image-20210731163556148"></p>
+<h2 id="2、检查AndroidManifest-xml文件"><a href="#2、检查AndroidManifest-xml文件" class="headerlink" title="2、检查AndroidManifest.xml文件"></a>2、检查AndroidManifest.xml文件</h2><p>AndroidManifest.xml是一个二进制 XML 格式的清单文件。每个 APK 文件都包含一个 AndroidManifest.xml 文件，该文件声明了应用程序的包名称、版本组件和其他元数据。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731163751713.png" alt="image-20210731163751713"></p>
+<p>在AndroidManifest.xml文件中检查发现hardwareAccelerated属性为true，这意思是app配置了硬件加速，需要GPU支持，逍遥模拟器没有GPU，导致了导致app的崩溃。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731172716313.png" alt="image-20210731172716313"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/fenglolo/article/details/108855856">安卓硬件加速方式的开启和关闭</a></p>
+<p><a target="_blank" rel="noopener" href="https://luoweiguang.github.io/2016/07/16/AndroidManifest.xml%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/index.html">AndroidManifest.xml文件详解</a></p>
+<p>接下来将hardwareAccelerated属性改为false，然后编译签名。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731173140897.png" alt="image-20210731173140897"></p>
+<h2 id="3、编译app"><a href="#3、编译app" class="headerlink" title="3、编译app"></a>3、编译app</h2><p>编译apk</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apktool b dvba_v1.<span class="number">1.0</span> <span class="literal">-o</span> dvba_v1.<span class="number">1.0</span><span class="literal">-no-gpu</span>.apk</span><br></pre></td></tr></table></figure>
+
+<p>在编译过程出了一些问题，导致资源没有加载到安装包内。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731205802261.png" alt="image-20210731205802261"></p>
+<p>后来在Ubuntu重新安装了一下，成功避开…</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731205923295.png" alt="image-20210731205923295"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/katrinawj/article/details/79133534">apktool的安装参考</a></p>
+<p>创建和使用签名</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">keytool <span class="literal">-genkey</span> <span class="literal">-v</span> <span class="literal">-keystore</span> my<span class="literal">-release-key</span>.keystore <span class="literal">-alias</span> dvba<span class="literal">-no-gpu</span> <span class="literal">-keyalg</span> RSA <span class="literal">-keysize</span> <span class="number">2048</span> <span class="literal">-validity</span> <span class="number">10000</span></span><br><span class="line"></span><br><span class="line">jarsigner <span class="literal">-verbose</span> <span class="literal">-sigalg</span> SHA1withRSA <span class="literal">-digestalg</span> SHA1 <span class="literal">-keystore</span> my<span class="literal">-release-key</span>.keystore dvba_v1.<span class="number">1.0</span>_no_gpu.apk dvba<span class="literal">-no-gpu</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731210425026.png" alt="image-20210731210425026"></p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731211152773.png" alt="image-20210731211152773"></p>
+<h2 id="4、测试运行"><a href="#4、测试运行" class="headerlink" title="4、测试运行"></a>4、测试运行</h2><p>重新在逍遥安装运行</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731211513545.png" alt="image-20210731211513545"></p>
+<h1 id="0x04-绕过root检测"><a href="#0x04-绕过root检测" class="headerlink" title="0x04 绕过root检测"></a>0x04 绕过root检测</h1><p>继续在逍遥里面观察，发现app运行后出现了另一个检测现象：“Phone is Rooted”，不过显然逍遥重现不了“Damn-Vulnerable-Bank”描述的场景。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731212118906.png" alt="image-20210731212118906"></p>
+<p>切换回genymotion，运行app，进行观察</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb.exe shell pm list packages</span><br><span class="line">adb.exe uninstall com.app.damnvulnerablebank</span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210731213517436.png" alt="image-20210731213517436"></p>
+<p><img src="/translation-of-the-first-attack-on-Android/1.gif" alt="image-20210731213517436"></p>
+<p>“Emulator Detected”、“Phone is Rooted”、“Frida is NOT running”</p>
+<h2 id="1、反编译"><a href="#1、反编译" class="headerlink" title="1、反编译"></a>1、反编译</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apkx dvba_v1.<span class="number">1.0</span>_no_gpu.apk</span><br><span class="line">grep <span class="literal">-r</span> <span class="literal">-i</span> <span class="string">&quot;Emulator Detected&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801004539248.png" alt="image-20210801004539248"></p>
+<p>“dvba_v1.1.0_no_gpu&#x2F;src&#x2F;com&#x2F;app&#x2F;damnvulnerablebank&#x2F;MainActivity.java”中存在特征。</p>
+<h2 id="2、代码审计"><a href="#2、代码审计" class="headerlink" title="2、代码审计"></a>2、代码审计</h2><p>审计“MainActivity.java”</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801014945900.png" alt="image-20210801014945900"></p>
+<p>可以看到，这段代码进行了模拟器检测、debug检测、root检测和frida检测。不过在检测过程中，只有root检测和frida检测才会调用finish()方法退出app，其他都是调用show()方法进行打印输出。最后检测通过后实现登录。</p>
+<p>其中，root检测的a.R() 的返回值为true才进入打印输出并结束。</p>
+<p>跟踪a.R() 的函数实现</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801031433735.png" alt="image-20210801031433735"></p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801032259310.png" alt="image-20210801032259310"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="keyword">new</span> <span class="title class_">File</span>(<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;/system/app/Superuser.apk&quot;</span>, <span class="string">&quot;/sbin/su&quot;</span>, <span class="string">&quot;/system/bin/su&quot;</span>, <span class="string">&quot;/system/xbin/su&quot;</span>, <span class="string">&quot;/data/local/xbin/su&quot;</span>, <span class="string">&quot;/data/local/bin/su&quot;</span>, <span class="string">&quot;/system/sd/xbin/su&quot;</span>, <span class="string">&quot;/system/bin/failsafe/su&quot;</span>, <span class="string">&quot;/data/local/su&quot;</span>, <span class="string">&quot;/su/bin/su&quot;</span>&#125;[n2]).exists()) <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">java.lang.<span class="type">Process</span> <span class="variable">process</span> <span class="operator">=</span> Runtime.getRuntime().exec(<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;/system/xbin/which&quot;</span>, <span class="string">&quot;su&quot;</span>&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>root权限是安卓最高的操作权限，俗称superuser，简称su，一般来说root过的手机，系统目录会有su目录和系统app目录中有Superuser.apk，或者kingroot、360Root、Root精灵、等apk。在安卓8系列中会使用magisk。</p>
+<h2 id="3、绕过检测"><a href="#3、绕过检测" class="headerlink" title="3、绕过检测"></a>3、绕过检测</h2><p>整个检测过程明确后，很容易地得到root检测的绕过方式：</p>
+<p>a. 直接在Java上直接修改，无论进入哪个判断都设置返回值为false。</p>
+<p>b. hook，利用frida控制a.R()函数的返回值为false。</p>
+<p>利用frida提供的JavaScript API，实现控制函数的返回值：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="comment">// We are loading the class here</span></span><br><span class="line">        <span class="keyword">var</span> <span class="title class_">Rfunc</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;a.a.a.a.a&quot;</span>);</span><br><span class="line">        <span class="comment">// Whenever a.a.a.a.a.R() is called, the below code is executed</span></span><br><span class="line">        <span class="title class_">Rfunc</span>.<span class="property">R</span>.<span class="property">implementation</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">            <span class="comment">// Capture the return value of R function</span></span><br><span class="line">            <span class="keyword">let</span> retval = <span class="variable language_">this</span>.<span class="title function_">R</span>();</span><br><span class="line">            <span class="comment">// Printing the value we got from this function</span></span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Original return value = &quot;</span>, retval);</span><br><span class="line">            <span class="comment">// Toggle the return value to make sure it doesn&#x27;t enter the if loop</span></span><br><span class="line">            <span class="keyword">return</span> !retval</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>10秒执行一次，加载<code>a.a.a.a.a</code>类中的<code>R</code>方法，获取函数返回值，并设置与返回值相反的值进行返回。</p>
+<p><a target="_blank" rel="noopener" href="https://frida.re/docs/javascript-api/">frida的官方JavaScript API</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mysticbinary/p/12016364.html">frida的参考案例</a></p>
+<h2 id="4、运行结果"><a href="#4、运行结果" class="headerlink" title="4、运行结果"></a>4、运行结果</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida <span class="literal">-U</span> <span class="operator">-f</span> com.app.damnvulnerablebank <span class="literal">-l</span> Damn<span class="literal">-Vulnerable-Bank</span>/rooted.js </span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/2.gif" alt="image-20210801041417263"></p>
+<h1 id="0x05-绕过frida检测"><a href="#0x05-绕过frida检测" class="headerlink" title="0x05 绕过frida检测"></a>0x05 绕过frida检测</h1><p>上一关，在最后出现了“Frida is running”，显然，app做了frida的检测。先尝试重新审计上一关的Java代码。</p>
+<h2 id="1、代码审计"><a href="#1、代码审计" class="headerlink" title="1、代码审计"></a>1、代码审计</h2><p>MainActivity.java中的关键代码：</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801054017775.png" alt="image-20210801054017775"></p>
+<p>当条件<code>var1_1.fridaCheck() == 1</code>达成时候，输出<code>Frida is running</code>，同时记录<code>&quot;FRIDA CHECK&quot;</code>和<code>&quot;FRIDA Server DETECTED&quot;</code>到日志中，最后调用<code>finish()</code>方法退出。关注有两点：</p>
+<p>a. <code>fridaCheck()</code>方法的具体实现细节，如何检测到frida的。</p>
+<p>b. 从记录<code>&quot;FRIDA CHECK&quot;</code>和<code>&quot;FRIDA Server DETECTED&quot;</code>到日志的操作，可以猜测，检测的对象是frida的服务端特征。</p>
+<p>继续全局搜索与frida相关的特殊字符。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="literal">-r</span> <span class="literal">-i</span> <span class="string">&quot;fridaCheck&quot;</span></span><br><span class="line">grep <span class="literal">-r</span> <span class="literal">-i</span> <span class="string">&quot;frida&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>经过搜索发现，在FridaCheckJNI类中存在一段代码为<code>System.loadLibrary(&quot;frida-check&quot;);</code>,其意思是通过调用这个方法在系统的路径下去搜索so库。</p>
+<p>在安卓app中，lib文件夹包含编译代码的可选文件夹 - 即本机代码库。</p>
+<p>在lib目录下存在多个so库，命名为<code>libfrida-check.so</code>。</p>
+<p>显然，<code>lib/x86/libfrida-check.so</code>中的代码就包含了如何检测frida的内容。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801055200015.png" alt="image-20210801055200015"></p>
+<p>接下来，通过Ghidra分析该libfrida-check.so文件。创建项目，导入so文件后，通过symbol tree 可以看到在导入表里面存在与网络连接相关的connect和socket。</p>
+<p>在导出表和函数表里面存在更为明显的字符串“Java_com_app_damnvulnerablebank_FridaCheckJNI_fridaCheck”。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801061330541.png" alt="image-20210801061330541"></p>
+<p>在“Java_com_app_damnvulnerablebank_FridaCheckJNI_fridaCheck”函数的伪代码中，存在“127.0.0.1”和“0xa2690002”。</p>
+<p>由此我们确定了frida的检测逻辑就是检查本地是否存在某个“0xa2690002”端口号，如果这个端口号存在，则判断存在frida，从而结束退出app。</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801061922537.png" alt="image-20210801061922537"></p>
+<p>结合genymotion和官方文档印证如下：</p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801062425351.png" alt="image-20210801062425351"></p>
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801062602326.png" alt="image-20210801062602326"></p>
+<p>至于“0xa2690002”与27042之间的转换关系，涉及到了在网络传输过程中的大端序和小端序问题。</p>
+<p>在大多数情况下，二进制文件包含大端格式的代码。由于网络协议规定接收到得第一个字节是高字节，存放到低地址，所以发送时会首先去低地址取数据的高字节。并且由于genymotion为x86架构，所以8位的“0xa2690002”需要分为4位的“0xa269”和“0x0002”。最后“0xa269”为实际有用值。</p>
+<p>将大端序的“0xa269”转换为十进制需要将前后2位对调，结果得“0x69a2”，其十进制为27042。</p>
+<h2 id="2、绕过检测"><a href="#2、绕过检测" class="headerlink" title="2、绕过检测"></a>2、绕过检测</h2><p>确定了frida的检测逻辑就是检查本地是否存在某个“27042”默认端口，那么将frida的服务端运行在另一个端口，即绕过frida检测了。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">netstat <span class="literal">-anptl</span> | grep frida</span><br><span class="line"><span class="built_in">ps</span> <span class="literal">-ef</span> | grep frida | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> | xargs <span class="built_in">kill</span> <span class="literal">-9</span></span><br><span class="line">./frida<span class="literal">-server-15</span>.<span class="number">0.13</span><span class="literal">-android-x86</span> <span class="literal">-l</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">27041</span> &amp;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/image-20210801064452138.png" alt="image-20210801064452138"></p>
+<h2 id="3、运行结果"><a href="#3、运行结果" class="headerlink" title="3、运行结果"></a>3、运行结果</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb devices</span><br><span class="line">frida <span class="literal">-H</span> <span class="number">192.168</span>.<span class="number">197.106</span>:<span class="number">27041</span>  <span class="operator">-f</span> com.app.damnvulnerablebank <span class="literal">-l</span> Damn<span class="literal">-Vulnerable-Bank</span>/rooted.js </span><br></pre></td></tr></table></figure>
+
+<p><img src="/translation-of-the-first-attack-on-Android/3.gif" alt="image-20210801064452138"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">0x02 环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E6%94%BB%E5%87%BB%E7%8E%AF%E5%A2%83"><span class="toc-number">2.1.</span> <span class="toc-text">1、攻击环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81frida"><span class="toc-number">2.2.</span> <span class="toc-text">2、frida</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81apkx%E5%92%8Capktool"><span class="toc-number">2.3.</span> <span class="toc-text">3、apkx和apktool</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81Ghidra"><span class="toc-number">2.4.</span> <span class="toc-text">4、Ghidra</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-%E7%BB%95%E8%BF%87GPU%E6%A3%80%E6%B5%8B"><span class="toc-number">3.</span> <span class="toc-text">0x03 绕过GPU检测</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81apktool%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="toc-number">3.1.</span> <span class="toc-text">1、apktool反编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E6%A3%80%E6%9F%A5AndroidManifest-xml%E6%96%87%E4%BB%B6"><span class="toc-number">3.2.</span> <span class="toc-text">2、检查AndroidManifest.xml文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E7%BC%96%E8%AF%91app"><span class="toc-number">3.3.</span> <span class="toc-text">3、编译app</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E6%B5%8B%E8%AF%95%E8%BF%90%E8%A1%8C"><span class="toc-number">3.4.</span> <span class="toc-text">4、测试运行</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-%E7%BB%95%E8%BF%87root%E6%A3%80%E6%B5%8B"><span class="toc-number">4.</span> <span class="toc-text">0x04 绕过root检测</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="toc-number">4.1.</span> <span class="toc-text">1、反编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="toc-number">4.2.</span> <span class="toc-text">2、代码审计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E7%BB%95%E8%BF%87%E6%A3%80%E6%B5%8B"><span class="toc-number">4.3.</span> <span class="toc-text">3、绕过检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="toc-number">4.4.</span> <span class="toc-text">4、运行结果</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x05-%E7%BB%95%E8%BF%87frida%E6%A3%80%E6%B5%8B"><span class="toc-number">5.</span> <span class="toc-text">0x05 绕过frida检测</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="toc-number">5.1.</span> <span class="toc-text">1、代码审计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%BB%95%E8%BF%87%E6%A3%80%E6%B5%8B"><span class="toc-number">5.2.</span> <span class="toc-text">2、绕过检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="toc-number">5.3.</span> <span class="toc-text">3、运行结果</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&text=让安卓APP正常运行起来"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&is_video=false&description=让安卓APP正常运行起来"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=让安卓APP正常运行起来&body=Check out this article: https://rj45mp.github.io/translation-of-the-first-attack-on-Android/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&title=让安卓APP正常运行起来"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&name=让安卓APP正常运行起来&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/translation-of-the-first-attack-on-Android/&t=让安卓APP正常运行起来"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

