@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x01 前言​	最近发现目标上线后，感觉不对劲就直接关机重启了。还是常规权限维持的话，稍不注意，内网没点了的话，那又得😭😭重新🎣。 ​	🫡为适配关机重启的场景，本文尝试对T1546.010进行武器化。 0x02 介绍​	T1546.010，T1546的子技术，其描述了Windows的一个注册表特性。  ​	Windows操作系统的注册表中默认提供了AppInit_Dlls和LoadApp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="T1546.010@权限维持武器化">
+<meta property="og:url" content="https://rj45mp.github.io/AppInitDll/index.html">
+<meta property="og:site_name" content="Rj45mp&#39;s blog">
+<meta property="og:description" content="0x01 前言​	最近发现目标上线后，感觉不对劲就直接关机重启了。还是常规权限维持的话，稍不注意，内网没点了的话，那又得😭😭重新🎣。 ​	🫡为适配关机重启的场景，本文尝试对T1546.010进行武器化。 0x02 介绍​	T1546.010，T1546的子技术，其描述了Windows的一个注册表特性。  ​	Windows操作系统的注册表中默认提供了AppInit_Dlls和LoadApp">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331115307329.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331000628164.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331002558874.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331194149038.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331194933449.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331010645080.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331010716836.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331200715259.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230331200923169.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230401143355121.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402013135265.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402013259692.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402164910796.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402164950098.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402165236245.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402173402094.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402180744531.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402181137558.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402184306390.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402184654817.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230402184510297.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230403001636444.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230403001733100.png">
+<meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230403002159068.png">
+<meta property="article:published_time" content="2023-03-30T15:45:26.000Z">
+<meta property="article:modified_time" content="2023-04-02T16:30:35.487Z">
+<meta property="article:author" content="Rj45mp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rj45mp.github.io/AppInitDll/image-20230331115307329.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/Rj45mp.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/Rj45mp.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/Rj45mp.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>T1546.010@权限维持武器化</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/win-task-scheduler/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/AppInitDll/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/AppInitDll/&text=T1546.010@权限维持武器化"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/AppInitDll/&is_video=false&description=T1546.010@权限维持武器化"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=T1546.010@权限维持武器化&body=Check out this article: https://rj45mp.github.io/AppInitDll/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/AppInitDll/&name=T1546.010@权限维持武器化&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/AppInitDll/&t=T1546.010@权限维持武器化"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.</span> <span class="toc-text">0x02 介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%B5%8B%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">0x03 测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E5%AE%9E%E6%88%98"><span class="toc-number">4.</span> <span class="toc-text">0x04 实战</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        T1546.010@权限维持武器化
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Rj45mp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-03-30T15:45:26.000Z" itemprop="datePublished">2023-03-30</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h2><p>​	最近发现目标上线后，感觉不对劲就直接关机重启了。还是常规权限维持的话，稍不注意，内网没点了的话，那又得😭😭重新🎣。</p>
+<p>​	🫡为适配关机重启的场景，本文尝试对T1546.010进行武器化。</p>
+<h2 id="0x02-介绍"><a href="#0x02-介绍" class="headerlink" title="0x02 介绍"></a>0x02 介绍</h2><p>​	T1546.010，T1546的子技术，其描述了Windows的一个注册表特性。</p>
+<p><img src="/AppInitDll/image-20230331115307329.png" alt="image-20230331115307329"></p>
+<p>​	Windows操作系统的注册表中默认提供了AppInit_Dlls和LoadAppInit_Dlls两个注册表表项。如果LoadAppInit_Dlls的键值设置为1，同时在AppInit_DLLs值中指定动态链接库，那么当机器重启后，指定的动态链接库将由user32.dll加载到加载user32.dll的每个进程中。</p>
+<p><img src="/AppInitDll/image-20230331000628164.png" alt="image-20230331000628164"></p>
+<p>​	依靠这一特性，除非重装系统，否则即便关机重启也可以实现再次上线。</p>
+<h2 id="0x03-测试"><a href="#0x03-测试" class="headerlink" title="0x03 测试"></a>0x03 测试</h2><p>1、定位注册表表项</p>
+<p>AppInit_Dlls 和 LoadAppInit_Dlls两个注册表表项路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\AppInit_Dlls</span><br><span class="line">计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\LoadAppInit_Dlls</span><br></pre></td></tr></table></figure>
+
+<p><img src="/AppInitDll/image-20230331002558874.png" alt="image-20230331002558874"></p>
+<p>2、编辑Dll代码</p>
+<p>​	“当机器重启后，指定的动态链接库将由user32.dll加载到加载user32.dll的每个进程中。”，也就是说所有调用到user32.dll的程序都会调用到指定的动态链接库。</p>
+<p>​	那么，为避免重复上线，需要精心设计Dll的限制条件：比如当检测到存在某个进程时（这个进程最好是Windows自带的，避免因机器的不同导致失去效果，同时也要注意尽量选择操作系统自启动类型的同时又不会影响到系统运行的进程），才触发执行。以弹窗子为例😁</p>
+<p>​	ctfmon.exe 是Windows提供语音识别、手写识别、键盘、翻译和其它用户输入技术支持的程序。其加载了user32.dll，故可以由user32.dll加载指定的动态链接库到加载user32.dll的每个进程中。</p>
+<p><img src="/AppInitDll/image-20230331194149038.png" alt="image-20230331194149038"></p>
+<p>该段Dll代码的意思是在加载Dll的过程中，当检测到ctfmon.exe进程后，触发弹窗子。</p>
+<p><img src="/AppInitDll/image-20230331194933449.png" alt="image-20230331194933449"></p>
+<p>3、修改注册表表项</p>
+<p>​	修改AppInit_Dlls 表项，填充编译好的dll路径</p>
+<p><img src="/AppInitDll/image-20230331010645080.png" alt="image-20230331010645080"></p>
+<p>​	修改LoadAppInit_Dlls的项目值，设置为1</p>
+<p><img src="/AppInitDll/image-20230331010716836.png" alt="image-20230331010716836"></p>
+<p>4、重启机器测试效果</p>
+<p>​	查看的Dll_Injection_AppInit_Dlls.dll加载情况，可以看到，Dll_Injection_AppInit_Dlls.dll注入到所有运行进程。</p>
+<p><img src="/AppInitDll/image-20230331200715259.png" alt="image-20230331200715259"></p>
+<p>​	但只有ctfmon.exe进程执行时，加载的Dll_Injection_AppInit_Dlls.dll中的窗口才会弹出执行。</p>
+<p><img src="/AppInitDll/image-20230331200923169.png" alt="image-20230331200923169"></p>
+<h2 id="0x04-实战"><a href="#0x04-实战" class="headerlink" title="0x04 实战"></a>0x04 实战</h2><p>​	实战环境下，武器化包括两个过程：@1、Dll的免杀和限制；@2、操作注册表表项。</p>
+<p>1、Dll未做限制</p>
+<p>​	可以看到上线的进程中既有system*的也有普通用户的，既有上线即掉也有持续存活的，既有多个进程持续上线的也有只上线一次的，既有系统进程也有用户态进程，所以限制进程需要满足：@操作系统进程；@持续存活；@上线次数尽量少；@尽量为system。进程略😁</p>
+<p><img src="/AppInitDll/image-20230401143355121.png" alt="image-20230401143355121"></p>
+<p>2、Dll免杀处理</p>
+<p>​	免杀处理非常简单，只需过静态即可，如：@shellcode编码转换；@回调函数加载执行。代码略😁</p>
+<p><img src="/AppInitDll/image-20230402013135265.png" alt="image-20230402013135265"></p>
+<p><img src="/AppInitDll/image-20230402013259692.png" alt="image-20230402013259692"></p>
+<p><img src="/AppInitDll/image-20230402164910796.png" alt="image-20230402164910796"></p>
+<p><img src="/AppInitDll/image-20230402164950098.png" alt="image-20230402164950098"></p>
+<p><img src="/AppInitDll/image-20230402165236245.png" alt="image-20230402165236245"></p>
+<p>3、操作注册表</p>
+<p>​	很多时候，直接在主机内操作注册表都会引起AV或EDR的告警。如：监控reg是否被调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg add &quot;HKLM\Software\Microsoft\Windows NT\CurrentVersion\Windows&quot; /v AppInit_DLLs /t REG_SZ /d &quot;DLL路径&quot; /f</span><br><span class="line">reg add &quot;HKLM\Software\Microsoft\Windows NT\CurrentVersion\Windows&quot; /v LoadAppInit_DLLs /t REG_DWORD /d 1 /f</span><br></pre></td></tr></table></figure>
+
+<p>​	当然，也可以在cs中利用<code>run</code>、<code>shell</code>、<code>powershell</code>或者进程注入到可信进程下，构造进程链尝试执行reg（有些EDR会区分常见进程和不常见进程）。</p>
+<p><img src="/AppInitDll/image-20230402173402094.png" alt="image-20230402173402094"></p>
+<p>​		所以最好的方式是通过Windows API，实现操作注册表，绕过reg的监控。</p>
+<p><img src="/AppInitDll/image-20230402180744531.png" alt="image-20230402180744531"></p>
+<p>​	不过，以Windows API的方式会带来一个不太优雅的问题：执行操作注册表的<code>ConsoleApplication1.exe</code>需要落地到目标机器内。</p>
+<p><img src="/AppInitDll/image-20230402181137558.png" alt="image-20230402181137558"></p>
+<p>​		</p>
+<p>​		操作注册表的行为，如果针对性配置规则的话，也可以看到两个告警：</p>
+<p><img src="/AppInitDll/image-20230402184306390.png" alt="image-20230402184306390"></p>
+<p>​	Unusual Parent-Child Relationship：</p>
+<p><img src="/AppInitDll/image-20230402184654817.png" alt="image-20230402184654817"></p>
+<p>​	Registry Persistence via AppInit DLL：</p>
+<p><img src="/AppInitDll/image-20230402184510297.png" alt="image-20230402184510297"></p>
+<p>​		优雅的实现无文件落地问题的方式有两种：</p>
+<p>​	@1：c#程序+execute-assembly内存加载</p>
+<p>​	通过c#编写.net程序，在使用时通过cs的execute-assembly命令加载到内存中执行。</p>
+<p>​	但这种方式可能会依赖目标主机的.net版本环境，同时如果稍不注意忘记bypassETW，可能就被检测发现，参考跳跳糖社区《ETW的攻与防》。</p>
+<p>​	@2： RDI+bdllspawn反射加载</p>
+<p>​	RDI，也叫反射Dll注入，简单描述就是与传统的DLL注入方式不同，反射Dll注入不需要将Dll文件写入目标进程的地址空间中，而是利用目标进程中的某些函数，将Dll文件“反射”到目标进程的内存中，从而实现Dl l文件的加载和执行。同时cs也提供了<code>bdllspawn</code>来进行反射Dll。</p>
+<p>​	以“RDI+bdllspawn反射加载”的方式既可实现无文件落地，也可避免环境的影响，同时在一定程度上绕过某些检测规则。</p>
+<p>​	编写cs插件代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">alias appinit_dll &#123;</span><br><span class="line">    $args = substr($0, 12);</span><br><span class="line">    bdllspawn($1, script_resource(&quot;reflective_dll.x64.dll&quot;),$args, &quot;AppInit_Dlls Injection&quot;, 5000, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​	RDI代码略😁</p>
+<p><img src="/AppInitDll/image-20230403001636444.png" alt="image-20230403001636444"></p>
+<p>​		直接在cs上运行插件，输入Dll路径，即可完成权限维持。</p>
+<p><img src="/AppInitDll/image-20230403001733100.png" alt="image-20230403001733100"></p>
+<p>​	至此，T1546.010武器化完成🤓。</p>
+<p><img src="/AppInitDll/image-20230403002159068.png" alt="image-20230403002159068"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/firends/">Firends</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.</span> <span class="toc-text">0x02 介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%B5%8B%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">0x03 测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E5%AE%9E%E6%88%98"><span class="toc-number">4.</span> <span class="toc-text">0x04 实战</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://rj45mp.github.io/AppInitDll/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://rj45mp.github.io/AppInitDll/&text=T1546.010@权限维持武器化"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://rj45mp.github.io/AppInitDll/&is_video=false&description=T1546.010@权限维持武器化"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=T1546.010@权限维持武器化&body=Check out this article: https://rj45mp.github.io/AppInitDll/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://rj45mp.github.io/AppInitDll/&title=T1546.010@权限维持武器化"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://rj45mp.github.io/AppInitDll/&name=T1546.010@权限维持武器化&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://rj45mp.github.io/AppInitDll/&t=T1546.010@权限维持武器化"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2019-2023
+    Rj45mp
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/firends/">Firends</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
