@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230403001733100.png">
 <meta property="og:image" content="https://rj45mp.github.io/AppInitDll/image-20230403002159068.png">
 <meta property="article:published_time" content="2023-03-30T15:45:26.000Z">
-<meta property="article:modified_time" content="2023-04-02T16:30:35.487Z">
+<meta property="article:modified_time" content="2023-04-02T16:45:30.363Z">
 <meta property="article:author" content="Rj45mp">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://rj45mp.github.io/AppInitDll/image-20230331115307329.png">
@@ -100,7 +100,7 @@
       <ul>
         
         
-        <li><a class="icon" aria-label="Next post" href="/win-task-scheduler/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Next post" href="/2022-Rj45mp-%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -229,7 +229,7 @@
 <p>​	通过c#编写.net程序，在使用时通过cs的execute-assembly命令加载到内存中执行。</p>
 <p>​	但这种方式可能会依赖目标主机的.net版本环境，同时如果稍不注意忘记bypassETW，可能就被检测发现，参考跳跳糖社区《ETW的攻与防》。</p>
 <p>​	@2： RDI+bdllspawn反射加载</p>
-<p>​	RDI，也叫反射Dll注入，简单描述就是与传统的DLL注入方式不同，反射Dll注入不需要将Dll文件写入目标进程的地址空间中，而是利用目标进程中的某些函数，将Dll文件“反射”到目标进程的内存中，从而实现Dl l文件的加载和执行。同时cs也提供了<code>bdllspawn</code>来进行反射Dll。</p>
+<p>​	RDI，也叫反射Dll注入，简单描述就是与传统的DLL注入方式不同，反射Dll注入不需要将Dll文件写入目标进程的地址空间中，而是利用目标进程中的某些函数，将Dll文件“反射”到目标进程的内存中，从而实现Dll文件的加载和执行。同时cs也提供了<code>bdllspawn</code>来进行反射Dll。</p>
 <p>​	以“RDI+bdllspawn反射加载”的方式既可实现无文件落地，也可避免环境的影响，同时在一定程度上绕过某些检测规则。</p>
 <p>​	编写cs插件代码：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">alias appinit_dll &#123;</span><br><span class="line">    $args = substr($0, 12);</span><br><span class="line">    bdllspawn($1, script_resource(&quot;reflective_dll.x64.dll&quot;),$args, &quot;AppInit_Dlls Injection&quot;, 5000, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
